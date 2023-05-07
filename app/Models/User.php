@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    protected $primaryKey = 'user_id';
     protected $fillable = [
         'user_type_id',
         'first_name',
@@ -25,7 +26,20 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'user_id','user_id');
+    }
+
+    public function usertype()
+    {
+        return $this->belongsTo(UserType::class, 'user_type_id','user_type_id');
+    }
+
+    public function actions(){
+        return $this->belongsToMany(Action::class,'logs','user_id','action_id',
+            'user_id','action_id');
+    }
+
+
 }
