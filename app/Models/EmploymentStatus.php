@@ -12,8 +12,12 @@ class EmploymentStatus extends Model
     protected $fillable = ['name', 'description'];
     protected $timestamps = true;
 
-    public function employeeStatuses()
-    {
-        return $this->hasMany(EmployeeStatus::class, 'emp_status_id', 'emp_status_id');
+
+    public function employees(){
+        return $this->belongsToMany(Employee::class, 'employee_statuses', 'emp_status_id', 'emp_id',
+            'emp_status_id','emp_id')
+            ->withPivot('start_date', 'end_date');
     }
+
+
 }

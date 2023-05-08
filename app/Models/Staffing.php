@@ -29,6 +29,7 @@ class Staffing extends Model
 
     public function permissions(){
         return $this->belongsToMany(Permission::class,'staff_permissions','staff_id','perm_id',
-            'staff_id','perm_id');
+            'staff_id','perm_id')
+            ->withPivot('status');;
     }
 }

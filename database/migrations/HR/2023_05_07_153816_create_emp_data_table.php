@@ -10,8 +10,22 @@ return new class extends Migration
     {
         Schema::create('emp_data', function (Blueprint $table) {
             $table->id('emp_data_id');
-            $table->text('fields');
+            $table->text('personal_photo')->nullable();
+            $table->string('father_name', 255);
+            $table->string('grand_father_name', 255);
+            $table->date('birth_date');
+            $table->string('birth_place', 80);
+            $table->integer('marital_status');
+            $table->date('start_working_date');
+            $table->boolean('is_employed');
+            $table->unsignedBigInteger('card_id');
+            $table->unsignedBigInteger('passport_id')->nullable();
+            $table->unsignedBigInteger('address_id');
             $table->timestamps();
+
+            $table->foreign('card_id')->references('personal_card_id')->on('personal_cards');
+            $table->foreign('passport_id')->references('passport_id')->on('passports');
+            $table->foreign('address_id')->references('address_id')->on('addresses');
         });
     }
     public function down(): void

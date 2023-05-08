@@ -38,7 +38,8 @@ class User extends Authenticatable
 
     public function actions(){
         return $this->belongsToMany(Action::class,'logs','user_id','action_id',
-            'user_id','action_id');
+            'user_id','action_id')
+            ->withPivot('description','date');
     }
 
 

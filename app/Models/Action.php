@@ -13,7 +13,8 @@ class Action extends Model
 
     public function users(){
         return $this->belongsToMany(User::class,'logs','action_id','user_id',
-            'action_id','user_id');
+            'action_id','user_id')
+            ->withPivot('description','date');;
     }
 
 

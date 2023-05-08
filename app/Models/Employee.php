@@ -35,9 +35,12 @@ class Employee extends Model
         return $this->hasMany(Attendance::class, 'emp_id', 'emp_id');
     }
 
-    public function employee_statuses(){
-        return $this->hasMany(EmployeeStatus::class, 'emp_id', 'emp_id');
+    public function employmentStatuses(){
+        return $this->belongsToMany(EmploymentStatus::class, 'employee_statuses', 'emp_id', 'emp_status_id',
+            'emp_id','emp_status_id')
+            ->withPivot('start_date', 'end_date');
     }
+
 
     public function staffings(){
         return $this->hasMany(Staffing::class, 'emp_id', 'emp_id');
@@ -58,8 +61,4 @@ class Employee extends Model
             'emp_id','schedule_id');
     }
 
-//    public function jobApplication()
-//    {
-//        return $this->belongsTo(JobApplication::class, 'job_app_id', 'job_app_id');
-//    }
 }
