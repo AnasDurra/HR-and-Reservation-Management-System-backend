@@ -21,6 +21,7 @@ class EmpData extends Model
         'card_id',
         'passport_id',
         'address_id',
+        'driving_licence_id',
     ];
 
     public function jobApplication()
@@ -35,7 +36,7 @@ class EmpData extends Model
 
     public function drivingLicence()
     {
-        return $this->hasOne(DrivingLicence::class, 'emp_data_id', 'emp_data_id');
+        return $this->belongsTo(DrivingLicence::class, 'driving_licence_id', 'driving_licence_id');
     }
 
     public function passport()

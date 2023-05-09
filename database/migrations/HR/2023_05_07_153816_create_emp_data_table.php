@@ -21,11 +21,13 @@ return new class extends Migration
             $table->unsignedBigInteger('card_id');
             $table->unsignedBigInteger('passport_id')->nullable();
             $table->unsignedBigInteger('address_id');
+            $table->unsignedBigInteger('driving_licence_id');
             $table->timestamps();
 
             $table->foreign('card_id')->references('personal_card_id')->on('personal_cards');
             $table->foreign('passport_id')->references('passport_id')->on('passports');
             $table->foreign('address_id')->references('address_id')->on('addresses');
+            $table->foreign('driving_licence_id')->references('driving_licence_id')->on('driving_licences');
         });
     }
     public function down(): void

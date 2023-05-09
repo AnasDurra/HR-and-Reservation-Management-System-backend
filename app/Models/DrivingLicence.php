@@ -11,7 +11,6 @@ class DrivingLicence extends Model
     protected $primaryKey = 'driving_licence_id';
 
     protected $fillable = [
-        'emp_data_id',
         'category',
         'date_of_issue',
         'place_of_issue',
@@ -21,6 +20,6 @@ class DrivingLicence extends Model
     ];
     public function empData()
     {
-        return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
+        return $this->hasOne(EmpData::class, 'driving_licence_id', 'driving_licence_id');
     }
 }
