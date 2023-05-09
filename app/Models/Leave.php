@@ -10,7 +10,6 @@ class Leave extends Model
     use HasFactory;
     protected $primaryKey = 'leave_id';
     protected $fillable = ['emp_id', 'uid', 'state', 'leave_time', 'leave_date', 'status', 'type'];
-    protected $timestamps = true;
 
     public function employee()
     {

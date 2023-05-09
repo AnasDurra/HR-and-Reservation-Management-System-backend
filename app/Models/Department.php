@@ -10,7 +10,6 @@ class Department extends Model
     use HasFactory;
     protected $primaryKey = 'dep_id';
     protected $fillable = ['name', 'description'];
-    protected $timestamps = true;
 
     public function staffings()
     {

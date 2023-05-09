@@ -10,7 +10,6 @@ class Attendance extends Model
     use HasFactory;
     protected $primaryKey = 'attendance_id';
     protected $fillable = ['emp_id', 'uid', 'state', 'attendance_time', 'attendance_date', 'status', 'type'];
-    protected $timestamps = true;
 
     public function employee()
     {

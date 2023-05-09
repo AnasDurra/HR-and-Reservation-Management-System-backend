@@ -10,7 +10,6 @@ class Overtime extends Model
     use HasFactory;
     protected $primaryKey = 'overtime_id';
     protected $fillable = ['emp_id', 'duration', 'overtime_date'];
-    protected $timestamps = true;
 
     public function employee()
     {

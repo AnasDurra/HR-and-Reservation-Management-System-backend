@@ -10,7 +10,6 @@ class Latetime extends Model
     use HasFactory;
     protected $primaryKey = 'latetime_id';
     protected $fillable = ['emp_id', 'duration', 'latetime_date'];
-    protected $timestamps = true;
 
     public function employee()
     {

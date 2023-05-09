@@ -10,7 +10,6 @@ class Staffing extends Model
     use HasFactory;
     protected $primaryKey = 'staff_id';
     protected $fillable = ['emp_id', 'job_title_id', 'dep_id', 'start_date', 'end_date'];
-    protected $timestamps = true;
 
     public function employee()
     {

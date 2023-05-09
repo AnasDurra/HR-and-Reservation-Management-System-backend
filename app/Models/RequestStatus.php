@@ -10,7 +10,6 @@ class RequestStatus extends Model
     use HasFactory;
     protected $primaryKey = 'req_stat_id';
     protected $fillable = ['name', 'description'];
-    protected $timestamps = true;
 
     public function shiftRequests()
     {

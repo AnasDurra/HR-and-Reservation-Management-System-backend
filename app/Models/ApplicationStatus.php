@@ -10,7 +10,6 @@ class ApplicationStatus extends Model
     use HasFactory;
     protected $primaryKey = 'app_status_id';
     protected $fillable = ['name', 'description'];
-    protected $timestamps = true;
 
     public function jobApplications()
     {

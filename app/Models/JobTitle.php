@@ -10,7 +10,6 @@ class JobTitle extends Model
     use HasFactory;
     protected $primaryKey = 'job_title_id';
     protected $fillable = ['name', 'description'];
-    protected $timestamps = true;
 
     public function staffings()
     {

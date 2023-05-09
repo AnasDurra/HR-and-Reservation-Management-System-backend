@@ -10,7 +10,6 @@ class Schedule extends Model
     use HasFactory;
     protected $primaryKey = 'schedule_id';
     protected $fillable = ['name', 'time_in', 'time_out'];
-    protected $timestamps = true;
 
     public function employees(){
         return $this->belongsToMany(Employee::class,'schedule_employees','schedule_id','emp_id',

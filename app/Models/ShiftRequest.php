@@ -10,7 +10,6 @@ class ShiftRequest extends Model
     use HasFactory;
     protected $primaryKey = 'shift_req_id';
     protected $fillable = ['emp_id', 'req_stat_id', 'description'];
-    protected $timestamps = true;
 
     public function employee()
     {

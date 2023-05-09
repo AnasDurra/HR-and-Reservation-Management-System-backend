@@ -10,7 +10,6 @@ class EmploymentStatus extends Model
     use HasFactory;
     protected $primaryKey = 'emp_status_id';
     protected $fillable = ['name', 'description'];
-    protected $timestamps = true;
 
 
     public function employees(){
