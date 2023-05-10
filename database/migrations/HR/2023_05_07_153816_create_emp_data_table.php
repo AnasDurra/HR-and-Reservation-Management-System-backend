@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('emp_data', function (Blueprint $table) {
@@ -20,6 +19,7 @@ return new class extends Migration
             $table->boolean('is_employed');
             $table->unsignedBigInteger('card_id');
             $table->unsignedBigInteger('passport_id')->nullable();
+            $table->unsignedBigInteger('driving_licence_id')->unique()->nullable();
             $table->unsignedBigInteger('address_id');
             $table->unsignedBigInteger('driving_licence_id');
             $table->timestamps();
@@ -27,9 +27,10 @@ return new class extends Migration
             $table->foreign('card_id')->references('personal_card_id')->on('personal_cards');
             $table->foreign('passport_id')->references('passport_id')->on('passports');
             $table->foreign('address_id')->references('address_id')->on('addresses');
-            $table->foreign('driving_licence_id')->references('driving_licence_id')->on('driving_licences');
+            $table->foreign('driving_licence_id')->references('driving_licence_id')->on('driving_licences')->onDelete('cascade');
         });
     }
+
     public function down(): void
     {
         Schema::dropIfExists('emp_data');
