@@ -1,16 +1,12 @@
 <?php
-
-
 namespace App\Application\Http\Controllers;
-
-
 use App\Application\Http\Resources\EmployeeResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class EmployeeController extends Controller
 {
-    private EmployeeService $employeeService;
+    private $employeeService;
 
     public function __construct(EmployeeService $employeeService)
     {

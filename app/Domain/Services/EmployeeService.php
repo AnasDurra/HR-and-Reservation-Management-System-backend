@@ -1,15 +1,12 @@
 <?php
-
-
 namespace App\Domain\Services;
-
-
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
 
 class EmployeeService
 {
-    private EmployeeRepositoryInterface $employeeRepository;
+    /** @var EmployeeRepositoryInterface */
+    private $employeeRepository;
 
     public function __construct(EmployeeRepositoryInterface $employeeRepository)
     {
