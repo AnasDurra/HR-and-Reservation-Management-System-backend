@@ -60,9 +60,9 @@ interface {$modelName}RepositoryInterface
 
     public function create(array \$data): {$modelName};
 
-    public function update(int \$id, array \$data): bool;
+    public function update(int \$id, array \$data): {$modelName};
 
-    public function delete(\$id): bool;
+    public function delete(\$id): {$modelName};
 }";
 
         return $interfaceContent;
@@ -96,12 +96,12 @@ class Eloquent{$modelName}Repository implements {$modelName}RepositoryInterface
         // TODO: Implement the logic to create a {$modelName}
     }
 
-    public function update(int \$id, array \$data): bool
+    public function update(int \$id, array \$data): {$modelName}
     {
         // TODO: Implement the logic to update a {$modelName}
     }
 
-    public function delete(\$id): bool
+    public function delete(\$id): {$modelName}
     {
         // TODO: Implement the logic to delete a {$modelName}
     }
@@ -147,12 +147,12 @@ class {$modelName}Service
         return \$this->{$modelName}Repository->create(\$data);
     }
 
-    public function update(int \$id, array \$data): bool
+    public function update(int \$id, array \$data): {$modelName}
     {
         return \$this->{$modelName}Repository->update(\$id, \$data);
     }
 
-    public function delete(\$id): bool
+    public function delete(\$id): {$modelName}
     {
         return \$this->{$modelName}Repository->delete(\$id);
     }
@@ -205,31 +205,31 @@ class {$modelName}Controller extends Controller
         \$this->{$serviceClass} = \${$serviceClass};
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
         \$items = \$this->{$serviceClass}->getList();
         return {$resourceClass}::collection(\$items);
     }
 
-    public function show(int \$id): {$resourceClass}
+    public function show(int \$id): JsonResponse
     {
         \$item = \$this->{$serviceClass}->getById(\$id);
         return new {$resourceClass}(\$item);
     }
 
-    public function store(): {$resourceClass}
+    public function store(): JsonResponse
     {
         \$item = \$this->{$serviceClass}->create(request()->all());
         return new {$resourceClass}(\$item);
     }
 
-    public function update(int \$id): {$resourceClass}
+    public function update(int \$id): JsonResponse
     {
         \$item = \$this->{$serviceClass}->update(\$id, request()->all());
         return new {$resourceClass}(\$item);
     }
 
-    public function destroy(int \$id): {$resourceClass}
+    public function destroy(int \$id): JsonResponse
     {
         \$item = \$this->{$serviceClass}->delete(\$id);
         return new {$resourceClass}(\$item);
