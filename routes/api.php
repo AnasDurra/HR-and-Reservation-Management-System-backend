@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\Http\Controllers\EmployeeController;
+use App\Application\Http\Controllers\DepartmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Register the routes for the EmployeeController
-Route::apiResource("employees", EmployeeController::class);
+Route::apiResource('employees', EmployeeController::class);
+
+
+// Register the routes for the DepartmentController
+Route::apiResource('departments', DepartmentController::class);
