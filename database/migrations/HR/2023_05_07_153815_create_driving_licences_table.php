@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::create('driving_licences', function (Blueprint $table) {
             $table->id('driving_licence_id');
-            $table->unsignedBigInteger('emp_data_id');
             $table->string('category', 50)->nullable();
             $table->date('date_of_issue');
             $table->string('place_of_issue', 100);
@@ -18,8 +17,6 @@ return new class extends Migration
             $table->date('expiry_date');
             $table->string('blood_group', 25);
             $table->timestamps();
-
-            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');
         });
     }
     public function down(): void
