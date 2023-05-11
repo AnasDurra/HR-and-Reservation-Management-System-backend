@@ -54,15 +54,15 @@ use {$modelClass};
 
 interface {$modelName}RepositoryInterface
 {
-    public function getList(): array;
+    public function get{$modelName}List(): array;
 
-    public function getById(int \$id): ?{$modelName};
+    public function get{$modelName}ById(int \$id): ?{$modelName};
 
-    public function create(array \$data): {$modelName};
+    public function create{$modelName}(array \$data): {$modelName};
 
-    public function update(int \$id, array \$data): {$modelName};
+    public function update{$modelName}(int \$id, array \$data): {$modelName};
 
-    public function delete(\$id): {$modelName};
+    public function delete{$modelName}(\$id): {$modelName};
 }";
 
         return $interfaceContent;
@@ -81,27 +81,27 @@ use {$modelClass};
 
 class Eloquent{$modelName}Repository implements {$modelName}RepositoryInterface
 {
-    public function getList(): array
+    public function get{$modelName}List(): array
     {
         // TODO: Implement the logic to retrieve a list of {$modelName}s
     }
 
-    public function getById(int \$id): ?{$modelName}
+    public function get{$modelName}ById(int \$id): ?{$modelName}
     {
         // TODO: Implement the logic to retrieve a {$modelName} by ID
     }
 
-    public function create(array \$data): {$modelName}
+    public function create{$modelName}(array \$data): {$modelName}
     {
         // TODO: Implement the logic to create a {$modelName}
     }
 
-    public function update(int \$id, array \$data): {$modelName}
+    public function update{$modelName}(int \$id, array \$data): {$modelName}
     {
         // TODO: Implement the logic to update a {$modelName}
     }
 
-    public function delete(\$id): {$modelName}
+    public function delete{$modelName}(\$id): {$modelName}
     {
         // TODO: Implement the logic to delete a {$modelName}
     }
@@ -132,29 +132,29 @@ class {$modelName}Service
         \$this->{$modelName}Repository = \${$modelName}Repository;
     }
 
-    public function getList(): array
+    public function get{$modelName}List(): array
     {
-        return \$this->{$modelName}Repository->getList();
+        return \$this->{$modelName}Repository->get{$modelName}List();
     }
 
-    public function getById(int \$id): ?{$modelName}
+    public function get{$modelName}ById(int \$id): ?{$modelName}
     {
-        return \$this->{$modelName}Repository->getById(\$id);
+        return \$this->{$modelName}Repository->get{$modelName}ById(\$id);
     }
 
-    public function create(array \$data): {$modelName}
+    public function create{$modelName}(array \$data): {$modelName}
     {
-        return \$this->{$modelName}Repository->create(\$data);
+        return \$this->{$modelName}Repository->create{$modelName}(\$data);
     }
 
-    public function update(int \$id, array \$data): {$modelName}
+    public function update{$modelName}(int \$id, array \$data): {$modelName}
     {
-        return \$this->{$modelName}Repository->update(\$id, \$data);
+        return \$this->{$modelName}Repository->update{$modelName}(\$id, \$data);
     }
 
-    public function delete(\$id): {$modelName}
+    public function delete{$modelName}(\$id): {$modelName}
     {
-        return \$this->{$modelName}Repository->delete(\$id);
+        return \$this->{$modelName}Repository->delete{$modelName}(\$id);
     }
 }";
 
@@ -188,13 +188,14 @@ class {$modelName}Resource extends JsonResource
         $resourceClass = "{$modelName}Resource";
         $serviceClass = "{$modelName}Service";
 
+        $model_name =lcfirst($modelName);
+
         $controllerContent = "<?php
-
 namespace App\Application\Http\Controllers;
-
 use App\Application\Http\Resources\\{$resourceClass};
 use App\Domain\Services\\{$serviceClass};
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Validator;
 
 class {$modelName}Controller extends Controller
 {
@@ -207,32 +208,42 @@ class {$modelName}Controller extends Controller
 
     public function index(): JsonResponse
     {
-        \$items = \$this->{$serviceClass}->getList();
-        return {$resourceClass}::collection(\$items);
+        \${$model_name}s = \$this->{$serviceClass}->get{$modelName}List();
+        return response()->json([
+            'data'=>{$resourceClass}::collection(\${$model_name}s) //Modify it as needed
+            ], 200);
     }
 
     public function show(int \$id): JsonResponse
     {
-        \$item = \$this->{$serviceClass}->getById(\$id);
-        return new {$resourceClass}(\$item);
+        \${$model_name} = \$this->{$serviceClass}->get{$modelName}ById(\$id);
+        return response()->json([
+            'data'=> new {$resourceClass}(\${$model_name}) //Modify it as needed
+            ], 200);
     }
 
     public function store(): JsonResponse
     {
-        \$item = \$this->{$serviceClass}->create(request()->all());
-        return new {$resourceClass}(\$item);
+        \${$model_name} = \$this->{$serviceClass}->create{$modelName}(request()->all());
+        return response()->json([
+            'data'=> new {$resourceClass}(\${$model_name}) //Modify it as needed
+            ], 200);
     }
 
     public function update(int \$id): JsonResponse
     {
-        \$item = \$this->{$serviceClass}->update(\$id, request()->all());
-        return new {$resourceClass}(\$item);
+        \${$model_name} = \$this->{$serviceClass}->update{$modelName}(\$id, request()->all());
+        return response()->json([
+            'data'=> new {$resourceClass}(\${$model_name}) //Modify it as needed
+            ], 200);
     }
 
     public function destroy(int \$id): JsonResponse
     {
-        \$item = \$this->{$serviceClass}->delete(\$id);
-        return new {$resourceClass}(\$item);
+        \${$model_name} = \$this->{$serviceClass}->delete{$modelName}(\$id);
+        return response()->json([
+            'data'=> new {$resourceClass}(\${$model_name}) //Modify it as needed
+            ], 200);
     }
 }";
 
