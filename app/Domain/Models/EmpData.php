@@ -2,6 +2,9 @@
 
 namespace App\Domain\Models;
 
+use App\Models\Certificate;
+use App\Models\Reference;
+use App\Models\Relative;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -105,5 +108,19 @@ class EmpData extends Model
         return $this->belongsToMany(EducationLevel::class, 'education_records', 'emp_data_id', 'education_level_id',
             'emp_data_id', 'education_level_id')
             ->withPivot('univ_name', 'city', 'start_date', 'end_date', 'specialize', 'grade');
+    }
+
+    public function relatives(){
+        return $this->belongsTo(Relative::class, 'emp_data_id', 'emp_data_id');
+    }
+
+    public function references()
+    {
+        return $this->hasMany(Reference::class, 'emp_data_id', 'emp_data_id');
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class, 'emp_data_id', 'emp_data_id');
     }
 }

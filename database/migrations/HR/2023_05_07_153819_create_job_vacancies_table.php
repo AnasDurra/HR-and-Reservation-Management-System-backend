@@ -14,8 +14,10 @@ return new class extends Migration
             $table->string('name', 50);
             $table->text('description');
             $table->integer('count');
+            $table->unsignedBigInteger('vacancy_status_id');
 
             $table->foreign('dep_id')->references('dep_id')->on('departments');
+            $table->foreign('vacancy_status_id')->references('vacancy_status_id')->on('vacancy_statuses');
 
             $table->timestamps();
         });

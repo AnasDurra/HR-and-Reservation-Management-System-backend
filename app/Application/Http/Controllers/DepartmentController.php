@@ -39,23 +39,12 @@ class DepartmentController extends Controller
     public function store(): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'name' => ['required', 'unique:departments,name'],
-            'description'
+            'name' => ['required','max:50','string','unique:departments,name'],
+            'description' =>['max:255','string']
         ]);
 
         if ($validator->fails()) {
             $errors = $validator->errors();
-            // Name already exists
-            if ($errors->has('name')) {
-                $resource = new DepartmentResource([
-                    'error' => $errors,
-                    'name_exists' => true
-                ]);
-                return response()->json([
-                    'data'=>$resource
-                ], 400);
-            }
-            // Other validation errors
             return response()->json([
                 'data'=>new DepartmentResource($errors)
             ], 400);
@@ -70,23 +59,11 @@ class DepartmentController extends Controller
     public function update(int $id): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'name' => ['unique:departments,name'],
-            'description'
+            'name' => ['max:50','string','unique:departments,name,' . $id . ',dep_id'],
+            'description' =>['max:255','string']
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
-            // Name already exists
-            if ($errors->has('name')) {
-                $resource = new DepartmentResource([
-                    'error' => $errors,
-                    'name_exists' => true,
-                ]);
-                return response()->json([
-                    'data'=>$resource
-                ], 400);
-            }
-
-            // Other validation errors
             return response()->json([
                 'data'=>new DepartmentResource($errors)
                 ], 400);

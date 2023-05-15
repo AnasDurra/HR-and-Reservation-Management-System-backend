@@ -2,6 +2,7 @@
 
 namespace App\Domain\Models;
 
+use App\Models\Relative;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +10,7 @@ class Employee extends Model
 {
     use HasFactory;
     protected $primaryKey = 'emp_id';
-    protected $fillable = ['user_id', 'emp_data_id', 'job_app_id', 'start_date', 'leaves_balance'];
+    protected $fillable = ['user_id', 'emp_data_id', 'job_app_id', 'start_date', 'leaves_balance','cur_title','cur_dep'];
 
     public function leaves(){
         return $this->hasMany(Leave::class, 'emp_id', 'emp_id');
@@ -59,6 +60,11 @@ class Employee extends Model
     public function schedules(){
         return $this->belongsToMany(Schedule::class,'schedule_employees','emp_id','schedule_id',
             'emp_id','schedule_id');
+    }
+
+
+    public function relatives(){
+        return $this->hasMany(Relative::class, 'emp_id', 'emp_id');
     }
 
 }

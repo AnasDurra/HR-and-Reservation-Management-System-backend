@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Infrastructure\Persistence\Eloquent;
-
 use App\Domain\Repositories\DepartmentRepositoryInterface;
 use App\Domain\Models\Department;
 
@@ -9,7 +8,19 @@ class EloquentDepartmentRepository implements DepartmentRepositoryInterface
 {
     public function getList(): array
     {
-        return Department::all()->toArray();
+        $departments=Department::all()->toArray();
+        $employeeRepository = new EloquentEmployeeRepository();
+        foreach ($departments as &$department) {
+            //TODO add this function into Employee Repository :
+            /*
+       public function getEmployeeListByDepId(int $dep_id): array
+        {
+            return Employee::query()->where('cur_dep','=',$dep_id)->get()->toArray();
+        }
+            */
+            $department['employees_count']=count($employeeRepository->getEmployeeListByDepId($department['dep_id']));
+        }
+        return $departments;
     }
 
     public function getById(int $id): ?Department

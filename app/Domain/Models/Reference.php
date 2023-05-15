@@ -5,19 +5,18 @@ namespace App\Domain\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TrainingCourse extends Model
+class Reference extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'training_course_id';
+    protected $primaryKey = 'reference_id';
 
     protected $fillable = [
         'emp_data_id',
         'name',
-        'institute_name',
-        'city',
-        'start_date',
-        'end_date',
-        'specialize',
+        'job',
+        'company',
+        'telephone',
+        'address',
     ];
 
     public function empData()

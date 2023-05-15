@@ -21,7 +21,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('passport_id')->nullable();
             $table->unsignedBigInteger('driving_licence_id')->unique()->nullable();
             $table->unsignedBigInteger('address_id');
-            $table->unsignedBigInteger('driving_licence_id');
             $table->timestamps();
 
             $table->foreign('card_id')->references('personal_card_id')->on('personal_cards');
