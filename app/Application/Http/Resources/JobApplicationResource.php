@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JsonSerializable;
 
-class EmployeeResource extends JsonResource
+class JobApplicationResource extends JsonResource
 {
     public function toArray(Request $request): array|JsonSerializable|Arrayable
     {
