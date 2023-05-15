@@ -32,7 +32,7 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
             'count' => $data['count'],
             'vacancy_status_id' => 1,
         ]);
-        return $jobVacancy;
+        return $jobVacancy->load('department', 'vacancyStatus');;
     }
 
     public function updateJobVacancy(int $id, array $data): JobVacancy|Builder
@@ -44,7 +44,7 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
         $jobVacancy->count = $data['count'] ?? $jobVacancy->count;
         $jobVacancy->vacancy_status_id = $data['vacancy_status_id'] ?? $jobVacancy->vacancy_status_id;
         $jobVacancy->save();
-        return $jobVacancy;
+        return $jobVacancy->load('department', 'vacancyStatus');
     }
 
     public function deleteJobVacancy($id): JobVacancy|Builder
