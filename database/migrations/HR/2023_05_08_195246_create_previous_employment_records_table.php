@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('previous_employment_records', function (Blueprint $table) {
             $table->id('prev_emp_record_id');
             $table->unsignedBigInteger('emp_data_id');
+            $table->string('employer_name');
             $table->date('start_date');
             $table->date('end_date');
             $table->text('address');

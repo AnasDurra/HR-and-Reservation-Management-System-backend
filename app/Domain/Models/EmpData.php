@@ -16,6 +16,8 @@ class EmpData extends Model
     protected $primaryKey = 'emp_data_id';
     protected $fillable = [
         'personal_photo',
+        'first_name',
+        'last_name',
         'father_name',
         'grand_father_name',
         'birth_date',
@@ -41,7 +43,7 @@ class EmpData extends Model
 
     public function drivingLicence(): HasOne
     {
-        return $this->belongsTo(DrivingLicence::class, 'driving_licence_id', 'driving_licence_id');
+        return $this->hasOne(DrivingLicence::class, 'driving_licence_id', 'driving_licence_id');
     }
 
     public function passport(): BelongsTo
@@ -89,8 +91,7 @@ class EmpData extends Model
     public function skills(): BelongsToMany
     {
         return $this->belongsToMany(EmpData::class, 'emp_skills', 'emp_data_id', 'skill_id',
-            'emp_data_id', 'skill_id')
-            ->withPivot('level');
+            'emp_data_id', 'skill_id');
     }
 
     public function languages(): BelongsToMany

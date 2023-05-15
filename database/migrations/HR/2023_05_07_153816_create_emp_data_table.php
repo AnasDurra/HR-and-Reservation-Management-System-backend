@@ -9,6 +9,8 @@ return new class extends Migration {
     {
         Schema::create('emp_data', function (Blueprint $table) {
             $table->id('emp_data_id');
+            $table->string('first_name', 255);
+            $table->string('last_name', 255);
             $table->text('personal_photo')->nullable();
             $table->string('father_name', 255);
             $table->string('grand_father_name', 255);

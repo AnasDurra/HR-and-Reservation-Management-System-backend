@@ -23,6 +23,6 @@ class DrivingLicence extends Model
 
     public function empData(): BelongsTo
     {
-        return $this->hasOne(EmpData::class, 'driving_licence_id', 'driving_licence_id');
+        return $this->belongsTo(EmpData::class, 'driving_licence_id', 'driving_licence_id');
     }
 }

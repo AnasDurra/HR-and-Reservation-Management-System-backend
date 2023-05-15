@@ -4,6 +4,7 @@ namespace App\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PreviousEmploymentRecord extends Model
 {
@@ -12,6 +13,7 @@ class PreviousEmploymentRecord extends Model
 
     protected $fillable = [
         'emp_data_id',
+        'employer_name',
         'start_date',
         'end_date',
         'address',
@@ -22,7 +24,7 @@ class PreviousEmploymentRecord extends Model
         'allowance',
         'quit_reason',
     ];
-    public function empData()
+    public function empData(): BelongsTo
     {
         return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
     }
