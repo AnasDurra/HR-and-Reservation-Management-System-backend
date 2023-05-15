@@ -1,6 +1,5 @@
 <?php
 
-use App\Application\Http\Controllers\EmployeeController;
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
 use Illuminate\Http\Request;
@@ -21,12 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Register the routes for the EmployeeController
-Route::apiResource('employees', EmployeeController::class);
-
-
 // Register the routes for the DepartmentController
 Route::apiResource('departments', DepartmentController::class);
 
 // Register the routes for the DepartmentController
-Route::apiResource('job_vacancies', JobVacancyController::class);
+Route::apiResource('job-vacancies', JobVacancyController::class);

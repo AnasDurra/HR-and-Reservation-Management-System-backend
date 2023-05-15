@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class DepartmentController extends Controller
 {
-    private $DepartmentService;
+    private DepartmentService $DepartmentService;
 
     public function __construct(DepartmentService $DepartmentService)
     {
