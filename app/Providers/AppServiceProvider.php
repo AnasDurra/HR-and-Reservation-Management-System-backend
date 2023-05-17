@@ -1,11 +1,15 @@
 <?php
 
 namespace App\Providers;
+use App\Domain\Models\JobTitlePermission;
 use App\Domain\Repositories\DepartmentRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
+use App\Domain\Repositories\JobTitlePermissionRepositoryInterface;
+use App\Domain\Repositories\JobTitleRepositoryInterface;
 use App\Domain\Repositories\JobVacancyRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentJobTitleRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobVacancyRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EmployeeRepositoryInterface::class, EloquentEmployeeRepository::class);
         $this->app->bind(DepartmentRepositoryInterface::class, EloquentDepartmentRepository::class);
         $this->app->bind(JobVacancyRepositoryInterface::class, EloquentJobVacancyRepository::class);
+        $this->app->bind(JobTitleRepositoryInterface::class, EloquentJobTitleRepository::class);
+        //$this->app->bind(JobTitlePermissionRepositoryInterface::class, EloquentJobTitleRepository::class);
     }
 
     /**

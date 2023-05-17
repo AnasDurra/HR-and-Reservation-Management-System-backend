@@ -15,6 +15,16 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return Employee::all()->toArray();
     }
 
+    public function getEmployeeListByDepId(int $dep_id): array
+    {
+        return Employee::query()->where('cur_dep','=',$dep_id)->get()->toArray();
+    }
+
+    public function getEmployeeListByTitleId(int $title_id): array
+    {
+        return Employee::query()->where('cur_title','=',$title_id)->get()->toArray();
+    }
+
     public function getEmployeeById(int $id): ?Employee
     {
         // TODO: Implement getEmployeeById() method.

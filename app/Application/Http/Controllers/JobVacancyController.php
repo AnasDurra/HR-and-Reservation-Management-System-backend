@@ -41,7 +41,7 @@ class JobVacancyController extends Controller
         $validator = Validator::make(request()->all(), [
             'dep_id' => ['required', 'integer', 'exists:departments,dep_id'],
             'name' => ['required', 'string', 'max:50', 'unique:job_vacancies,name'],
-            'description' => ['required', 'string'],
+            'description' => ['required','max:255','string','nullable'],
             'count' => ['required', 'integer'],
         ]);
         if ($validator->fails()) {
@@ -61,7 +61,7 @@ class JobVacancyController extends Controller
     {
         $validator = Validator::make(request()->all(), [
             'name' => ['string', 'max:50', 'unique:job_vacancies,name,' . $id . ',job_vacancy_id'],
-            'description' => ['string'],
+            'description' => ['string','max:255','nullable'],
             'count' => ['integer'],
             'vacancy_status_id' => ['integer', 'exists:vacancy_statuses,vacancy_status_id'],
         ]);

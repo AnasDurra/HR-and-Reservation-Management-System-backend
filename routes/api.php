@@ -2,6 +2,7 @@
 
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
+use App\Application\Http\Controllers\JobTitleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,5 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Register the routes for the DepartmentController
 Route::apiResource('departments', DepartmentController::class);
 
-// Register the routes for the DepartmentController
+// Register the routes for the JobVacancyController
 Route::apiResource('job-vacancies', JobVacancyController::class);
+
+// Register the routes for the JobVacancyController
+Route::apiResource('job-titles', JobTitleController::class);

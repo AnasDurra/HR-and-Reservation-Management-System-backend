@@ -8,6 +8,10 @@ interface EmployeeRepositoryInterface
 {
     public function getEmployeeList(): array;
 
+    public function getEmployeeListByDepId(int $dep_id): array;
+
+    public function getEmployeeListByTitleId(int $title_id): array;
+
     public function getEmployeeById(int $id): ?Employee;
 
     public function createEmployee(array $data): Employee;

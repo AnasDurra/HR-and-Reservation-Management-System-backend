@@ -18,6 +18,16 @@ class EmployeeService
         return $this->employeeRepository->getEmployeeList();
     }
 
+    public function getEmployeeListByDepId($dep_id): array
+    {
+        return $this->employeeRepository->getEmployeeListByDepId($dep_id);
+    }
+
+    public function getEmployeeListByTitleId($title_id): array
+    {
+        return $this->employeeRepository->getEmployeeListByTitleId($title_id);
+    }
+
     public function getEmployeeById(int $id): ?Employee
     {
         return $this->employeeRepository->getEmployeeById($id);
