@@ -9,6 +9,8 @@ use App\Domain\Repositories\JobTitleRepositoryInterface;
 use App\Domain\Repositories\JobVacancyRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
+use App\Domain\Repositories\JobApplicationRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\EloquentJobApplicationRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobTitleRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobVacancyRepository;
 use Illuminate\Support\ServiceProvider;
@@ -21,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register the repository interface with its implementation
-        $this->app->bind(EmployeeRepositoryInterface::class, EloquentEmployeeRepository::class);
+        $this->app->bind(JobApplicationRepositoryInterface::class, EloquentJobApplicationRepository::class);
         $this->app->bind(DepartmentRepositoryInterface::class, EloquentDepartmentRepository::class);
         $this->app->bind(JobVacancyRepositoryInterface::class, EloquentJobVacancyRepository::class);
         $this->app->bind(JobTitleRepositoryInterface::class, EloquentJobTitleRepository::class);

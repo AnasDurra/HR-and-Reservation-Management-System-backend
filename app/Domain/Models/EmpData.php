@@ -12,6 +12,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * @property mixed first_name
+ * @property mixed last_name
+ * @property mixed emp_data_id
+ * @property mixed driving_licence_id
+ * @property mixed passport_id
+ * @property mixed address_id
+ * @property mixed card_id
+ * @property mixed is_employed
+ * @property mixed start_working_date
+ * @property mixed marital_status
+ * @property mixed birth_place
+ * @property mixed birth_date
+ * @property mixed grand_father_name
+ * @property mixed father_name
+ * @property mixed personal_photo
+ */
 class EmpData extends Model
 {
     use HasFactory;
@@ -19,6 +36,8 @@ class EmpData extends Model
     protected $primaryKey = 'emp_data_id';
     protected $fillable = [
         'personal_photo',
+        'first_name',
+        'last_name',
         'father_name',
         'grand_father_name',
         'birth_date',
@@ -44,7 +63,7 @@ class EmpData extends Model
 
     public function drivingLicence(): HasOne
     {
-        return $this->belongsTo(DrivingLicence::class, 'driving_licence_id', 'driving_licence_id');
+        return $this->hasOne(DrivingLicence::class, 'driving_licence_id', 'driving_licence_id');
     }
 
     public function passport(): BelongsTo
@@ -91,9 +110,8 @@ class EmpData extends Model
 
     public function skills(): BelongsToMany
     {
-        return $this->belongsToMany(EmpData::class, 'emp_skills', 'emp_data_id', 'skill_id',
-            'emp_data_id', 'skill_id')
-            ->withPivot('level');
+        return $this->belongsToMany(Skill::class, 'emp_skills', 'emp_data_id', 'skill_id',
+            'emp_data_id', 'skill_id');
     }
 
     public function languages(): BelongsToMany
@@ -122,5 +140,12 @@ class EmpData extends Model
     public function certificates()
     {
         return $this->hasMany(Certificate::class, 'emp_data_id', 'emp_data_id');
+    }
+
+
+    // get full name mutator
+    public function getFullNameAttribute(): string
+    {
+        return "$this->first_name $this->last_name";
     }
 }

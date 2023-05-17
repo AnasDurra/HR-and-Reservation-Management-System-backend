@@ -4,6 +4,7 @@ namespace App\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class EducationLevel extends Model
 {
@@ -14,7 +15,7 @@ class EducationLevel extends Model
         'name',
     ];
 
-    public function empsData()
+    public function empsData(): BelongsToMany
     {
         return $this->belongsToMany(EmpData::class, 'education_level_emp_data', 'education_level_id', 'emp_data_id',
             'education_level_id','emp_data_id')
