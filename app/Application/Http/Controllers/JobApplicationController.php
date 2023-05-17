@@ -5,7 +5,8 @@ namespace App\Application\Http\Controllers;
 
 
 use App\Application\Http\Requests\StoreJobApplicationRequest;
-use App\Application\Http\Resources\JobApplicationResource;
+use App\Application\Http\Resources\JobApplicationBriefResource;
+use App\Application\Http\Resources\JobApplicationDetailsResource;
 use App\Domain\Services\JobApplicationService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -21,16 +22,16 @@ class JobApplicationController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $jobApplications = $this->jobApplicationService->getJobApplicationsList();
-        return JobApplicationResource::collection($jobApplications);
+        return JobApplicationBriefResource::collection($jobApplications);
     }
 
-    public function show(int $id): JobApplicationResource
+    public function show(int $id): JobApplicationDetailsResource
     {
         $jobApplication = $this->jobApplicationService->getJobApplicationById($id);
-        return new JobApplicationResource($jobApplication);
+        return new JobApplicationDetailsResource($jobApplication);
     }
 
-    public function store(StoreJobApplicationRequest $request): JobApplicationResource
+    public function store(StoreJobApplicationRequest $request): JobApplicationBriefResource
     {
         // validate request data
         $validated = $request->validated();
@@ -39,18 +40,18 @@ class JobApplicationController extends Controller
         $jobApplication = $this->jobApplicationService->createJobApplication($validated);
 
         // return job application in json format
-        return new JobApplicationResource($jobApplication);
+        return new JobApplicationBriefResource($jobApplication);
     }
 
-    public function update(int $id): JobApplicationResource
+    public function update(int $id): JobApplicationBriefResource
     {
         $employee = $this->jobApplicationService->updateJobApplication($id, request()->all());
-        return new JobApplicationResource($employee);
+        return new JobApplicationBriefResource($employee);
     }
 
-    public function destroy(int $id): JobApplicationResource
+    public function destroy(int $id): JobApplicationBriefResource
     {
         $employee = $this->jobApplicationService->deleteJobApplication($id);
-        return new JobApplicationResource($employee);
+        return new JobApplicationBriefResource($employee);
     }
 }
