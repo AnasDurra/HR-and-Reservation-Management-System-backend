@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class JobVacancyController extends Controller
 {
-    private $JobVacancyService;
+    private JobVacancyService $JobVacancyService;
 
     public function __construct(JobVacancyService $JobVacancyService)
     {
@@ -95,7 +95,6 @@ class JobVacancyController extends Controller
             return response()->json(['message' => 'Job Vacancy not found']
                 , 404);
         }
-        //TODO "Maybe we should allow the deletion or archiving of Closed Vacancies"
         if ($jobVacancy->vacancyStatus->vacancy_status_id == 2) {
             return response()->json([
                 'message' => 'Job Vacancy is closed',

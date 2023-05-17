@@ -89,6 +89,18 @@ class DepartmentController extends Controller
                 , 404);
         }
         $item = $this->DepartmentService->delete($id);
+        if($item['employees_count']>0){
+            return response()->json([
+                'message'=>'There is one or more employees in the department',
+                'data'=>new DepartmentResource($item),
+                ], 400);
+        }
+        if($item['message']){
+            return response()->json([
+                'message'=>$item['message'],
+                'data'=>new DepartmentResource($item),
+            ], 400);
+        }
         return response()->json([
             'data'=>new DepartmentResource($item),
         ],200);
