@@ -6,6 +6,7 @@ use App\Application\Http\Resources\DepartmentResource;
 use App\Domain\Services\DepartmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class DepartmentController extends Controller
 {
@@ -39,8 +40,9 @@ class DepartmentController extends Controller
     public function store(): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'name' => ['required','max:50','string','unique:departments,name'],
-            'description' =>['max:255','string']
+            'name' => ['required','max:50','string',
+                Rule::unique('departments', 'name')->whereNull('deleted_at')],
+            'description' =>['max:255','string','nullable']
         ]);
 
         if ($validator->fails()) {
@@ -59,8 +61,9 @@ class DepartmentController extends Controller
     public function update(int $id): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'name' => ['max:50','string','unique:departments,name,' . $id . ',dep_id'],
-            'description' =>['max:255','string']
+            'name' => ['max:50','string',
+                Rule::unique('departments', 'name')->whereNull('deleted_at')->ignore($id, 'dep_id')],
+            'description' =>['max:255','string','nullable']
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -92,13 +95,11 @@ class DepartmentController extends Controller
         if($item['employees_count']>0){
             return response()->json([
                 'message'=>'There is one or more employees in the department',
-                'data'=>new DepartmentResource($item),
                 ], 400);
         }
         if($item['message']){
             return response()->json([
                 'message'=>$item['message'],
-                'data'=>new DepartmentResource($item),
             ], 400);
         }
         return response()->json([
