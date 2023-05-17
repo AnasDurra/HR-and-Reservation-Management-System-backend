@@ -2,6 +2,7 @@
 
 use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
+use App\Application\Http\Controllers\JobVacancyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,6 @@ Route::apiResource("job-applications", JobApplicationController::class);
 
 // Register the routes for the DepartmentController
 Route::apiResource('departments', DepartmentController::class);
+
+// Register the routes for the DepartmentController
+Route::apiResource('job-vacancies', JobVacancyController::class);

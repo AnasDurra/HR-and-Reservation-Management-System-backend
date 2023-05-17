@@ -272,9 +272,9 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
         }
     }
 
+
     public function updateJobApplication(int $id, array $data): bool
     {
-        // TODO: Implement updateJobApplication() method.
 
     }
 

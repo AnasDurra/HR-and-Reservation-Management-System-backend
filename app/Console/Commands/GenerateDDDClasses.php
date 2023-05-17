@@ -51,18 +51,19 @@ class GenerateDDDClasses extends Command
 namespace App\Domain\Repositories;
 
 use {$modelClass};
+use Illuminate\Database\Eloquent\Builder;
 
 interface {$modelName}RepositoryInterface
 {
     public function get{$modelName}List(): array;
 
-    public function get{$modelName}ById(int \$id): ?{$modelName};
+    public function get{$modelName}ById(int \$id): {$modelName}|Builder|null;
 
-    public function create{$modelName}(array \$data): {$modelName};
+    public function create{$modelName}(array \$data): {$modelName}|Builder|null;
 
-    public function update{$modelName}(int \$id, array \$data): {$modelName};
+    public function update{$modelName}(int \$id, array \$data): {$modelName}|Builder|null;
 
-    public function delete{$modelName}(\$id): {$modelName};
+    public function delete{$modelName}(\$id): {$modelName}|Builder|null;
 }";
 
         return $interfaceContent;
@@ -78,6 +79,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Repositories\\{$modelName}RepositoryInterface;
 use {$modelClass};
+use Illuminate\Database\Eloquent\Builder;
 
 class Eloquent{$modelName}Repository implements {$modelName}RepositoryInterface
 {
@@ -86,22 +88,22 @@ class Eloquent{$modelName}Repository implements {$modelName}RepositoryInterface
         // TODO: Implement the logic to retrieve a list of {$modelName}s
     }
 
-    public function get{$modelName}ById(int \$id): ?{$modelName}
+    public function get{$modelName}ById(int \$id): {$modelName}|Builder|null
     {
         // TODO: Implement the logic to retrieve a {$modelName} by ID
     }
 
-    public function create{$modelName}(array \$data): {$modelName}
+    public function create{$modelName}(array \$data): {$modelName}|Builder|null
     {
         // TODO: Implement the logic to create a {$modelName}
     }
 
-    public function update{$modelName}(int \$id, array \$data): {$modelName}
+    public function update{$modelName}(int \$id, array \$data): {$modelName}|Builder|null
     {
         // TODO: Implement the logic to update a {$modelName}
     }
 
-    public function delete{$modelName}(\$id): {$modelName}
+    public function delete{$modelName}(\$id): {$modelName}|Builder|null
     {
         // TODO: Implement the logic to delete a {$modelName}
     }
@@ -121,6 +123,7 @@ namespace App\Domain\Services;
 
 use App\Domain\Repositories\\{$repositoryInterface};
 use {$modelClass};
+use Illuminate\Database\Eloquent\Builder;
 
 class {$modelName}Service
 {
@@ -137,22 +140,22 @@ class {$modelName}Service
         return \$this->{$modelName}Repository->get{$modelName}List();
     }
 
-    public function get{$modelName}ById(int \$id): ?{$modelName}
+    public function get{$modelName}ById(int \$id): {$modelName}|Builder|null
     {
         return \$this->{$modelName}Repository->get{$modelName}ById(\$id);
     }
 
-    public function create{$modelName}(array \$data): {$modelName}
+    public function create{$modelName}(array \$data): {$modelName}|Builder|null
     {
         return \$this->{$modelName}Repository->create{$modelName}(\$data);
     }
 
-    public function update{$modelName}(int \$id, array \$data): {$modelName}
+    public function update{$modelName}(int \$id, array \$data): {$modelName}|Builder|null
     {
         return \$this->{$modelName}Repository->update{$modelName}(\$id, \$data);
     }
 
-    public function delete{$modelName}(\$id): {$modelName}
+    public function delete{$modelName}(\$id): {$modelName}|Builder|null
     {
         return \$this->{$modelName}Repository->delete{$modelName}(\$id);
     }

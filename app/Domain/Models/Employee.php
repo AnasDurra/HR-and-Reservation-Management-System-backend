@@ -2,6 +2,7 @@
 
 namespace App\Domain\Models;
 
+use App\Models\Relative;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -78,6 +79,11 @@ class Employee extends Model
     {
         return $this->belongsToMany(Schedule::class, 'schedule_employees', 'emp_id', 'schedule_id',
             'emp_id', 'schedule_id');
+    }
+
+
+    public function relatives(){
+        return $this->hasMany(Relative::class, 'emp_id', 'emp_id');
     }
 
 }

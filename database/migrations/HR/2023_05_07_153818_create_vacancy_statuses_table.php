@@ -8,16 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
-            $table->id('dep_id');
+        Schema::create('vacancy_statuses', function (Blueprint $table) {
+            $table->id('vacancy_status_id');
             $table->string('name', 50);
             $table->string('description', 255);
-            $table->timestamps();
-            $table->softDeletes();
         });
     }
     public function down(): void
     {
-        Schema::dropIfExists('departments');
+        Schema::dropIfExists('vacancy_statuses');
     }
 };

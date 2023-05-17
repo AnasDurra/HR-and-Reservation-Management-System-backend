@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('training_courses', function (Blueprint $table) {
             $table->id('training_course_id');
             $table->unsignedBigInteger('emp_data_id');
+            $table->string('name', 100);
             $table->string('institute_name', 100);
             $table->string('city', 70);
             $table->date('start_date');

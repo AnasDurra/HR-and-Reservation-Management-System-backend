@@ -14,6 +14,9 @@ return new class extends Migration
             $table->unsignedBigInteger('emp_status_id');
             $table->date('start_date');
             $table->date('end_date');
+            $table->integer('cur_title');
+            $table->integer('cur_dep');
+
 
             $table->foreign('emp_id')->references('emp_id')->on('employees');
             $table->foreign('emp_status_id')->references('emp_status_id')->on('employment_statuses');

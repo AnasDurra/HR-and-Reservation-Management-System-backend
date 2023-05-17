@@ -13,7 +13,8 @@ return new class extends Migration
             $table->unsignedBigInteger('app_status_id');
             $table->unsignedBigInteger('job_vacancy_id');
             $table->unsignedBigInteger('emp_data_id');
-
+            $table->text('section_man_notes');
+            $table->text('vice_man_rec');
             $table->foreign('app_status_id')->references('app_status_id')->on('application_statuses');
             $table->foreign('job_vacancy_id')->references('job_vacancy_id')->on('job_vacancies');
             $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');
