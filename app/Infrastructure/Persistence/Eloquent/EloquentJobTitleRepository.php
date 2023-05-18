@@ -65,7 +65,10 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
     public function deleteJobTitle($id): JobTitle|Builder|null
     {
         $employeeRepository = new EloquentEmployeeRepository();
+
         $jobTitle = JobTitle::with('permissions')->find($id);
+        if(!$jobTitle) return null;
+
         $jobTitle['employees_count']=count($employeeRepository->getEmployeeListByTitleId($jobTitle['job_title_id']));
         if($jobTitle['employees_count']>0){
             return $jobTitle;

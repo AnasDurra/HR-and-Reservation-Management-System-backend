@@ -21,7 +21,7 @@ class JobTitleController extends Controller
         $jobTitles = $this->JobTitleService->getJobTitleList();
         return response()->json([
             'data'=>JobTitleResource::collection($jobTitles)
-            ], 200);
+        ], 200);
     }
 
     public function show(int $id): JsonResponse
@@ -33,7 +33,7 @@ class JobTitleController extends Controller
         }
         return response()->json([
             'data'=> new JobTitleResource($jobTitle)
-            ], 200);
+        ], 200);
     }
 
     public function store(): JsonResponse
@@ -54,7 +54,7 @@ class JobTitleController extends Controller
         $jobTitle = $this->JobTitleService->createJobTitle(request()->all());
         return response()->json([
             'data'=> new JobTitleResource($jobTitle)
-            ], 200);
+        ], 200);
     }
 
     public function update(int $id): JsonResponse
@@ -81,28 +81,27 @@ class JobTitleController extends Controller
         $jobTitle = $this->JobTitleService->updateJobTitle($id, request()->all());
         //TODO Update Employees permissions also
 
-        if($jobTitle['employees_count']>0){
-            return response()->json([
-                'message' => 'There is one or more employees have this Job title',
-                    ], 400);
-        }
-
         return response()->json([
             'data'=> new JobTitleResource($jobTitle)
-            ], 200);
+        ], 200);
     }
 
     public function destroy(int $id): JsonResponse
     {
-        $jobTitle = $this->JobTitleService->getJobTitleById($id);
+        $jobTitle = $this->JobTitleService->deleteJobTitle($id);
+
         if(!$jobTitle){
             return response()->json(['message' => 'Job Title not found']
                 , 404);
         }
 
-        $jobTitle = $this->JobTitleService->deleteJobTitle($id);
+        if($jobTitle['employees_count']>0){
+            return response()->json([
+                'message' => 'There is one or more employees have this Job title',
+            ], 400);
+        }
         return response()->json([
             'data'=> new JobTitleResource($jobTitle) //Modify it as needed
-            ], 200);
+        ], 200);
     }
 }
