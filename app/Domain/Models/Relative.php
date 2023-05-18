@@ -4,6 +4,8 @@ namespace App\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Relative extends Model
 {
@@ -15,12 +17,12 @@ class Relative extends Model
         'emp_id',
     ];
 
-    public function empData()
+    public function empData(): HasOne
     {
         return $this->hasOne(EmpData::class, 'emp_data_id', 'emp_data_id');
     }
 
-    public function employee()
+    public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'emp_id', 'emp_id');
     }

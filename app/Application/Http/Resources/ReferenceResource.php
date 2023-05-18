@@ -7,6 +7,14 @@ namespace App\Application\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property mixed reference_id
+ * @property mixed name
+ * @property mixed job
+ * @property mixed company
+ * @property mixed telephone
+ * @property mixed address
+ */
 class ReferenceResource extends JsonResource
 {
     public function toArray(Request $request)
@@ -14,10 +22,10 @@ class ReferenceResource extends JsonResource
         return [
             'id' => $this->reference_id,
             'name' => $this->name,
-            'job_title' => $this->job_title,
-            'company_name' => $this->company_name,
-            'phone' => $this->phone,
-            'email' => $this->email,
+            'job' => $this->job,
+            'company' => $this->company,
+            'telephone' => $this->telephone,
+            'address' => $this->address,
         ];
     }
 }

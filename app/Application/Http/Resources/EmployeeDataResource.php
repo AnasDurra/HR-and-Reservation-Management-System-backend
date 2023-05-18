@@ -35,6 +35,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed skills
  * @property mixed languages
  * @property mixed computerSkills
+ * @property mixed references
  */
 class EmployeeDataResource extends JsonResource
 {
@@ -94,8 +95,11 @@ class EmployeeDataResource extends JsonResource
             // Computer Skills data (if exists)
             "computer_skills" => ComputerSkillResource::collection($this->computerSkills),
 
-//            // References data (if exists)
-//            "references" => ReferenceResource::collection($this->references),
+            // Relatives (that represents employees) data (if exists)
+            "relatives" => RelativeResource::collection($this->relatives),
+
+            // References data (if exists)
+            "references" => ReferenceResource::collection($this->references),
 
 //            // Job Application data (if exists)
 //            "job_application" => new JobApplicationResource($this->jobApplication),
