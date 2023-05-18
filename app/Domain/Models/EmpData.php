@@ -2,9 +2,6 @@
 
 namespace App\Domain\Models;
 
-use App\Models\Certificate;
-use App\Models\Reference;
-use App\Models\Relative;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -128,16 +125,17 @@ class EmpData extends Model
             ->withPivot('univ_name', 'city', 'start_date', 'end_date', 'specialize', 'grade');
     }
 
-    public function relatives(){
+    public function relatives(): BelongsTo
+    {
         return $this->belongsTo(Relative::class, 'emp_data_id', 'emp_data_id');
     }
 
-    public function references()
+    public function references(): HasMany
     {
         return $this->hasMany(Reference::class, 'emp_data_id', 'emp_data_id');
     }
 
-    public function certificates()
+    public function certificates(): HasMany
     {
         return $this->hasMany(Certificate::class, 'emp_data_id', 'emp_data_id');
     }
