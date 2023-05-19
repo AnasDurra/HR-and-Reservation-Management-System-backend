@@ -90,7 +90,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 "last_name" => $data['personal_data']['last_name'],
                 "father_name" => $data['personal_data']['father_name'],
                 "grand_father_name" => $data['personal_data']['grand_father_name'],
-                "personal_photo" => /*$data['personal_photo']*/ "https://cdnb.ganttpro.com/uploads/2022/05/work-breakdown-structure-example-for-software-development-1002x1024.png",
+                "personal_photo" => $data['personal_photo'],
                 "birth_date" => $data['personal_data']['birth_date'],
                 "birth_place" => $data['personal_data']['birth_place'],
                 "marital_status" => $data['personal_data']['marital_status'],
