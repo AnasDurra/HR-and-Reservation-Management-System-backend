@@ -2,12 +2,13 @@
 
 namespace App\Domain\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 interface JobApplicationRepositoryInterface
 {
-    public function getJobApplicationsList(): array;
+    public function getJobApplicationsList(): Collection;
 
     public function getJobApplicationById(int $id): Builder|Model|null;
 

@@ -70,7 +70,7 @@ class EmpData extends Model
 
     public function personalCard(): BelongsTo
     {
-        return $this->belongsTo(PersonalCard::class, 'personal_card_id', 'personal_card_id');
+        return $this->belongsTo(PersonalCard::class, 'card_id', 'personal_card_id');
     }
 
     public function address(): BelongsTo

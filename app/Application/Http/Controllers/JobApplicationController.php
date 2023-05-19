@@ -10,6 +10,7 @@ use App\Application\Http\Resources\JobApplicationDetailsResource;
 use App\Domain\Services\JobApplicationService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
+
 class JobApplicationController extends Controller
 {
     private JobApplicationService $jobApplicationService;

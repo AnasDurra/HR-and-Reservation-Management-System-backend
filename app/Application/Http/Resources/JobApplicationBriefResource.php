@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use JsonSerializable;
 
 /**
- * @property mixed id
+ * @property mixed $job_app_id
  * @property mixed empData
  * @property mixed jobVacancy
  * @property mixed applicationStatus
@@ -24,7 +24,7 @@ class JobApplicationBriefResource extends JsonResource
     public function toArray(Request $request): array|JsonSerializable|Arrayable
     {
         return [
-            'id' => $this->id,
+            'id' => $this->job_app_id,
             'employee_name' => $this->empData->full_name,
             'department_name' => $this->jobVacancy->department->name,
             'job_name' => $this->jobVacancy->name,

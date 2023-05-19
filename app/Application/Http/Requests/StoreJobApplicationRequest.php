@@ -6,6 +6,7 @@ namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+
 class StoreJobApplicationRequest extends FormRequest
 {
     // validation rules
@@ -23,7 +24,7 @@ class StoreJobApplicationRequest extends FormRequest
             "personal_data" => ['required'],
             "personal_data.first_name" => ['required', 'string', 'max:255'],
             "personal_data.last_name" => ['required', 'string', 'max:255'],
-            'personal_data.personal_photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+//            'personal_data.personal_photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'personal_data.father_name' => ['required', 'string', 'max:255'],
             'personal_data.grand_father_name' => ['required', 'string', 'max:255'],
             'personal_data.birth_date' => ['required', 'date'],
@@ -86,8 +87,8 @@ class StoreJobApplicationRequest extends FormRequest
             "previous_employment_record.*.job_description" => ['required', 'string'],
             "previous_employment_record.*.start_date" => ['required', 'date'],
             "previous_employment_record.*.end_date" => ['required', 'date'],
-            "previous_employment_record.*.salary" => ['required', 'integer', 'max:255'],
-            "previous_employment_record.*.allowance" => ['required', 'integer', 'max:255'],
+            "previous_employment_record.*.salary" => ['required', 'integer'],
+            "previous_employment_record.*.allowance" => ['required', 'integer'],
             "previous_employment_record.*.quit_reason" => ['sometimes', 'nullable', 'string', 'max:255'],
 
 
@@ -102,7 +103,7 @@ class StoreJobApplicationRequest extends FormRequest
             "education.*.start_date" => ['required', 'date'],
             "education.*.end_date" => ['required', 'date'],
             "education.*.specialize" => ['required', 'string', 'max:255'],
-            "education.*.grade" => ['required', 'double'],
+            "education.*.grade" => ['required', 'numeric'],
             "education.*.education_level_id" => ['required', 'integer', 'exists:education_levels,education_level_id'],
 
             // training courses

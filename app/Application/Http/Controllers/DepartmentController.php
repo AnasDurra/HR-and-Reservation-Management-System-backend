@@ -21,39 +21,39 @@ class DepartmentController extends Controller
     {
         $items = $this->DepartmentService->getList();
         return response()->json([
-            'data'=>DepartmentResource::collection($items)]
-            ,200);
+                'data' => DepartmentResource::collection($items)]
+            , 200);
     }
 
     public function show(int $id): JsonResponse
     {
         $item = $this->DepartmentService->getById($id);
         if (!$item) {
-            return response()->json(['message'=>'Department not found']
+            return response()->json(['message' => 'Department not found']
                 , 404);
         }
         return response()->json([
-            'data'=>new DepartmentResource($item)
-            ], 200);
+            'data' => new DepartmentResource($item)
+        ], 200);
     }
 
     public function store(): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'name' => ['required','max:50','string',
+            'name' => ['required', 'max:50', 'string',
                 Rule::unique('departments', 'name')->whereNull('deleted_at')],
-            'description' =>['max:255','string','nullable']
+            'description' => ['max:255', 'string', 'nullable']
         ]);
 
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'data'=>new DepartmentResource($errors)
+                'data' => new DepartmentResource($errors)
             ], 400);
         }
         $item = $this->DepartmentService->create(request()->all());
         return response()->json([
-            'data'=>new DepartmentResource($item)
+            'data' => new DepartmentResource($item)
         ], 201);
 
     }
@@ -61,25 +61,25 @@ class DepartmentController extends Controller
     public function update(int $id): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'name' => ['max:50','string',
+            'name' => ['max:50', 'string',
                 Rule::unique('departments', 'name')->whereNull('deleted_at')->ignore($id, 'dep_id')],
-            'description' =>['max:255','string','nullable']
+            'description' => ['max:255', 'string', 'nullable']
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'data'=>new DepartmentResource($errors)
-                ], 400);
+                'data' => new DepartmentResource($errors)
+            ], 400);
         }
 
         $item = $this->DepartmentService->getById($id);
         if (!$item) {
-            return response()->json(['message'=>'Department not found']
+            return response()->json(['message' => 'Department not found']
                 , 404);
         }
         $item = $this->DepartmentService->update($id, request()->all());
         return response()->json([
-            'data'=>new DepartmentResource($item)
+            'data' => new DepartmentResource($item)
         ], 200);
 
     }
@@ -88,22 +88,22 @@ class DepartmentController extends Controller
     {
         $item = $this->DepartmentService->getById($id);
         if (!$item) {
-            return response()->json(['message'=>'Department not found']
+            return response()->json(['message' => 'Department not found']
                 , 404);
         }
         $item = $this->DepartmentService->delete($id);
-        if($item['employees_count']>0){
+        if ($item['employees_count'] > 0) {
             return response()->json([
-                'message'=>'There is one or more employees in the department',
-                ], 400);
+                'message' => 'There is one or more employees in the department',
+            ], 400);
         }
-        if($item['message']){
+        if ($item['message']) {
             return response()->json([
-                'message'=>$item['message'],
+                'message' => $item['message'],
             ], 400);
         }
         return response()->json([
-            'data'=>new DepartmentResource($item),
-        ],200);
+            'data' => new DepartmentResource($item),
+        ], 200);
     }
 }

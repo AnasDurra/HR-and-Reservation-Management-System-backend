@@ -4,29 +4,32 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 
+use App\Domain\Models\Address;
 use App\Domain\Models\ComputerSkill;
 use App\Domain\Models\EmpData;
 use App\Domain\Models\JobApplication;
 use App\Domain\Models\Language;
+use App\Domain\Models\Passport;
+use App\Domain\Models\PersonalCard;
 use App\Domain\Models\Skill;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
-use App\Domain\Models\Employee;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class EloquentJobApplicationRepository implements JobApplicationRepositoryInterface
 {
 
-    public function getJobApplicationsList(): array
+    public function getJobApplicationsList(): Collection
     {
-        return Employee::all()->toArray();
+        return JobApplication::all();
     }
 
     public function getJobApplicationById(int $id): ?JobApplication
     {
-        return Employee::query()->findOrFail($id)->first();
+        return JobApplication::query()->findOrFail($id)->first();
     }
 
     /**
@@ -41,7 +44,43 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             DB::beginTransaction();
 
             // store employee personal photo in local storage
-            $data['personal_photo'] = $this->storePersonalPhoto($data['personal_photo']);
+//            $data['personal_photo'] = $this->storePersonalPhoto($data['personal_photo']);
+
+
+            // create personal card data for this employee data
+            $personalCard = new PersonalCard([
+                "card_number" => $data['personal_card']['card_number'],
+                "place_of_issue" => $data['personal_card']['card_place_of_issue'],
+                "date_of_issue" => $data['personal_card']['card_date_of_issue'],
+            ]);
+
+            // save personal card data
+            $personalCard->save();
+
+            // create passport data for this employee data
+            $passport = new Passport([
+                "passport_number" => $data['passport']['passport_number'],
+                "place_of_issue" => $data['passport']['passport_place_of_issue'],
+                "date_of_issue" => $data['passport']['passport_date_of_issue'],
+            ]);
+
+            // save passport data
+            $passport->save();
+
+            // address data
+            $address = new Address([
+                "state" => $data['address']['state'],
+                "city" => $data['address']['city'],
+                "street" => $data['address']['street'],
+                "postal_code" => optional($data['address'])['postal_code'],
+                "email" => optional($data['address'])['email'],
+                "mobile_no" => optional($data['address'])['mobile_no'],
+                "home_phone_no" => optional($data['address'])['home_phone_no'],
+                "work_phone_no" => optional($data['address'])['work_phone_no'],
+            ]);
+
+            // save address data
+            $address->save();
 
             // create job application data
             $employeeData = EmpData::query()->create([
@@ -51,7 +90,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 "last_name" => $data['personal_data']['last_name'],
                 "father_name" => $data['personal_data']['father_name'],
                 "grand_father_name" => $data['personal_data']['grand_father_name'],
-                "personal_photo" => $data['personal_photo'],
+                "personal_photo" => /*$data['personal_photo']*/ "https://cdnb.ganttpro.com/uploads/2022/05/work-breakdown-structure-example-for-software-development-1002x1024.png",
                 "birth_date" => $data['personal_data']['birth_date'],
                 "birth_place" => $data['personal_data']['birth_place'],
                 "marital_status" => $data['personal_data']['marital_status'],
@@ -60,21 +99,16 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 "start_working_date" => $data['job_data']['start_working_date'],
                 "is_employed" => $data['job_data']['is_employed'],
 
+                // passport data
+                "passport_id" => $passport->getAttribute('passport_id'),
+
+                // personal card data
+                "card_id" => $personalCard->getAttribute('personal_card_id'),
+
+                // address data
+                "address_id" => $address->getAttribute('address_id'),
             ]);
 
-            // create personal card data for this employee data
-            $employeeData->personalCard()->create([
-                "card_number" => $data['personal_card']['card_number'],
-                "place_of_issue" => $data['personal_card']['card_place_of_issue'],
-                "date_of_issue" => $data['personal_card']['card_date_of_issue'],
-            ]);
-
-            // create passport data for this employee data
-            $employeeData->passport()->create([
-                "passport_number" => $data['passport']['passport_number'],
-                "place_of_issue" => $data['passport']['passport_place_of_issue'],
-                "date_of_issue" => $data['passport']['passport_date_of_issue'],
-            ]);
 
             // create job application for this employee data
             $employeeData->jobApplication()->create([
@@ -84,17 +118,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 "vice_man_rec" => optional($data)['job_application']['vice_man_rec'],
             ]);
 
-            // address data
-            $employeeData->address()->create([
-                "state" => $data['address']['state'],
-                "city" => $data['address']['city'],
-                "street" => $data['address']['street'],
-                "postal_code" => optional($data)['address']['postal_code'],
-                "email" => optional($data)['address']['email'],
-                "mobile_no" => optional($data)['address']['mobile_no'],
-                "home_phone_no" => optional($data)['address']['home_phone_no'],
-                "work_phone_no" => optional($data)['address']['work_phone_no'],
-            ]);
 
             // driving licence data (if exists)
             if (isset($data['driving_licence'])) {
@@ -167,7 +190,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             if (isset($data['training_courses'])) {
                 foreach ($data['training_courses'] as $course) {
                     $employeeData->trainingCourses()->create([
-                        "course_name" => $course['course_name'],
+                        "name" => $course['course_name'],
                         "institute_name" => $course['institute_name'],
                         "city" => $course['city'],
                         "start_date" => $course['start_date'],
@@ -255,12 +278,16 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 }
             }
 
+            // save employee data
+            $employeeData->save();
 
+            // create job application
             $jobApplication = JobApplication::query()->create([
-                "employee_data_id" => $employeeData->getAttribute("employee_data_id"),
-                "job_vacancy_id" => $data['personal_data']["job_vacancy_id"],
-                "section_man_notes" => optional($data)['personal_data']["section_man_notes"],
-                "vice_man_rec" => optional($data)['personal_data']["vice_man_rec"],
+                "emp_data_id" => $employeeData->getAttribute("emp_data_id"),
+                "app_status_id" => 1, // set app status id by default to 1 (pending)
+                "job_vacancy_id" => $data['job_application']["job_vacancy_id"],
+                "section_man_notes" => optional($data['job_application'])["section_man_notes"],
+                "vice_man_rec" => optional($data['job_application'])["vice_man_rec"],
             ]);
 
             DB::commit();

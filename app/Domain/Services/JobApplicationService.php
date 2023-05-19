@@ -6,6 +6,7 @@ namespace App\Domain\Services;
 
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class JobApplicationService
@@ -17,7 +18,7 @@ class JobApplicationService
         $this->jobApplicationRepository = $jobApplicationRepository;
     }
 
-    public function getJobApplicationsList(): array
+    public function getJobApplicationsList(): Collection
     {
         return $this->jobApplicationRepository->getJobApplicationsList();
     }
