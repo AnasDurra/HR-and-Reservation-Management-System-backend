@@ -24,7 +24,7 @@ class StoreJobApplicationRequest extends FormRequest
             "personal_data" => ['required'],
             "personal_data.first_name" => ['required', 'string', 'max:255'],
             "personal_data.last_name" => ['required', 'string', 'max:255'],
-//            'personal_data.personal_photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'personal_data.personal_photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'personal_data.father_name' => ['required', 'string', 'max:255'],
             'personal_data.grand_father_name' => ['required', 'string', 'max:255'],
             'personal_data.birth_date' => ['required', 'date'],
