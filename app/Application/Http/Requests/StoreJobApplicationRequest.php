@@ -44,10 +44,10 @@ class StoreJobApplicationRequest extends FormRequest
             "personal_card.card_date_of_issue" => ['required', 'date'],
 
             // passport data
-            "passport" => ['required'],
-            'passport.passport_number' => ['required', 'string', 'max:25'],
-            'passport.passport_place_of_issue' => ['required', 'string', 'max:80'],
-            'passport.passport_date_of_issue' => ['required', 'date'],
+            "passport" => ['sometimes','nullable'],
+            'passport.passport_number' => ['required_with:passport', 'string', 'max:25'],
+            'passport.passport_place_of_issue' => ['required_with:passport', 'string', 'max:80'],
+            'passport.passport_date_of_issue' => ['required_with:passport', 'date'],
 
 
             // address data
