@@ -44,7 +44,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             DB::beginTransaction();
 
             // store employee personal photo in local storage
-            $data['personal_photo'] = $this->storePersonalPhoto($data['personal_photo']);
+            $data['personal_data']['personal_photo'] =
+             $this->storePersonalPhoto($data['personal_data']['personal_photo']);
 
 
             // create personal card data for this employee data
@@ -93,7 +94,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 "last_name" => $data['personal_data']['last_name'],
                 "father_name" => $data['personal_data']['father_name'],
                 "grand_father_name" => $data['personal_data']['grand_father_name'],
-                "personal_photo" => $data['personal_photo'],
+                "personal_photo" => $data['personal_data']['personal_photo'],
                 "birth_date" => $data['personal_data']['birth_date'],
                 "birth_place" => $data['personal_data']['birth_place'],
                 "marital_status" => $data['personal_data']['marital_status'],
