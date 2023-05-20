@@ -122,15 +122,15 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             $employeeData->jobApplication()->create([
                 "job_vacancy_id" => $data['job_application']['job_vacancy_id'],
                 "app_status_id" => 1, // needs to be processed
-                "section_man_notes" => optional($data)['job_application']['section_man_notes'],
-                "vice_man_rec" => optional($data)['job_application']['vice_man_rec'],
+                "section_man_notes" => optional($data['job_application'])['section_man_notes'],
+                "vice_man_rec" => optional($data['job_application'])['vice_man_rec'],
             ]);
 
 
             // driving licence data (if exists)
             if (isset($data['driving_licence'])) {
                 $employeeData->drivingLicence()->create([
-                    "category" => optional($data)['driving_licence']['category'],
+                    "category" => optional($data['driving_licence'])['category'],
                     "date_of_issue" => $data['driving_licence']['date_of_issue'],
                     "place_of_issue" => $data['driving_licence']['place_of_issue'],
                     "number" => $data['driving_licence']['number'],
