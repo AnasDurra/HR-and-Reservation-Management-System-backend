@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('city');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('specialize');
-            $table->double('grade');
+            $table->string('specialize')->nullable();
+            $table->double('grade')->nullable();
 
             $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');
             $table->foreign('education_level_id')->references('education_level_id')->on('education_levels');

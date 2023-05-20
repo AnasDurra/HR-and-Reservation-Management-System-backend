@@ -102,8 +102,8 @@ class StoreJobApplicationRequest extends FormRequest
             "education.*.city" => ['required', 'string', 'max:255'],
             "education.*.start_date" => ['required', 'date'],
             "education.*.end_date" => ['required', 'date'],
-            "education.*.specialize" => ['required', 'string', 'max:255'],
-            "education.*.grade" => ['required', 'numeric'],
+            "education.*.specialize" => ['sometimes','nullable', 'string', 'max:255'],
+            "education.*.grade" => ['sometimes', 'nullable', 'numeric'],
             "education.*.education_level_id" => ['required', 'integer', 'exists:education_levels,education_level_id'],
 
             // training courses

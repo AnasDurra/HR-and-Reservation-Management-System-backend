@@ -179,8 +179,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         "city" => $record['city'],
                         "start_date" => $record['start_date'],
                         "end_date" => $record['end_date'],
-                        "specialize" => $record['specialize'],
-                        "grade" => $record['grade'],
+                        "specialize" => optional($record)['specialize'],
+                        "grade" => optional($record)['grade'],
                     ]);
 
                 }
