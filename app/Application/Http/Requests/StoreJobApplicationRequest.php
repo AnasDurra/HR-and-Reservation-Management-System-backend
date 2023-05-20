@@ -64,11 +64,11 @@ class StoreJobApplicationRequest extends FormRequest
             // driving licence data
             "driving_licence" => ['sometimes', 'nullable'],
             "driving_licence.category" => ['sometimes', 'nullable', 'string', 'max:50'],
-            "driving_licence.number" => ['required', 'string', 'max:25'],
-            "driving_licence.date_of_issue" => ['required', 'date'],
-            "driving_licence.expiry_date" => ['required', 'date'],
-            'driving_licence.place_of_issue' => ['required', 'string', 'max:80'],
-            "driving_licence.blood_group" => ['required', 'string', 'max:25'],
+            "driving_licence.number" => ['required_with:driving_licence', 'string', 'max:25'],
+            "driving_licence.date_of_issue" => ['required_with:driving_licence', 'date'],
+            "driving_licence.expiry_date" => ['required_with:driving_licence', 'date'],
+            'driving_licence.place_of_issue' => ['required_with:driving_licence', 'string', 'max:80'],
+            "driving_licence.blood_group" => ['required_with:driving_licence', 'string', 'max:25'],
 
             // dependants
             "dependants" => ['sometimes', 'nullable', 'array'],
