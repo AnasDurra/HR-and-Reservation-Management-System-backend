@@ -57,15 +57,18 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             // save personal card data
             $personalCard->save();
 
-            // create passport data for this employee data
-            $passport = new Passport([
-                "passport_number" => $data['passport']['passport_number'],
-                "place_of_issue" => $data['passport']['passport_place_of_issue'],
-                "date_of_issue" => $data['passport']['passport_date_of_issue'],
-            ]);
+            // create passport data for this employee data (if exists)
+            if (isset($data['passport'])) {
+                $passport = new Passport([
+                    "passport_number" => $data['passport']['passport_number'],
+                    "place_of_issue" => $data['passport']['passport_place_of_issue'],
+                    "date_of_issue" => $data['passport']['passport_date_of_issue'],
+                ]);
 
-            // save passport data
-            $passport->save();
+                // save passport data
+                $passport->save();
+            }
+
 
             // address data
             $address = new Address([
@@ -100,7 +103,9 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 "is_employed" => $data['job_data']['is_employed'],
 
                 // passport data
-                "passport_id" => $passport->getAttribute('passport_id'),
+                "passport_id" => isset($passport)
+                    ? $passport->getAttribute('passport_id')
+                    : null,
 
                 // personal card data
                 "card_id" => $personalCard->getAttribute('personal_card_id'),
@@ -108,6 +113,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 // address data
                 "address_id" => $address->getAttribute('address_id'),
             ]);
+
+            // check if passport is passed, assign the object ot the empData
 
 
             // create job application for this employee data
