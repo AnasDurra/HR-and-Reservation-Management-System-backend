@@ -4,6 +4,7 @@ use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
 use App\Application\Http\Controllers\JobTitleController;
+use App\Application\Http\Controllers\PermissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,5 +32,10 @@ Route::apiResource('departments', DepartmentController::class);
 // Register the routes for the JobVacancyController
 Route::apiResource('job-vacancies', JobVacancyController::class);
 
-// Register the routes for the JobVacancyController
+// Register the routes for the JobTitleController
 Route::apiResource('job-titles', JobTitleController::class);
+
+// Register the routes for the PermissionController
+Route::apiResource('permissions', PermissionController::class);
+
+
