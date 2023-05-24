@@ -5,6 +5,7 @@ use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
 use App\Application\Http\Controllers\JobTitleController;
 use App\Application\Http\Controllers\PermissionController;
+use App\Application\Http\Controllers\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,10 @@ Route::apiResource('job-vacancies', JobVacancyController::class);
 Route::apiResource('job-titles', JobTitleController::class);
 
 // Register the routes for the PermissionController
-Route::apiResource('permissions', PermissionController::class);
+Route::get('permissions', [PermissionController::class,'index']);
+Route::get('permissions/{id}', [PermissionController::class,'show']);
+
+// Register the routes for the EmployeeController
+Route::post('employees/edit-permissions/{id}', [EmployeeController::class,'editPermissions']);
 
 

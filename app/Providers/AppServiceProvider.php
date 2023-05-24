@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         //$this->app->bind(JobTitlePermissionRepositoryInterface::class, EloquentJobTitleRepository::class);
 
         $this->app->bind(PermissionRepositoryInterface::class, EloquentPermissionRepository::class);
+        $this->app->bind(EmployeeRepositoryInterface::class, EloquentEmployeeRepository::class);
     }
 
 

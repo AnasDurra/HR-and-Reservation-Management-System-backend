@@ -3,6 +3,7 @@
 namespace App\Domain\Repositories;
 
 use App\Domain\Models\Employee;
+use Illuminate\Database\Eloquent\Builder;
 
 interface EmployeeRepositoryInterface
 {
@@ -19,4 +20,6 @@ interface EmployeeRepositoryInterface
     public function updateEmployee(int $id, array $data): bool;
 
     public function deleteEmployee($id): bool;
+
+    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null;
 }

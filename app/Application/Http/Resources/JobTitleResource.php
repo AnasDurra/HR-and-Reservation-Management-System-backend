@@ -10,6 +10,12 @@ class JobTitleResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'job_title_id' => $this['job_title_id'],
+            'name' => $this['name'],
+            'description' => $this['description'],
+            'deleted_at' => $this['deleted_at'],
+            'permissions' => $this['permissions']
+        ];
     }
 }

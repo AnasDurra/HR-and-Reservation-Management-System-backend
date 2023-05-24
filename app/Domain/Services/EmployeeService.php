@@ -2,6 +2,7 @@
 namespace App\Domain\Services;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
+use Illuminate\Database\Eloquent\Builder;
 
 class EmployeeService
 {
@@ -46,5 +47,10 @@ class EmployeeService
     public function deleteEmployee($id): bool
     {
         return $this->employeeRepository->deleteEmployee($id);
+    }
+
+    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null
+    {
+        return $this->employeeRepository->editEmployeePermissions($id , $data);
     }
 }

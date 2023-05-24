@@ -6,6 +6,8 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
+use Illuminate\Database\Eloquent\Builder;
+use MongoDB\Driver\BulkWrite;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
@@ -43,5 +45,50 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
     public function deleteEmployee($id): bool
     {
         // TODO: Implement deleteEmployee() method.
+    }
+
+    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null
+    {
+        $employee = Employee::query()
+            ->with(['staffings' => function ($query) {
+                $query->with('jobTitle','permissions')->whereNull('end_date')->latest();
+            }])
+            ->find($id);
+        if(!$employee){
+            return $employee;
+        }
+        if(!$employee->staffings->first()){
+            $employee['message'] = "employee no longer works in any department";
+            $employee['status'] = 400;
+            return $employee;
+        }
+
+        // Update the job title (if its updated)
+        if( $employee->cur_title != $data['job_title_id'] ){
+           $employee->staffings()->whereNull('end_date')->first()->update(['job_title_id'=>$data['job_title_id']]);
+           $employee->cur_title = $data['job_title_id'];
+           $employee->save();
+        }
+
+        // Update the permissions including the additional and the new job title permissions
+        $employee->staffings()->whereNull('end_date')->first()->permissions()->detach();
+        foreach ($data['permissions_ids'] as $permissions_id){
+            $employee->staffings()->whereNull('end_date')->first()->permissions()->attach($permissions_id,[
+                'status'=>1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            $employee->save();
+        }
+        // Reload the staffings relationship after the update
+        $employee->load([
+            'staffings' => function ($query) {
+                $query->whereNull('end_date');
+            },
+            'staffings.jobTitle',
+            'staffings.permissions'
+        ]);
+
+        return $employee;
     }
 }

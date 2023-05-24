@@ -20,7 +20,7 @@ class EloquentJobTitlePermissionRepository implements JobTitlePermissionReposito
 
     public function createJobTitlePermission(array $data): JobTitlePermission|Builder|null
     {
-        $jobTitlePermission =JobTitlePermission::create([
+        $jobTitlePermission =JobTitlePermission::query()->create([
             'job_title_id'=>$data['job_title_id'],
             'perm_id'=>$data['perm_id']
         ]);
@@ -35,7 +35,7 @@ class EloquentJobTitlePermissionRepository implements JobTitlePermissionReposito
     public function deleteJobTitlePermission($job_title_id): JobTitlePermission|Builder|null
     {
 
-        JobTitlePermission::where('job_title_id', '=', $job_title_id)->delete();
+        JobTitlePermission::query()->where('job_title_id', '=', $job_title_id)->delete();
         return null;
     }
 }
