@@ -29,37 +29,33 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
 
     public function createJobTitle(array $data): JobTitle|Builder|null
     {
-        $jobTile= JobTitle::create([
+        $jobTitle= JobTitle::create([
             'name' => $data['name'],
             'description' => $data['description'],
         ]);
-        $jobTitlePermissionRepository =new EloquentJobTitlePermissionRepository();
         foreach ($data['permissions_ids'] as $permission) {
-            $jobTitlePermissionRepository->createJobTitlePermission([
-                'job_title_id' => $jobTile['job_title_id'],
-                'perm_id' => $permission
+            $jobTitle->permissions()->attach($permission,[
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
         }
-        return $jobTile->load('permissions');
+        return $jobTitle->load('permissions');
     }
 
     public function updateJobTitle(int $id, array $data): JobTitle|Builder|null
     {
-        $jobTitlePermissionRepository = new EloquentJobTitlePermissionRepository();
-
-        $jobTile = JobTitle::find($id);
-        $jobTile->name = $data['name'] ?? $jobTile->name;
-        $jobTile->description = $data['description'] ?? $jobTile->description;
-        $jobTile->save();
-        $jobTitlePermissionRepository->deleteJobTitlePermission($id);
-
+        $jobTitle = JobTitle::find($id);
+        $jobTitle->name = $data['name'] ?? $jobTitle->name;
+        $jobTitle->description = $data['description'] ?? $jobTitle->description;
+        $jobTitle->save();
+        $jobTitle->permissions()->detach();
         foreach ($data['permissions_ids'] as $permission) {
-            $jobTitlePermissionRepository->createJobTitlePermission([
-                'job_title_id' => $jobTile['job_title_id'],
-                'perm_id' => $permission
+            $jobTitle->permissions()->attach($permission,[
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
         }
-        return $jobTile->load('permissions');
+        return $jobTitle->load('permissions');
     }
 
     public function deleteJobTitle($id): JobTitle|Builder|null
