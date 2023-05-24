@@ -48,12 +48,14 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
         $jobTitle->name = $data['name'] ?? $jobTitle->name;
         $jobTitle->description = $data['description'] ?? $jobTitle->description;
         $jobTitle->save();
-        $jobTitle->permissions()->detach();
-        foreach ($data['permissions_ids'] as $permission) {
-            $jobTitle->permissions()->attach($permission,[
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+        if(array_key_exists('permissions_ids', $data)) {
+            $jobTitle->permissions()->detach();
+            foreach ($data['permissions_ids'] as $permission) {
+                $jobTitle->permissions()->attach($permission, [
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
         }
         return $jobTitle->load('permissions');
     }

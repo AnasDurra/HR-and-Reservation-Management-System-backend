@@ -62,7 +62,7 @@ class JobTitleController extends Controller
         $validator = Validator::make(request()->all(), [
             'name' => ['max:50','string',
                 Rule::unique('job_titles', 'name')->whereNull('deleted_at')->ignore($id, 'job_title_id')],
-            'permissions_ids'=>['required','array','min:1'],
+            'permissions_ids'=>['sometimes','array','min:1'],
             'permissions_ids.*' => ['integer','exists:permissions,perm_id'],
             'description' =>['max:255','string','nullable']
         ]);

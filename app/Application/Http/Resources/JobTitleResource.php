@@ -14,6 +14,7 @@ class JobTitleResource extends JsonResource
             'job_title_id' => $this['job_title_id'],
             'name' => $this['name'],
             'description' => $this['description'],
+            'employees_count' => $this['employees_count'],
             'deleted_at' => $this['deleted_at'],
             'permissions' => $this['permissions']
         ];
