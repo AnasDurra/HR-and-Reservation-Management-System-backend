@@ -47,7 +47,7 @@ class JobVacancyController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'data' => new JobVacancyResource($errors)
+                'data' => $errors
             ], 400);
         }
 
@@ -68,7 +68,7 @@ class JobVacancyController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'data' => new JobVacancyResource($errors)
+                'data' => $errors
             ], 400);
         }
         $jobVacancy = $this->JobVacancyService->getJobVacancyById($id);

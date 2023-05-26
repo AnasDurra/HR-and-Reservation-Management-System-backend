@@ -127,8 +127,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class {$modelName}Service
 {
-    /** @var {$repositoryInterface} */
-    private \${$modelName}Repository;
+    private $repositoryInterface \${$modelName}Repository;
 
     public function __construct({$repositoryInterface} \${$modelName}Repository)
     {
@@ -202,7 +201,7 @@ use Illuminate\Support\Facades\Validator;
 
 class {$modelName}Controller extends Controller
 {
-    private \${$serviceClass};
+    private $serviceClass \${$serviceClass};
 
     public function __construct({$serviceClass} \${$serviceClass})
     {

@@ -48,7 +48,7 @@ class JobTitleController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'errors'=>new JobTitleResource($errors)
+                'errors'=>$errors
             ], 400);
         }
         $jobTitle = $this->JobTitleService->createJobTitle(request()->all());
@@ -69,7 +69,7 @@ class JobTitleController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'errors'=>new JobTitleResource($errors)
+                'errors'=> $errors
             ], 400);
         }
 
@@ -79,7 +79,6 @@ class JobTitleController extends Controller
                 , 404);
         }
         $jobTitle = $this->JobTitleService->updateJobTitle($id, request()->all());
-        //TODO Update Employees permissions also
 
         return response()->json([
             'data'=> new JobTitleResource($jobTitle)
@@ -101,7 +100,7 @@ class JobTitleController extends Controller
             ], 400);
         }
         return response()->json([
-            'data'=> new JobTitleResource($jobTitle) //Modify it as needed
+            'data'=> new JobTitleResource($jobTitle)
         ], 200);
     }
 }

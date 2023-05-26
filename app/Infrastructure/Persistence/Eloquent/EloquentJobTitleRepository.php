@@ -11,7 +11,7 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
     public function getJobTitleList(): array
     {
         $employeeRepository = new EloquentEmployeeRepository();
-        $jobTitles = JobTitle::with('permissions')->get()->toArray();
+        $jobTitles = JobTitle::query()->with('permissions')->get()->toArray();
         foreach ($jobTitles as &$jobTitle)
             $jobTitle['employees_count']=count($employeeRepository->getEmployeeListByTitleId($jobTitle['job_title_id']));
 
@@ -21,7 +21,7 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
     public function getJobTitleById(int $id): JobTitle|Builder|null
     {
         $employeeRepository = new EloquentEmployeeRepository();
-        $jobTitle = JobTitle::with('permissions')->find($id);
+        $jobTitle = JobTitle::query()->with('permissions')->find($id);
         if($jobTitle) $jobTitle['employees_count']=count($employeeRepository->getEmployeeListByTitleId($jobTitle['job_title_id']));
 
         return $jobTitle;
@@ -29,7 +29,7 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
 
     public function createJobTitle(array $data): JobTitle|Builder|null
     {
-        $jobTitle= JobTitle::create([
+        $jobTitle= JobTitle::query()->create([
             'name' => $data['name'],
             'description' => $data['description'],
         ]);
@@ -44,7 +44,7 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
 
     public function updateJobTitle(int $id, array $data): JobTitle|Builder|null
     {
-        $jobTitle = JobTitle::find($id);
+        $jobTitle = JobTitle::query()->find($id);
         $jobTitle->name = $data['name'] ?? $jobTitle->name;
         $jobTitle->description = $data['description'] ?? $jobTitle->description;
         $jobTitle->save();
@@ -56,8 +56,6 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
                     'updated_at' => now()
                 ]);
             }
-            // Update Employees permissions also
-
         }
         return $jobTitle->load('permissions');
     }
@@ -66,7 +64,7 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
     {
         $employeeRepository = new EloquentEmployeeRepository();
 
-        $jobTitle = JobTitle::with('permissions')->find($id);
+        $jobTitle = JobTitle::query()->with('permissions')->find($id);
         if(!$jobTitle) return null;
 
         $jobTitle['employees_count']=count($employeeRepository->getEmployeeListByTitleId($jobTitle['job_title_id']));
