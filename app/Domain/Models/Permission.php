@@ -11,7 +11,6 @@ class Permission extends Model
     use HasFactory;
     protected $primaryKey = 'perm_id';
     protected $fillable = ['name', 'description'];
-    protected $hidden=['pivot'];
     public function staffings(): BelongsToMany
     {
         return $this->belongsToMany(Staffing::class,'staff_permissions','perm_id','staff_id',

@@ -56,6 +56,8 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
                     'updated_at' => now()
                 ]);
             }
+            // Update Employees permissions also
+
         }
         return $jobTitle->load('permissions');
     }

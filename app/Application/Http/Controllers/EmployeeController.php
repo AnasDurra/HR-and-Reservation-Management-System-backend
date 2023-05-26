@@ -58,10 +58,13 @@ class EmployeeController extends Controller
     public function editPermissions(int $id): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'job_title_id'=>['required',
-                Rule::exists('job_titles','job_title_id')->whereNull('deleted_at'),],
-            'permissions_ids'=>['required','array','min:1'],
-            'permissions_ids.*' => ['integer','exists:permissions,perm_id'],
+            'job_title_id'=>['sometimes',
+                Rule::exists('job_titles','job_title_id')->whereNull('deleted_at'),
+                ],
+            'additional_permissions_ids'=>['sometimes','array'],
+            'additional_permissions_ids.*' => ['integer','exists:permissions,perm_id'],
+            'deleted_permissions_ids'=>['sometimes','array','min:1'],
+            'deleted_permissions_ids.*' => ['integer','exists:permissions,perm_id'],
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
