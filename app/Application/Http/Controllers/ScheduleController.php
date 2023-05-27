@@ -41,8 +41,8 @@ class ScheduleController extends Controller
         $validator = Validator::make(request()->all(), [
             "name" => ["required","max:255","string",
                 Rule::unique("schedules", "name")->whereNull("deleted_at")],
-            "time_in" =>"required", "date_format:H:i",
-            "time_out" => "required", "date_format:H:i"
+            "time_in" =>"required", "date_format:H:i:s",
+            "time_out" => "required", "date_format:H:i:s"
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -61,8 +61,8 @@ class ScheduleController extends Controller
         $validator = Validator::make(request()->all(), [
         "name" => ["max:255","string",
             Rule::unique("schedules", "name")->whereNull("deleted_at")->ignore($id, 'schedule_id')],
-        "time_in" => "date_format:H:i",
-        "time_out" => "date_format:H:i"
+        "time_in" => "date_format:H:i:s",
+        "time_out" => "date_format:H:i:s"
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
