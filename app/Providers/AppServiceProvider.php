@@ -4,6 +4,7 @@ namespace App\Providers;
 use App\Domain\Models\JobTitlePermission;
 use App\Domain\Repositories\DepartmentRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
+use App\Domain\Repositories\FingerDeviceRepositoryInterface;
 use App\Domain\Repositories\JobTitlePermissionRepositoryInterface;
 use App\Domain\Repositories\JobTitleRepositoryInterface;
 use App\Domain\Repositories\JobVacancyRepositoryInterface;
@@ -12,6 +13,7 @@ use App\Domain\Repositories\ScheduleRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobApplicationRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobTitleRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobVacancyRepository;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PermissionRepositoryInterface::class, EloquentPermissionRepository::class);
         $this->app->bind(EmployeeRepositoryInterface::class, EloquentEmployeeRepository::class);
         $this->app->bind(ScheduleRepositoryInterface::class, EloquentScheduleRepository::class);
+        $this->app->bind(FingerDeviceRepositoryInterface::class, EloquentFingerDeviceRepository::class);
     }
 
 

@@ -7,6 +7,7 @@ use App\Application\Http\Controllers\JobTitleController;
 use App\Application\Http\Controllers\PermissionController;
 use App\Application\Http\Controllers\EmployeeController;
 use App\Application\Http\Controllers\ScheduleController;
+use App\Application\Http\Controllers\BiometricDeviceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,5 +47,8 @@ Route::post('employees/edit-permissions/{id}', [EmployeeController::class,'editP
 
 // Register the routes for the ScheduleController
 Route::apiResource('schedules', ScheduleController::class);
+
+// Register the routes for the BiometricDeviceController
+Route::apiResource('finger_device', BiometricDeviceController::class);
 
 
