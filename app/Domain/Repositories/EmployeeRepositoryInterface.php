@@ -9,13 +9,17 @@ interface EmployeeRepositoryInterface
 {
     public function getEmployeeList(): array;
 
-    public function getEmployeeById(int $id): Employee|Builder|null;
-
-    public function createEmployee(array $data): Employee|Builder|null;
-
-    public function updateEmployee(int $id, array $data): Employee|Builder|null;
-
-    public function deleteEmployee($id): Employee|Builder|null;
-
     public function getEmployeeListByDepId(int $dep_id): array;
+
+    public function getEmployeeListByTitleId(int $title_id): array;
+
+    public function getEmployeeById(int $id): ?Employee;
+
+    public function createEmployee(array $data): Employee;
+
+    public function updateEmployee(int $id, array $data): bool;
+
+    public function deleteEmployee($id): bool;
+
+    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null;
 }

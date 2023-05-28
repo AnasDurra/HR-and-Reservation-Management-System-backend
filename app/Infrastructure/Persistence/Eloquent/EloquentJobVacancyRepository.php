@@ -15,15 +15,14 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function getJobVacancyById(int $id): JobVacancy|Builder|null
     {
-        $jobVacancy=JobVacancy::whereHas('vacancyStatus', function ($query) {
+        return JobVacancy::query()->whereHas('vacancyStatus', function ($query) {
             $query->where('vacancy_status_id', '!=', 3);
         })->with('department', 'vacancyStatus')->find($id);
-        return $jobVacancy;
     }
 
     public function createJobVacancy(array $data): JobVacancy|Builder
     {
-        $jobVacancy= JobVacancy::create([
+        $jobVacancy= JobVacancy::query()->create([
             'dep_id' => $data['dep_id'],
             'name' => $data['name'],
             'description' => $data['description'],
@@ -35,7 +34,7 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function updateJobVacancy(int $id, array $data): JobVacancy|Builder
     {
-        $jobVacancy = JobVacancy::find($id);
+        $jobVacancy = JobVacancy::query()->find($id);
         $jobVacancy->name = $data['name'] ?? $jobVacancy->name;
         $jobVacancy->dep_id = $data['dep_id'] ?? $jobVacancy->dep_id;
         $jobVacancy->description = $data['description'] ?? $jobVacancy->description;
@@ -47,7 +46,7 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function deleteJobVacancy($id): JobVacancy|Builder
     {
-        $jobVacancy =JobVacancy::with('jobApplications')->find($id);
+        $jobVacancy =JobVacancy::query()->with('jobApplications')->find($id);
         if($jobVacancy->jobApplications->isEmpty()){
             $jobVacancy::find($id)->delete();
         }

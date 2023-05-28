@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreign('perm_id')->references('perm_id')->on('permissions');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
