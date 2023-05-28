@@ -13,7 +13,7 @@ class EloquentFingerDeviceRepository implements FingerDeviceRepositoryInterface
         return FingerDevice::all()->toArray();
     }
 
-    public function getFingerDeviceById(int $id): FingerDevice|Builder|null
+    public function getFingerDeviceById(int $id): FingerDevice|null
     {
         return FingerDevice::find($id); // keep it find() without query->find()
     }

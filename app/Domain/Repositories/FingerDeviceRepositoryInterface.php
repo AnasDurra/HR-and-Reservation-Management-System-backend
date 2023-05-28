@@ -9,7 +9,7 @@ interface FingerDeviceRepositoryInterface
 {
     public function getFingerDeviceList(): array;
 
-    public function getFingerDeviceById(int $id): FingerDevice|Builder|null;
+    public function getFingerDeviceById(int $id): FingerDevice|null;
 
     public function createFingerDevice(array $data): FingerDevice|Builder|null;
 

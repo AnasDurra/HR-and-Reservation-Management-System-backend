@@ -87,14 +87,13 @@ class BiometricDeviceController extends Controller
         $fingerDevice = $this->FingerDeviceService->getFingerDeviceById($id);
 
         if(!$fingerDevice){
-            return response()->json(['message'=>'FingerDevice not found']
+            return response()->json(['message'=>'Finger Device not found']
                 , 404);
         }
 
         $fingerDevice->update(request()->all());
         $fingerDevice = $this->FingerDeviceService->getFingerDeviceById($id);
 
-//        $fingerDevice = $this->FingerDeviceService->updateFingerDevice($id, request()->all());
         return response()->json([
             'data'=> new FingerDeviceResource($fingerDevice)
             ], 200);
@@ -112,13 +111,13 @@ class BiometricDeviceController extends Controller
             $fingerDevice->delete();
         } catch (\Exception $e) {
             return response()->json([
-                'message'=> "Failed to delete {$fingerDevice->name} "
+                'message'=> "Failed to delete {$fingerDevice['name']} "
             ], 422);
         }
 
-//        $fingerDevice = $this->FingerDeviceService->deleteFingerDevice($id);
         return response()->json([
             'data'=> new FingerDeviceResource($fingerDevice)
             ], 200);
     }
+
 }

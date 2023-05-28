@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFingerDevicesTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
@@ -22,5 +22,5 @@ class CreateFingerDevicesTable extends Migration
     {
         Schema::dropIfExists('finger_devices');
     }
-}
+};
 
