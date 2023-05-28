@@ -69,7 +69,7 @@ class EmployeeController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'errors'=>new EmployeeResource($errors)
+                'errors' => $errors
             ], 400);
         }
         $employee = $this->employeeService->editEmployeePermissions($id , request()->all());

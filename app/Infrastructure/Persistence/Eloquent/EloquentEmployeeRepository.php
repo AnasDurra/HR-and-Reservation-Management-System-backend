@@ -163,7 +163,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
                         } else {
                             $new_additional_permissions_ids[] = $additional_permissions_id;
                         }
-                    } else if (!in_array($additional_permissions_id, $new_job_title_permissions_ids)) { //TODO if id is of deleted array !
+                    } else if (!in_array($additional_permissions_id, $new_job_title_permissions_ids)) { //TODO if id is in deleted array !
                         $new_additional_permissions_ids[] = $additional_permissions_id;
                     }
                 }
