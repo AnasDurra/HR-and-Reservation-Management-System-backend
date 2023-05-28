@@ -15,7 +15,7 @@ class EducationLevel extends Model
         'name',
     ];
 
-    public function empsData(): BelongsToMany
+    public function empData(): BelongsToMany
     {
         return $this->belongsToMany(EmpData::class, 'education_level_emp_data', 'education_level_id', 'emp_data_id',
             'education_level_id','emp_data_id')
