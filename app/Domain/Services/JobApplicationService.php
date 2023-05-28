@@ -5,8 +5,8 @@ namespace App\Domain\Services;
 
 
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class JobApplicationService
@@ -18,7 +18,7 @@ class JobApplicationService
         $this->jobApplicationRepository = $jobApplicationRepository;
     }
 
-    public function getJobApplicationsList(): Collection
+    public function getJobApplicationsList(): LengthAwarePaginator
     {
         return $this->jobApplicationRepository->getJobApplicationsList();
     }

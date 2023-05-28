@@ -20,6 +20,7 @@ class JobApplicationController extends Controller
         $this->jobApplicationService = $jobApplicationService;
     }
 
+    // implement get all job applications with pagination
     public function index(): AnonymousResourceCollection
     {
         $jobApplications = $this->jobApplicationService->getJobApplicationsList();
