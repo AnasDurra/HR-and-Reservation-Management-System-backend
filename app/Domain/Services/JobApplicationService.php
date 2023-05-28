@@ -8,6 +8,7 @@ use App\Domain\Repositories\JobApplicationRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 class JobApplicationService
 {
@@ -23,9 +24,12 @@ class JobApplicationService
         return $this->jobApplicationRepository->getJobApplicationsList();
     }
 
+    /**
+     * @throws Throwable
+     */
     public function getJobApplicationById(int $id): Builder|Model
     {
-        return $this->jobApplicationRepository->getJobApplicationById($id);
+            return $this->jobApplicationRepository->getJobApplicationById($id);
     }
 
     public function createJobApplication(array $data): Builder|Model

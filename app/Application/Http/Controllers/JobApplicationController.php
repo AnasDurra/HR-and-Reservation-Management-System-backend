@@ -9,6 +9,7 @@ use App\Application\Http\Resources\JobApplicationBriefResource;
 use App\Application\Http\Resources\JobApplicationDetailsResource;
 use App\Domain\Services\JobApplicationService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Throwable;
 
 
 class JobApplicationController extends Controller
@@ -27,6 +28,9 @@ class JobApplicationController extends Controller
         return JobApplicationBriefResource::collection($jobApplications);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function show(int $id): JobApplicationDetailsResource
     {
         $jobApplication = $this->jobApplicationService->getJobApplicationById($id);

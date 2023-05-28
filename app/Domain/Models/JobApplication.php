@@ -11,7 +11,7 @@ class JobApplication extends Model
     use HasFactory;
 
     protected $primaryKey = 'job_app_id';
-    protected $fillable = ['app_status_id', 'job_vacancy_id', 'emp_data_id','section_man_notes','vice_man_rec'];
+    protected $fillable = ['app_status_id', 'job_vacancy_id', 'emp_data_id', 'section_man_notes', 'vice_man_rec'];
 
     public function applicationStatus(): BelongsTo
     {

@@ -125,9 +125,10 @@ class EmpData extends Model
             ->withPivot('univ_name', 'city', 'start_date', 'end_date', 'specialize', 'grade');
     }
 
+    // TODO: needs to be fixed
     public function relatives(): BelongsTo
     {
-        return $this->belongsTo(Relative::class, 'emp_data_id', 'emp_data_id');
+        return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
     }
 
     public function references(): HasMany
