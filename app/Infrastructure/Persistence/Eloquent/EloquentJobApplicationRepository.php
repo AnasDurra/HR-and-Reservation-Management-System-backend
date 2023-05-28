@@ -27,9 +27,12 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
         return JobApplication::all();
     }
 
-    public function getJobApplicationById(int $id): ?JobApplication
+    /**
+     * @throws Exception
+     */
+    public function getJobApplicationById(int $id): Builder|array|Collection|Model
     {
-        return JobApplication::query()->findOrFail($id)->first();
+        return  JobApplication::query()->findOrFail($id);
     }
 
     /**
@@ -45,7 +48,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
             // store employee personal photo in local storage
             $data['personal_data']['personal_photo'] =
-             $this->storePersonalPhoto($data['personal_data']['personal_photo']);
+                $this->storePersonalPhoto($data['personal_data']['personal_photo']);
 
 
             // create personal card data for this employee data

@@ -10,7 +10,7 @@ interface JobApplicationRepositoryInterface
 {
     public function getJobApplicationsList(): Collection;
 
-    public function getJobApplicationById(int $id): Builder|Model|null;
+    public function getJobApplicationById(int $id): Builder|array|Collection|Model;
 
     public function createJobApplication(array $data): Builder|Model;
 
