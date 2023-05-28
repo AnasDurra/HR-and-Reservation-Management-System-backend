@@ -90,6 +90,13 @@ class ScheduleController extends Controller
                 , 404);
         }
 
+        if($schedule['employees']){
+            return response()->json([
+                'message' => 'one or more employees associated with this Schedule',
+                'data' => $schedule
+                ], 400);
+        }
+
         return response()->json([
             'data'=> new ScheduleResource($schedule)
             ], 200);

@@ -40,10 +40,15 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
 
     public function deleteSchedule($id): Schedule|Builder|null
     {
-        $schedule = Schedule::query()->find($id);
+        $schedule = Schedule::query()->with('employees')->find($id);
         if(!$schedule) return null;
 
-        // TODO something
+        $schedule->employees->makeHidden(['pivot']);
+
+        if($schedule['employees']){
+            return $schedule;
+        }
+
         $schedule->delete();
 
         return $schedule;
