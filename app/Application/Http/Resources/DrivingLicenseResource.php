@@ -22,7 +22,7 @@ class DrivingLicenseResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id' => $this->driving_licence_id,
+            'driving_licence_id' => $this->driving_licence_id,
             'category' => $this->category,
             'number' => $this->number,
             'date_of_issue' => $this->date_of_issue,

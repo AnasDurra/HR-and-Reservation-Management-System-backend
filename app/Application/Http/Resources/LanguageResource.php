@@ -20,11 +20,11 @@ class LanguageResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id' => $this->language_id,
-            'name' => $this->name,
-            'speaking_level' => $this->pivot->speaking_level,
-            'writing_level' => $this->pivot->writing_level,
-            'reading_level' => $this->pivot->reading_level,
+            'language_id' => $this->language_id,
+            'language_name' => $this->name,
+            'speaking' => $this->pivot->speaking_level,
+            'writing' => $this->pivot->writing_level,
+            'reading' => $this->pivot->reading_level,
         ];
     }
 }

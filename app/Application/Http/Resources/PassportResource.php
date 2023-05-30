@@ -19,10 +19,10 @@ class PassportResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id' => $this->passport_id,
+            'passport_id' => $this->passport_id,
             'passport_number' => $this->passport_number,
-            'place_of_issue' => $this->place_of_issue,
-            'date_of_issue' => $this->date_of_issue,
+            'passport_place_of_issue' => $this->place_of_issue,
+            'passport_date_of_issue' => $this->date_of_issue,
         ];
     }
 }

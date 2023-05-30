@@ -37,7 +37,7 @@ class JobApplicationService
         return $this->jobApplicationRepository->createJobApplication($data);
     }
 
-    public function updateJobApplication(int $id, array $data): bool
+    public function updateJobApplication(int $id, array $data): Builder|Model
     {
         return $this->jobApplicationRepository->updateJobApplication($id, $data);
     }

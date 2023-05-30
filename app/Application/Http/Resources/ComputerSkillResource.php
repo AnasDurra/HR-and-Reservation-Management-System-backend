@@ -18,8 +18,8 @@ class ComputerSkillResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id' => $this->computer_skill_id,
-            'name' => $this->name,
+            'computer_skill_id' => $this->computer_skill_id,
+            'skill_name' => $this->name,
             'level' => $this->pivot->level,
         ];
     }

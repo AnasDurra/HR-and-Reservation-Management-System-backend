@@ -37,6 +37,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed computerSkills
  * @property mixed relatives
  * @property mixed references
+ * @property mixed certificates
  */
 class EmployeeDataResource extends JsonResource
 {
@@ -44,21 +45,24 @@ class EmployeeDataResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-
             // Personal data
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'full_name' => $this->full_name,
-            'personal-photo_url' => $this->personal_photo,
-            'father_name' => $this->father_name,
-            'grand-father_name' => $this->grand_father_name,
-            'birth_date' => $this->birth_date,
-            'birth_place' => $this->birth_place,
-            'marital_status' => $this->marital_status,
+            'personal_data' => [
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'full_name' => $this->full_name,
+                'personal-photo_url' => $this->personal_photo,
+                'father_name' => $this->father_name,
+                'grand-father_name' => $this->grand_father_name,
+                'birth_date' => $this->birth_date,
+                'birth_place' => $this->birth_place,
+                'marital_status' => $this->marital_status,
+            ],
 
             // Job Data
-            'start-working_date' => $this->start_working_date,
-            'is_employed' => $this->is_employed,
+            'job_data' => [
+                'start-working_date' => $this->start_working_date,
+                'is_employed' => $this->is_employed,
+            ],
 
             // Personal Card data
             "personal_card" => new PersonalCardResource($this->personalCard),
@@ -70,19 +74,19 @@ class EmployeeDataResource extends JsonResource
             "address" => new AddressResource($this->address),
 
             // Driving License data (if exists)
-            "driving_license" => $this->drivingLicence ? new DrivingLicenseResource($this->drivingLicence) : null,
+            "driving_licence" => new DrivingLicenseResource($this->drivingLicence),
 
             // Dependents data (if exists)
             "dependents" => DependentResource::collection($this->dependents),
 
             // Previous Employment Records data (if exists)
-            "previous_employment_records" => PreviousEmploymentRecordResource::collection($this->previousEmploymentRecords),
+            "previous_employment_record" => PreviousEmploymentRecordResource::collection($this->previousEmploymentRecords),
 
             // Convictions data (if exists)
             "convictions" => ConvictionResource::collection($this->convictions),
 
             // Education Levels data (if exists)
-            "education_records" => EducationLevelResource::collection($this->educationLevels),
+            "education" => EducationLevelResource::collection($this->educationLevels),
 
             // Training Courses data (if exists)
             "training_courses" => TrainingCourseResource::collection($this->trainingCourses),
@@ -102,6 +106,8 @@ class EmployeeDataResource extends JsonResource
             // References data (if exists)
             "references" => ReferenceResource::collection($this->references),
 
+            // Certificates data (if exists)
+            "certificates" => CertificateResource::collection($this->certificates),
         ];
     }
 

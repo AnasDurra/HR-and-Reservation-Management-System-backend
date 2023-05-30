@@ -4,6 +4,7 @@ namespace App\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Certificate extends Model
 {
@@ -15,7 +16,7 @@ class Certificate extends Model
         'file_url',
     ];
 
-    public function empData()
+    public function empData(): BelongsTo
     {
         return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
     }

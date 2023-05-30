@@ -16,7 +16,7 @@ class ConvictionResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id' => $this->conviction_id,
+            'conviction_id' => $this->conviction_id,
             'description' => $this->description,
         ];
     }
