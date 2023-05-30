@@ -10,7 +10,36 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 {
     public function getAttendanceList(): array
     {
-        return Attendance::query()->latest()->get()->toArray();
+        return Attendance::query()
+            ->with([
+                'employee:emp_id,schedule_id,emp_data_id,cur_dep',
+                'employee.schedule:schedule_id,name,time_in,time_out',
+                'employee.empData:emp_data_id,first_name,last_name',
+            ])
+            ->select(
+                'attendances.emp_id',
+                'attendances.attendance_date',
+                'attendances.state AS check_in.state',
+                'attendances.status AS check_in.status',
+                'attendances.attendance_time AS check_in_time',
+                'leaves.state AS check_out.state',
+                'leaves.status AS check_out.status',
+                'leaves.leave_time AS check_out_time',
+                'latetimes.duration AS latetime.duration',
+                'latetimes.latetime_date AS latetime.latetime_date'
+            )
+            ->leftJoin('leaves', function ($join) {
+                $join->on('attendances.emp_id', '=', 'leaves.emp_id')
+                    ->whereRaw('leaves.leave_date = attendances.attendance_date')
+                    ->whereNull('leaves.deleted_at');
+            })
+            ->leftJoin('latetimes', function ($join) {
+                $join->on('attendances.emp_id', '=', 'latetimes.emp_id')
+                    ->whereRaw('latetimes.latetime_date = attendances.attendance_date')
+                    ->whereNull('latetimes.deleted_at');
+            })
+            ->latest('attendances.attendance_date')
+            ->paginate(10)->toArray();
     }
 
     public function getAttendanceById(int $id): Attendance|Builder|null
@@ -53,7 +82,8 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                     ->whereNull('latetimes.deleted_at');
             })
             ->where('attendances.emp_id', $emp_id)
-            ->paginate(1)->toArray();
+            ->latest('attendances.attendance_date')
+            ->paginate(10)->toArray();
 
         if(!$attendances) return null;
 

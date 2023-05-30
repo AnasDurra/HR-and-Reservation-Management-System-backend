@@ -18,7 +18,7 @@ class AttendanceController extends Controller
     {
         $attendances = $this->AttendanceService->getAttendanceList();
         return response()->json([
-            'data'=>AttendanceResource::collection($attendances)
+            'data'=>new AttendanceResource($attendances)
             ], 200);
     }
 
