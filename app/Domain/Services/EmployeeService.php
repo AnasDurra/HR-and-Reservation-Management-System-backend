@@ -54,7 +54,15 @@ class EmployeeService
 
     public function deleteEmployee($id): bool
     {
-        return $this->employeeRepository->deleteEmployee($id);
+        $employee = $this->employeeRepository->deleteEmployee($id);
+
+        // Delete employee from finger device
+         if(!$employee) {
+            $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
+            $fingerDeviceService->deleteEmployeeFromFingerDevice($id);
+        }
+
+        return $employee;
     }
 
     public function editEmployeePermissions(int $id , array $data): Employee|Builder|null

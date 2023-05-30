@@ -66,4 +66,24 @@ class FingerDeviceService
 
         return true;
     }
+
+    public function deleteEmployeeFromFingerDevice(int $emp_id): bool|null
+    {
+        $fingerDevices = $this->getFingerDeviceList();
+
+        if (!$fingerDevices) return null;
+
+        foreach ($fingerDevices as $fingerDevice) {
+
+            $device = new ZKTeco($fingerDevice->ip, 4370);
+            $device->connect();
+            $deviceUsers = collect($device->getUser())->pluck('uid');
+
+            if (($deviceUsers->contains($emp_id))) {
+                $device->removeUser($emp_id);
+            }
+        }
+
+        return true;
+    }
 }

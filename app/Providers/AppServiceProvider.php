@@ -2,14 +2,17 @@
 
 namespace App\Providers;
 use App\Domain\Models\JobTitlePermission;
+use App\Domain\Repositories\AttendanceRepositoryInterface;
 use App\Domain\Repositories\DepartmentRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\FingerDeviceRepositoryInterface;
 use App\Domain\Repositories\JobTitlePermissionRepositoryInterface;
 use App\Domain\Repositories\JobTitleRepositoryInterface;
 use App\Domain\Repositories\JobVacancyRepositoryInterface;
+use App\Domain\Repositories\LeaveRepositoryInterface;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\ScheduleRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
@@ -17,6 +20,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobApplicationRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobTitleRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobVacancyRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentLeaveRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentPermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentScheduleRepository;
 use Illuminate\Support\ServiceProvider;
@@ -39,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EmployeeRepositoryInterface::class, EloquentEmployeeRepository::class);
         $this->app->bind(ScheduleRepositoryInterface::class, EloquentScheduleRepository::class);
         $this->app->bind(FingerDeviceRepositoryInterface::class, EloquentFingerDeviceRepository::class);
+        $this->app->bind(AttendanceRepositoryInterface::class, EloquentAttendanceRepository::class);
+        $this->app->bind(LeaveRepositoryInterface::class, EloquentLeaveRepository::class);
     }
 
 
