@@ -40,5 +40,4 @@ class EmployeeService
     {
         return $this->EmployeeRepository->deleteEmployee($id);
     }
-
 }

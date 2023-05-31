@@ -16,6 +16,4 @@ interface EmployeeRepositoryInterface
     public function updateEmployee(int $id, array $data): Employee|Builder|null;
 
     public function deleteEmployee($id): Employee|Builder|null;
-
-    public function getEmployeeListByDepId(int $dep_id): array;
 }

@@ -2,8 +2,8 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
+use App\Domain\Repositories\EmployeeRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
@@ -33,9 +33,14 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         // TODO: Implement the logic to delete a Employee
     }
 
-    public function getEmployeeListByDepId(int $dep_id): array
+    /*
+     * @param int $id
+     * @param array $data
+     *
+     * @return Employee|Builder|null
+     */
+    public function updateEmployeeData(int $id, array $data): Employee|Builder|null
     {
-        return Employee::query()->where('cur_dep','=',$dep_id)->get()->toArray();
-    }
 
+    }
 }

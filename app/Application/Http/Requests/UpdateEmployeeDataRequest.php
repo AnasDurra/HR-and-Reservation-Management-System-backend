@@ -6,23 +6,13 @@ namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/***
- * Class UpdateJobApplicationRequest
- * @package App\Application\Http\Requests
- *
- * have all validation rules for updating job application
- */
-class UpdateJobApplicationRequest extends FormRequest
+class UpdateEmployeeDataRequest extends FormRequest
 {
+
+    // validation rules
     public function rules(): array
     {
         return [
-            //    // job application data
-            "job_application" => ['sometimes'],
-            "job_application.job_vacancy_id" => ['sometimes', 'integer', 'exists:job_vacancies,job_vacancy_id'],
-            "job_application.section_man_notes" => ['sometimes', 'nullable', 'string'],
-            "job_application.vice_man_rec" => ['sometimes', 'nullable', 'string'],
-
 
             // employee data
             "personal_data" => ['sometimes'],
@@ -158,52 +148,6 @@ class UpdateJobApplicationRequest extends FormRequest
             "certificates.*.certificate_name" => ['sometimes', 'string', 'max:255'],
             // this can be either string or file
             "certificates.*.file" => ['sometimes'],
-
-            // here we will add arrays of ids to be deleted
-
-            // dependants
-            "deleted_dependants" => ['sometimes', 'nullable', 'array'],
-            "deleted_dependants.*" => ['sometimes', 'integer', 'exists:dependents,dependent_id'],
-
-            // previous employment record
-            "deleted_previous_employment_record" => ['sometimes', 'nullable', 'array'],
-            "deleted_previous_employment_record.*" => ['sometimes', 'integer', 'exists:previous_employment_records,prev_emp_record_id'],
-
-            // convictions
-            "deleted_convictions" => ['sometimes', 'nullable', 'array'],
-            "deleted_convictions.*" => ['sometimes', 'integer', 'exists:convictions,conviction_id'],
-
-            // education
-            "deleted_education" => ['sometimes', 'nullable', 'array'],
-            "deleted_education.*" => ['sometimes', 'integer'],
-
-            // training courses
-            "deleted_training_courses" => ['sometimes', 'nullable', 'array'],
-            "deleted_training_courses.*" => ['sometimes', 'integer', 'exists:training_courses,training_course_id'],
-
-            // skills
-            "deleted_skills" => ['sometimes', 'nullable', 'array'],
-            "deleted_skills.*" => ['sometimes', 'integer', 'exists:skills,skill_id'],
-
-            // languages
-            "deleted_languages" => ['sometimes', 'nullable', 'array'],
-            "deleted_languages.*" => ['sometimes', 'integer', 'exists:languages,language_id'],
-
-            // computer skills
-            "deleted_computer_skills" => ['sometimes', 'nullable', 'array'],
-            "deleted_computer_skills.*" => ['sometimes', 'integer', 'exists:computer_skills,computer_skill_id'],
-
-//            // relatives
-//            "deleted_relatives" => ['sometimes', 'nullable', 'array'],
-//            "deleted_relatives.*" => ['sometimes', 'integer', 'exists:relatives,relative_id'],
-
-            // references
-            "deleted_references" => ['sometimes', 'nullable', 'array'],
-            "deleted_references.*" => ['sometimes', 'integer', 'exists:references,reference_id'],
-
-            // certificates
-            "deleted_certificates" => ['sometimes', 'nullable', 'array'],
-            "deleted_certificates.*" => ['sometimes', 'integer', 'exists:certificates,certificate_id'],
         ];
     }
 }
