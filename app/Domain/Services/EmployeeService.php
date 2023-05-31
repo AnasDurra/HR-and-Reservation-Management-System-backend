@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Domain\Services;
-
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,35 +7,50 @@ use Illuminate\Database\Eloquent\Builder;
 class EmployeeService
 {
     /** @var EmployeeRepositoryInterface */
-    private $EmployeeRepository;
+    private $employeeRepository;
 
-    public function __construct(EmployeeRepositoryInterface $EmployeeRepository)
+    public function __construct(EmployeeRepositoryInterface $employeeRepository)
     {
-        $this->EmployeeRepository = $EmployeeRepository;
+        $this->employeeRepository = $employeeRepository;
     }
 
     public function getEmployeeList(): array
     {
-        return $this->EmployeeRepository->getEmployeeList();
+        return $this->employeeRepository->getEmployeeList();
     }
 
-    public function getEmployeeById(int $id): Employee|Builder|null
+    public function getEmployeeListByDepId($dep_id): array
     {
-        return $this->EmployeeRepository->getEmployeeById($id);
+        return $this->employeeRepository->getEmployeeListByDepId($dep_id);
     }
 
-    public function createEmployee(array $data): Employee|Builder|null
+    public function getEmployeeListByTitleId($title_id): array
     {
-        return $this->EmployeeRepository->createEmployee($data);
+        return $this->employeeRepository->getEmployeeListByTitleId($title_id);
     }
 
-    public function updateEmployee(int $id, array $data): Employee|Builder|null
+    public function getEmployeeById(int $id): ?Employee
     {
-        return $this->EmployeeRepository->updateEmployee($id, $data);
+        return $this->employeeRepository->getEmployeeById($id);
     }
 
-    public function deleteEmployee($id): Employee|Builder|null
+    public function createEmployee(array $data): Employee
     {
-        return $this->EmployeeRepository->deleteEmployee($id);
+        return $this->employeeRepository->createEmployee($data);
+    }
+
+    public function updateEmployee(int $id, array $data): bool
+    {
+        return $this->employeeRepository->updateEmployee($id, $data);
+    }
+
+    public function deleteEmployee($id): bool
+    {
+        return $this->employeeRepository->deleteEmployee($id);
+    }
+
+    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null
+    {
+        return $this->employeeRepository->editEmployeePermissions($id , $data);
     }
 }

@@ -48,7 +48,7 @@ class DepartmentController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'data' => new DepartmentResource($errors)
+                'data'=> $errors
             ], 400);
         }
         $item = $this->DepartmentService->create(request()->all());
@@ -68,8 +68,8 @@ class DepartmentController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'data' => new DepartmentResource($errors)
-            ], 400);
+                'data'=>$errors
+                ], 400);
         }
 
         $item = $this->DepartmentService->getById($id);

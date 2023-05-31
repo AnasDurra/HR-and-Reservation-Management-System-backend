@@ -4,6 +4,7 @@ namespace App\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Staffing extends Model
@@ -13,17 +14,17 @@ class Staffing extends Model
     protected $primaryKey = 'staff_id';
     protected $fillable = ['emp_id', 'job_title_id', 'dep_id', 'start_date', 'end_date'];
 
-    public function employee()
+    public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'emp_id', 'emp_id');
     }
 
-    public function jobTitle()
+    public function jobTitle(): BelongsTo
     {
         return $this->belongsTo(JobTitle::class, 'job_title_id', 'job_title_id');
     }
 
-    public function department()
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'dep_id', 'dep_id');
     }
