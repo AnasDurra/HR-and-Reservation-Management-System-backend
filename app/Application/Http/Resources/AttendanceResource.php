@@ -11,21 +11,23 @@ class AttendanceResource extends JsonResource
     {
         if(!$this["data"]){
             return [
-                    'attendance_id' => $this["attendance_id"],
-                    'emp_id' => $this["emp_id"],
-                    'state' => $this["state"],
-                    'attendance_time' => $this["attendance_time"],
-                    'attendance_date' => $this["attendance_date"],
-                    'status' => $this["status"],
-                    'deleted_at' => $this["deleted_at"],
-                    'employee' => [
-                        'full_name' =>$this["employee"]["empdata"]["first_name"].' '.$this["employee"]["empdata"]["last_name"],
-                        'cur_dep' => $this["employee"]["cur_dep"],
-                        'schedule' => [
-                            'schedule_id' => $this["employee"]["schedule"]["schedule_id"],
-                            'name' => $this["employee"]["schedule"]["name"],
-                            'time_in' => $this["employee"]["schedule"]["time_in"],
-                            'time_out' => $this["employee"]["schedule"]["time_out"],
+                'attendance_id' => $this["attendance_id"],
+                'emp_id' => $this["emp_id"],
+                'attendance_date' => $this["attendance_date"],
+                'check_in.state' => $this["state"],
+                'check_in.status' => $this["status"],
+                'check_in_time' => $this["attendance_time"],
+                'latetime.duration' => $this["latetime_duration"],
+                'latetime.latetime_date' => $this["latetime_date"],
+                'deleted_at' => $this["deleted_at"],
+                'employee' => [
+                    'full_name' =>$this["employee"]["empdata"]["first_name"].' '.$this["employee"]["empdata"]["last_name"],
+                    'cur_dep' => $this["employee"]["cur_dep"],
+                    'schedule' => [
+                        'schedule_id' => $this["employee"]["schedule"]["schedule_id"],
+                        'name' => $this["employee"]["schedule"]["name"],
+                        'time_in' => $this["employee"]["schedule"]["time_in"],
+                        'time_out' => $this["employee"]["schedule"]["time_out"],
                         ],
                     ],
                 ];

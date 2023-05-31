@@ -53,6 +53,13 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 
         if(!$attendance) return null;
 
+        $eloquentLatetimeRepository = new EloquentLatetimeRepository();
+        $late_time = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
+        if($late_time){
+            $attendance["latetime_duration"]=$late_time["duration"];
+            $attendance["latetime_date"]=$late_time["latetime_date"];
+        }
+
         return $attendance;
     }
 
@@ -112,7 +119,8 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         $attendance = Attendance::query()->create([
             'emp_id' => $data['emp_id'],
             'uid' => $data['uid'] ?? 0,
-            'state' => $data['state'] ?? 1,
+            'state' => $data['state'] ?? 0,
+            'status' => $data['status'] ?? 1,
             'attendance_time' => $data['attendance_time'],
             'attendance_date' => $data['attendance_date'],
         ]);
@@ -121,12 +129,15 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         $eloquentLatetimeRepository = new EloquentLatetimeRepository();
         if (!($attendance->employee->schedule->time_in >= $attendance["attendance_time"])) {
             $attendance["status"] = 0;
-            $eloquentLatetimeRepository->createLatetime([
+            $late_time = $eloquentLatetimeRepository->createLatetime([
                 "emp_id" => $attendance["employee"]["emp_id"],
                 "attendance_time" => $attendance["attendance_time"],
                 "schedule_time_in" => $attendance->employee->schedule->time_in,
                 "latetime_date" => $attendance["attendance_date"]
                 ]);
+
+            $attendance["latetime_duration"]=$late_time["duration"];
+            $attendance["latetime_date"]=$late_time["latetime_date"];
             $attendance->save();
         }
 
@@ -182,7 +193,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 
     public function deleteAttendance($id): Attendance|Builder|null
     {
-        $attendance = Attendance::query()->find($id);
+        $attendance = $this->getAttendanceById($id);
 
         if(!$attendance) return null;
 
