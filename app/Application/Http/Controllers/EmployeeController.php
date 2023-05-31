@@ -8,16 +8,16 @@ use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
-    private EmployeeService $employeeService;
+    private EmployeeService $EmployeeService;
 
     public function __construct(EmployeeService $EmployeeService)
     {
-        $this->employeeService = $EmployeeService;
+        $this->EmployeeService = $EmployeeService;
     }
 
     public function index(): JsonResponse
     {
-        $employees = $this->employeeService->getEmployeeList();
+        $employees = $this->EmployeeService->getEmployeeList();
         return response()->json([
             'data'=>EmployeeResource::collection($employees) //Modify it as needed
             ], 200);
@@ -25,7 +25,7 @@ class EmployeeController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $employee = $this->employeeService->getEmployeeById($id);
+        $employee = $this->EmployeeService->getEmployeeById($id);
         return response()->json([
             'data'=> new EmployeeResource($employee) //Modify it as needed
             ], 200);
@@ -33,7 +33,7 @@ class EmployeeController extends Controller
 
     public function store(): JsonResponse
     {
-        $employee = $this->employeeService->createEmployee(request()->all());
+        $employee = $this->EmployeeService->createEmployee(request()->all());
         return response()->json([
             'data'=> new EmployeeResource($employee) //Modify it as needed
             ], 200);
@@ -41,7 +41,7 @@ class EmployeeController extends Controller
 
     public function update(int $id): JsonResponse
     {
-        $employee = $this->employeeService->updateEmployee($id, request()->all());
+        $employee = $this->EmployeeService->updateEmployee($id, request()->all());
         return response()->json([
             'data'=> new EmployeeResource($employee) //Modify it as needed
             ], 200);
@@ -49,7 +49,7 @@ class EmployeeController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        $employee = $this->employeeService->deleteEmployee($id);
+        $employee = $this->EmployeeService->deleteEmployee($id);
         return response()->json([
             'data'=> new EmployeeResource($employee) //Modify it as needed
             ], 200);

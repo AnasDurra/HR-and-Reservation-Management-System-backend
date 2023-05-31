@@ -1224,6 +1224,73 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 }
             }
 
+
+            // delete the records that have ids that are mentioned in the equivalent array
+
+            // dependents
+            if (optional($data)['deleted_dependants']) {
+                $jobApplication->empData->dependents()->whereIn('dependent_id', $data['deleted_dependants'])->delete();
+            }
+
+            // previous employment records
+            if (optional($data)['deleted_previous_employment_record']) {
+                $jobApplication->empData->previousEmploymentRecords()->whereIn('prev_emp_record_id', $data['deleted_previous_employment_record'])->delete();
+            }
+
+            // convictions
+            if (optional($data)['deleted_convictions']) {
+                $jobApplication->empData->convictions()->whereIn('conviction_id', $data['deleted_convictions'])->delete();
+            }
+
+            // education
+            if (optional($data)['deleted_education']) {
+                // the education records are the ids of the entries in the pivot table
+                $jobApplication->empData->educationLevels()->wherePivotIn('education_level_id', $data['deleted_education'])->detach();
+            }
+
+            // training courses
+            if (optional($data)['deleted_training_courses']) {
+                $jobApplication->empData->trainingCourses()->whereIn('training_course_id', $data['deleted_training_courses'])->delete();
+            }
+
+            // skills
+            if (optional($data)['deleted_skills']) {
+                // the skills records are the ids of the entries in the pivot table
+                $jobApplication->empData->skills()->wherePivotIn('skill_id', $data['deleted_skills'])->detach();
+            }
+
+            // languages
+            if (optional($data)['deleted_languages']) {
+                // Get the empData's languages relationship and use the wherePivotIn method
+                // to filter by the given language IDs and detach the matching records
+                $jobApplication->empData->languages()->wherePivotIn('language_id', $data['deleted_languages'])->detach();
+            }
+
+            // computer skills
+            if (optional($data)['deleted_computer_skills']) {
+                // the computer skills records are the ids of the entries in the pivot table
+                $jobApplication->empData->computerSkills()->wherePivotIn('computer_skill_id', $data['deleted_computer_skills'])->detach();
+            }
+
+            // references
+            if (optional($data)['deleted_references']) {
+                $jobApplication->empData->references()->whereIn('reference_id', $data['deleted_references'])->delete();
+            }
+
+            // certificates
+            if (optional($data)['deleted_certificates']) {
+
+                // get the file url from the database for the given certificate ids
+                $fileUrls = $jobApplication->empData->certificates()->whereIn('certificate_id', $data['deleted_certificates'])->pluck('file_url')->toArray();
+
+                // delete the files from the storage for the given file urls
+                StorageUtilities::deleteFiles($fileUrls);
+
+                // delete the records from the database
+                $jobApplication->empData->certificates()->whereIn('certificate_id', $data['deleted_certificates'])->delete();
+            }
+
+
             DB::commit();
 
 

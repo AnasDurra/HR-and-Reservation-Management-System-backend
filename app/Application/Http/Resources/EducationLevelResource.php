@@ -19,6 +19,9 @@ class EducationLevelResource extends JsonResource
         return [
             'education_level_id' => $this->education_level_id,
             'name' => $this->name,
+            'education_record_id' => $this->whenPivotLoaded('education_records', function () {
+                return $this->pivot->education_record_id;
+            }),
             'univ_name' => $this->whenPivotLoaded('education_records', function () {
                 return $this->pivot->univ_name;
             }),

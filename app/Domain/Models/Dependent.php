@@ -4,6 +4,7 @@ namespace App\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Dependent extends Model
 {
@@ -17,7 +18,7 @@ class Dependent extends Model
         'address',
     ];
 
-    public function empData()
+    public function empData(): BelongsTo
     {
         return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
     }

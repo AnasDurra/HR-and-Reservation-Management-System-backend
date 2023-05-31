@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
+use App\Domain\Repositories\EmployeeRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use MongoDB\Driver\BulkWrite;
 
@@ -210,4 +211,5 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return $employee;
     }
 
+    }
 }

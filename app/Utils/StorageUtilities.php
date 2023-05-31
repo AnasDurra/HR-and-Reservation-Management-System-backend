@@ -62,5 +62,13 @@ class StorageUtilities
         return asset('storage/' . $filePath);
     }
 
+    public static function deleteFiles($urls): void
+    {
+        foreach ($urls as $url) {
+            if (Storage::disk('public')->exists($url)) {
+                Storage::disk('public')->delete($url);
+            }
+        }
+    }
 
 }
