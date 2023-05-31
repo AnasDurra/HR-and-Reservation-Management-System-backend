@@ -13,13 +13,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed start_date
  * @property mixed end_date
  * @property mixed specialize
+ * @property mixed name
  */
 class TrainingCourseResource extends JsonResource
 {
     public function toArray($request): array
     {
         return [
-            'id' => $this->training_course_id,
+            'training_course_id' => $this->training_course_id,
+            'course_name' => $this->name,
             'institute_name' => $this->institute_name,
             'city' => $this->city,
             'start_date' => $this->start_date,

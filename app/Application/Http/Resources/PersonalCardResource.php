@@ -21,8 +21,8 @@ class PersonalCardResource extends JsonResource
         return [
             'id' => $this->personal_card_id,
             'card_number' => $this->card_number,
-            'place_of_issue' => $this->place_of_issue,
-            'date_of_issue' => $this->date_of_issue,
+            'card_place_of_issue' => $this->place_of_issue,
+            'card_date_of_issue' => $this->date_of_issue,
         ];
     }
 }

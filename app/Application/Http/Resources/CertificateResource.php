@@ -8,16 +8,19 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property mixed skill_id
+ * @property mixed certificate_id
+ * @property mixed file_url
  * @property mixed name
  */
-class SkillResource extends JsonResource
+class CertificateResource extends JsonResource
 {
+
     public function toArray(Request $request)
     {
         return [
-            'skill_id' => $this->skill_id,
-            'skill_name' => $this->name,
+            'certificate_id' => $this->certificate_id,
+            'certificate_name' => $this->name,
+            'file' => $this->file_url,
         ];
     }
 }

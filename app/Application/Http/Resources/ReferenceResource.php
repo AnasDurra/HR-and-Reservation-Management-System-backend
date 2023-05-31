@@ -20,7 +20,7 @@ class ReferenceResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id' => $this->reference_id,
+            'reference_id' => $this->reference_id,
             'name' => $this->name,
             'job' => $this->job,
             'company' => $this->company,

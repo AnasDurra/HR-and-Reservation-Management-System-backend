@@ -5,6 +5,7 @@ namespace App\Application\Http\Controllers;
 
 
 use App\Application\Http\Requests\StoreJobApplicationRequest;
+use App\Application\Http\Requests\UpdateJobApplicationRequest;
 use App\Application\Http\Resources\JobApplicationBriefResource;
 use App\Application\Http\Resources\JobApplicationDetailsResource;
 use App\Domain\Services\JobApplicationService;
@@ -49,10 +50,10 @@ class JobApplicationController extends Controller
         return new JobApplicationBriefResource($jobApplication);
     }
 
-    public function update(int $id): JobApplicationBriefResource
+    public function update(UpdateJobApplicationRequest $request, int $id): JobApplicationDetailsResource
     {
-        $employee = $this->jobApplicationService->updateJobApplication($id, request()->all());
-        return new JobApplicationBriefResource($employee);
+        $employee = $this->jobApplicationService->updateJobApplication($id, $request->validated());
+        return new JobApplicationDetailsResource($employee);
     }
 
     public function destroy(int $id): JobApplicationBriefResource

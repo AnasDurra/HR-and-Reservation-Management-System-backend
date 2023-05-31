@@ -24,7 +24,7 @@ class PreviousEmploymentRecordResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->prev_emp_record_id,
+            'prev_emp_record_id' => $this->prev_emp_record_id,
             'employer_name' => $this->employer_name,
             'address' => $this->address,
             'telephone' => $this->telephone,

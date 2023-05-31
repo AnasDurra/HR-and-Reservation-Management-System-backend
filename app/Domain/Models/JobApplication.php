@@ -6,6 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Class JobApplication
+ * @package App\Domain\Models
+ *
+ * @property int job_app_id
+ * @property int app_status_id
+ * @property int job_vacancy_id
+ * @property int emp_data_id
+ * @property string section_man_notes
+ * @property string vice_man_rec
+ *
+ * @property ApplicationStatus applicationStatus
+ * @property JobVacancy jobVacancy
+ * @property EmpData empData
+ */
 class JobApplication extends Model
 {
     use HasFactory;

@@ -19,7 +19,7 @@ class DependentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->dependent_id,
+            'dependent_id' => $this->dependent_id,
             'name' => $this->name,
             'age' => $this->age,
             'relationship' => $this->relation,

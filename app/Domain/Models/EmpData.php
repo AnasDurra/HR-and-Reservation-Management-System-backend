@@ -25,6 +25,22 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property mixed grand_father_name
  * @property mixed father_name
  * @property mixed personal_photo
+ *
+ * @property JobApplication jobApplication
+ * @property Employee employee
+ * @property DrivingLicence drivingLicence
+ * @property Passport passport
+ * @property Address address
+ * @property PersonalCard personalCard
+ * @property EducationRecord[] educations
+ * @property Conviction[] convictions
+ * @property TrainingCourse[] trainingCourses
+ * @property PreviousEmploymentRecord[] previousEmploymentRecords
+ * @property Dependent[] dependents
+ * @property ComputerSkill[] computerSkills
+ * @property Skill[] skills
+ * @property Language[] languages
+ * @property Reference[] references
  */
 class EmpData extends Model
 {

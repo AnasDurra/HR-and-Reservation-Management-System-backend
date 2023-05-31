@@ -17,7 +17,7 @@ class EducationLevelResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id' => $this->education_level_id,
+            'education_level_id' => $this->education_level_id,
             'name' => $this->name,
             'univ_name' => $this->whenPivotLoaded('education_records', function () {
                 return $this->pivot->univ_name;
