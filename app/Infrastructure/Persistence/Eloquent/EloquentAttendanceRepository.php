@@ -125,10 +125,11 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             'attendance_date' => $data['attendance_date'],
         ]);
 
-        //calc late time
+        // Calculate Late time if exists
         $eloquentLatetimeRepository = new EloquentLatetimeRepository();
         if (!($attendance->employee->schedule->time_in >= $attendance["attendance_time"])) {
             $attendance["status"] = 0;
+            $attendance->save();
             $late_time = $eloquentLatetimeRepository->createLatetime([
                 "emp_id" => $attendance["employee"]["emp_id"],
                 "attendance_time" => $attendance["attendance_time"],
@@ -138,7 +139,6 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 
             $attendance["latetime_duration"]=$late_time["duration"];
             $attendance["latetime_date"]=$late_time["latetime_date"];
-            $attendance->save();
         }
 
         return $attendance;
@@ -167,13 +167,13 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 }
 
                 $attendance["status"] = 0;
+                $attendance->save();
                 $eloquentLatetimeRepository->createLatetime([
                     "emp_id" => $attendance["employee"]["emp_id"],
                     "attendance_time" => $attendance["attendance_time"],
                     "schedule_time_in" => $attendance->employee->schedule->time_in,
                     "latetime_date" => $attendance["attendance_date"]
                 ]);
-                $attendance->save();
             }
             else
             {
