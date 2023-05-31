@@ -17,6 +17,6 @@ interface AttendanceRepositoryInterface
 
     public function deleteAttendance($id): Attendance|Builder|null;
 
-    public function getEmployeeAttByDate($id,$date): Attendance|Builder|null;
+    public function getEmployeeAttByDate($emp_id,$date): Attendance|Builder|null;
 
 }

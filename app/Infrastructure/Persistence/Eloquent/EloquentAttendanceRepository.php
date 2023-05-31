@@ -17,6 +17,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 'employee.empData:emp_data_id,first_name,last_name',
             ])
             ->select(
+                'attendances.attendance_id',
                 'attendances.emp_id',
                 'attendances.attendance_date',
                 'attendances.state AS check_in.state',
@@ -44,7 +45,11 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 
     public function getAttendanceById(int $id): Attendance|Builder|null
     {
-        $attendance = Attendance::query()->find($id);
+        $attendance = Attendance::query()->with([
+            'employee:emp_id,schedule_id,emp_data_id,cur_dep',
+            'employee.schedule:schedule_id,name,time_in,time_out',
+            'employee.empData:emp_data_id,first_name,last_name'])
+            ->find($id);
 
         if(!$attendance) return null;
 
@@ -60,6 +65,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 'employee.empData:emp_data_id,first_name,last_name',
             ])
             ->select(
+                'attendances.attendance_id',
                 'attendances.emp_id',
                 'attendances.attendance_date',
                 'attendances.state AS check_in.state',
@@ -94,14 +100,6 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
     public function createAttendance(array $data): Attendance|Builder|null
     {
 
-//    like as 0 => array:5 [▼
-//              "uid" => 1      /* serial number of the attendance */
-//              "id" => "1"     /* user id of the application */
-//              "state" => 1    /* the authentication type, 1 for Fingerprint, 4 for RF Card etc */
-//              "timestamp" => "2020-05-27 21:21:06" /* time of attendance */
-//              "type" => 255   /* attendance type, like check-in, check-out, overtime-in, overtime-out, break-in & break-out etc. if attendance type is none of them, it gives  255. */
-//              ]
-
         if($att = Attendance::query()->where('emp_id',$data['emp_id'])->where('attendance_date',$data['attendance_date'])
             ->first()
         )
@@ -110,13 +108,29 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             return $att;
         }
 
-        return Attendance::query()->create([
+
+        $attendance = Attendance::query()->create([
             'emp_id' => $data['emp_id'],
             'uid' => $data['uid'] ?? 0,
             'state' => $data['state'] ?? 1,
             'attendance_time' => $data['attendance_time'],
             'attendance_date' => $data['attendance_date'],
         ]);
+
+        //calc late time
+        $eloquentLatetimeRepository = new EloquentLatetimeRepository();
+        if (!($attendance->employee->schedule->time_in >= $attendance["attendance_time"])) {
+            $attendance["status"] = 0;
+            $eloquentLatetimeRepository->createLatetime([
+                "emp_id" => $attendance["employee"]["emp_id"],
+                "attendance_time" => $attendance["attendance_time"],
+                "schedule_time_in" => $attendance->employee->schedule->time_in,
+                "latetime_date" => $attendance["attendance_date"]
+                ]);
+            $attendance->save();
+        }
+
+        return $attendance;
     }
 
     public function updateAttendance(int $id, array $data): Attendance|Builder|null
@@ -131,6 +145,38 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
        $attendance['status'] = $data['status'] ?? $attendance['status'];
        $attendance->save();
 
+
+        $eloquentLatetimeRepository = new EloquentLatetimeRepository();
+        if($attendance['attendance_time']) {
+            if (!($attendance->employee->schedule->time_in >= $attendance["attendance_time"]))
+            {
+                $employee_late = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
+                if($employee_late){
+                    $eloquentLatetimeRepository->deleteLatetime($employee_late->latetime_id);
+                }
+
+                $attendance["status"] = 0;
+                $eloquentLatetimeRepository->createLatetime([
+                    "emp_id" => $attendance["employee"]["emp_id"],
+                    "attendance_time" => $attendance["attendance_time"],
+                    "schedule_time_in" => $attendance->employee->schedule->time_in,
+                    "latetime_date" => $attendance["attendance_date"]
+                ]);
+                $attendance->save();
+            }
+            else
+            {
+                $employee_late = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
+                if($employee_late) {
+                    echo 44;
+                    $attendance["status"]=1;
+                    $eloquentLatetimeRepository->deleteLatetime($employee_late->latetime_id);
+                    $attendance->save();
+                }
+            }
+
+        }
+
        return $attendance;
     }
 
@@ -144,9 +190,10 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         return $attendance;
     }
 
-    public function getEmployeeAttByDate($id,$date): Attendance|Builder|null
+    public function getEmployeeAttByDate($emp_id,$date): Attendance|Builder|null
     {
-        $attendance = Attendance::query()->whereDate('attendance_date',$date)->find($id);
+        $attendance = Attendance::query()->whereDate('attendance_date',$date)
+            ->where('emp_id','=',$emp_id)->first();
 
         if(!$attendance) return null;
 
