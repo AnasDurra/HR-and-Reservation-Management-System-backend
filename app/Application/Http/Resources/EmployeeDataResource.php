@@ -50,7 +50,7 @@ class EmployeeDataResource extends JsonResource
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
                 'full_name' => $this->full_name,
-                'personal-photo_url' => $this->personal_photo,
+                'personal_photo' => $this->personal_photo,
                 'father_name' => $this->father_name,
                 'grand-father_name' => $this->grand_father_name,
                 'birth_date' => $this->birth_date,

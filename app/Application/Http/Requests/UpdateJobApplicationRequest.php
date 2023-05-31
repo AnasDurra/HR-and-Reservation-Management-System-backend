@@ -130,9 +130,9 @@ class UpdateJobApplicationRequest extends FormRequest
             // languages
             "languages" => ['sometimes', 'nullable', 'array'],
             "languages.*.language_name" => ['required', 'string', 'max:255'],
-            "languages.*.reading" => ['sometimes', 'integer', 'max:3'],
-            "languages.*.writing" => ['sometimes', 'integer', 'max:3'],
-            "languages.*.speaking" => ['sometimes', 'integer', 'max:3'],
+            "languages.*.reading" => ['sometimes', 'nullable', 'integer', 'max:3'],
+            "languages.*.writing" => ['sometimes', 'nullable', 'integer', 'max:3'],
+            "languages.*.speaking" => ['sometimes', 'nullable', 'integer', 'max:3'],
 
             // computer skills
             "computer_skills" => ['sometimes', 'nullable', 'array'],

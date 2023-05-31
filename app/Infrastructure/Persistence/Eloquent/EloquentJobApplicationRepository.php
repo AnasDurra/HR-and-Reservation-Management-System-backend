@@ -688,7 +688,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         if (isset(optional($dependant)['dependent_id'])) {
 
                             // get dependant object
-                            $dependantObj = $jobApplication->empData->dependants()->find($dependant['dependent_id']);
+                            $dependantObj = $jobApplication->empData->dependents()->find($dependant['dependent_id']);
 
                             // check dependant name
                             if (optional($dependant)['name'] &&
@@ -704,8 +704,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
                             // check dependant relationship
                             if (optional($dependant)['relationship'] &&
-                                optional($dependant)['relationship'] != $dependantObj->getAttribute("relationship")) {
-                                $dependantObj->update(['relationship' => $dependant['relationship']]);
+                                optional($dependant)['relationship'] != $dependantObj->getAttribute("relation")) {
+                                $dependantObj->update(['relation' => $dependant['relationship']]);
                             }
 
                             // check dependant address
@@ -723,9 +723,9 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             }
 
             // Employee data (previous employment records)
-            if (optional($data)['previous_employment_records']) {
+            if (optional($data)['previous_employment_record']) {
 
-                $previousEmploymentRecordData = $data['previous_employment_records'];
+                $previousEmploymentRecordData = $data['previous_employment_record'];
 
                 /*
                  * First we will check if the length of the previous employment record array is greater than 0,
@@ -1022,11 +1022,11 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $languageName = $language['language_name'];
 
                         // check if the language name is found in the languages table
-                        $languageObj = Language::query()->where('name', $languageName)->first();
+                        $lang = Language::query()->where('name', $languageName)->first();
 
-                        if (!$languageObj) {
+                        if (!$lang) {
                             // create a new language
-                            Language::query()->create(['name' => $languageName]);
+                            $lang = Language::query()->create(['name' => $languageName]);
                         }
 
                         // check if there is a pivot record for this language
@@ -1050,7 +1050,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
                         } else {
                             // create a new record in the pivot table
-                            $jobApplication->empData->languages()->attach($languageObj->language_id, [
+                            $jobApplication->empData->languages()->attach($lang->language_id, [
                                 'reading_level' => $language['reading'],
                                 'writing_level' => $language['writing'],
                                 'speaking_level' => $language['speaking'],
@@ -1080,11 +1080,11 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $skillName = $computerSkill['skill_name'];
 
                         // check if the skill name is found in the computer skills table
-                        $skillObj = ComputerSkill::query()->where('name', $skillName)->first();
+                        $skillRecord = ComputerSkill::query()->where('name', $skillName)->first();
 
-                        if (!$skillObj) {
+                        if (!$skillRecord) {
                             // create a new skill
-                            ComputerSkill::query()->create(['name' => $skillName]);
+                            $skillRecord = ComputerSkill::query()->create(['name' => $skillName]);
                         }
 
                         // check if there is a pivot record for this skill
@@ -1098,7 +1098,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
                         } else {
                             // create a new record in the pivot table
-                            $jobApplication->empData->computerSkills()->attach($skillObj->computer_skill_id, [
+                            $jobApplication->empData->computerSkills()->attach($skillRecord->computer_skill_id, [
                                 'level' => $computerSkill['level'],
                             ]);
                         }

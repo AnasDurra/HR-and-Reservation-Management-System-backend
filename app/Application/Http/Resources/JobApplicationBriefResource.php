@@ -28,7 +28,7 @@ class JobApplicationBriefResource extends JsonResource
             'employee_name' => $this->empData->full_name,
             'department_name' => $this->jobVacancy->department->name,
             'job_name' => $this->jobVacancy->name,
-            'status' => $this->applicationStatus->name,
+            'status' => $this->applicationStatus->app_status_id,
             'created_at' => $this->created_at,
         ];
     }

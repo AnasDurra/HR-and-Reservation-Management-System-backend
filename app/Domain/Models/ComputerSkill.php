@@ -4,6 +4,7 @@ namespace App\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ComputerSkill extends Model
 {
@@ -12,7 +13,7 @@ class ComputerSkill extends Model
 
     protected $fillable = ['name'];
 
-    public function empsData()
+    public function empsData(): BelongsToMany
     {
         return $this->belongsToMany(EmpData::class, 'emp_computer_skills', 'computer_skill_id', 'emp_data_id',
             'computer_skill_id','emp_data_id')
