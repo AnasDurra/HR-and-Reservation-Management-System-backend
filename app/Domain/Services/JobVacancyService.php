@@ -4,40 +4,41 @@ namespace App\Domain\Services;
 
 use App\Domain\Repositories\JobVacancyRepositoryInterface;
 use App\Domain\Models\JobVacancy;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class JobVacancyService
 {
     /** @var JobVacancyRepositoryInterface */
-    private $JobVacancyRepository;
+    private JobVacancyRepositoryInterface $jobVacancyRepository;
 
     public function __construct(JobVacancyRepositoryInterface $JobVacancyRepository)
     {
-        $this->JobVacancyRepository = $JobVacancyRepository;
+        $this->jobVacancyRepository = $JobVacancyRepository;
     }
 
-    public function getJobVacancyList(): array
+    public function getJobVacancyList(): LengthAwarePaginator
     {
-        return $this->JobVacancyRepository->getJobVacancyList();
+        return $this->jobVacancyRepository->getJobVacancyList();
     }
 
     public function getJobVacancyById(int $id): JobVacancy|Builder|null
     {
-        return $this->JobVacancyRepository->getJobVacancyById($id);
+        return $this->jobVacancyRepository->getJobVacancyById($id);
     }
 
     public function createJobVacancy(array $data): JobVacancy|Builder
     {
-        return $this->JobVacancyRepository->createJobVacancy($data);
+        return $this->jobVacancyRepository->createJobVacancy($data);
     }
 
     public function updateJobVacancy(int $id, array $data): JobVacancy|Builder
     {
-        return $this->JobVacancyRepository->updateJobVacancy($id, $data);
+        return $this->jobVacancyRepository->updateJobVacancy($id, $data);
     }
 
     public function deleteJobVacancy($id): JobVacancy|Builder
     {
-        return $this->JobVacancyRepository->deleteJobVacancy($id);
+        return $this->jobVacancyRepository->deleteJobVacancy($id);
     }
 }
