@@ -13,13 +13,17 @@ class AttendanceResource extends JsonResource
             return [
                 'attendance_id' => $this["attendance_id"],
                 'emp_id' => $this["emp_id"],
+
                 'attendance_date' => $this["attendance_date"],
                 'check_in.state' => $this["state"],
                 'check_in.status' => $this["status"],
                 'check_in_time' => $this["attendance_time"],
-                'latetime.duration' => $this["latetime_duration"],
-                'latetime.latetime_date' => $this["latetime_date"],
-                'deleted_at' => $this["deleted_at"],
+
+                'latetime.duration' => $this["latetime_duration"] ?? null,
+                'latetime.latetime_date' => $this["latetime_date"] ?? null ,
+
+                'deleted_at' => $this["deleted_at"] ?? null,
+
                 'employee' => [
                     'full_name' =>$this["employee"]["empdata"]["first_name"].' '.$this["employee"]["empdata"]["last_name"],
                     'cur_dep' => $this["employee"]["cur_dep"],
@@ -32,7 +36,9 @@ class AttendanceResource extends JsonResource
                     ],
                 ];
         }
+
         $i=0;
+        $data = null;
         foreach ($this["data"] as $element) {
             $data[$i]["attendance_id"] = $element["attendance_id"];
             $data[$i]["emp_id"] = $element["emp_id"];
@@ -40,11 +46,27 @@ class AttendanceResource extends JsonResource
             $data[$i]["check_in.state"] = $element["check_in.state"];
             $data[$i]["check_in.status"] = $element["check_in.state"];
             $data[$i]["check_in_time"] = $element["check_in_time"];
-            $data[$i]["check_out.state"] = $element["check_out.state"];
-            $data[$i]["check_out.status"] = $element["check_out.status"];
-            $data[$i]["check_out_time"] = $element["check_out_time"];
-            $data[$i]["latetime.duration"] = $element["latetime.duration"];
-            $data[$i]["latetime.latetime_date"] = $element["latetime.latetime_date"];
+
+            if($element["check_out_time"]) {
+                $data[$i]["check_out.state"] = $element["check_out.state"];
+                $data[$i]["check_out.status"] = $element["check_out.status"];
+                $data[$i]["check_out_time"] = $element["check_out_time"];
+
+                // Leave before calculation
+                if (!($element["employee"]["schedule"]["time_out"] <= $element["check_out_time"])) {
+                    $leaveTime = \DateTime::createFromFormat('H:i:s', $element["check_out_time"]);
+                    $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $element["employee"]["schedule"]["time_out"]);
+                    $duration = $scheduleTimeOut->diff($leaveTime);
+                    $data[$i]["leaveBefore"] = $duration->format('%H:%I:%S');
+                }
+            }
+
+            // Late Time
+            if($element["latetime.duration"]) {
+                $data[$i]["latetime.duration"] = $element["latetime.duration"];
+                $data[$i]["latetime.latetime_date"] = $element["latetime.latetime_date"];
+            }
+
 
             $data[$i]["employee"]["full_name"] = $element['employee']['emp_data']['first_name'] . ' ' . $element['employee']['emp_data']['last_name'];
             $data[$i]["employee"]["cur_dep"] = $element["employee"]["cur_dep"];

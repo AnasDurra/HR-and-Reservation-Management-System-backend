@@ -19,7 +19,7 @@ class LeaveController extends Controller
         $leaves = $this->LeaveService->getLeaveList();
 
         return response()->json([
-            'data'=>LeaveResource::collection($leaves)
+            'data'=>new LeaveResource($leaves)
             ], 200);
     }
 

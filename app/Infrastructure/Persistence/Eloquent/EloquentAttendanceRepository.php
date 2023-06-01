@@ -56,6 +56,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         $eloquentLatetimeRepository = new EloquentLatetimeRepository();
         $late_time = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
         if($late_time){
+            $attendance["latetime_id"]=$late_time["latetime_id"];
             $attendance["latetime_duration"]=$late_time["duration"];
             $attendance["latetime_date"]=$late_time["latetime_date"];
         }
@@ -161,27 +162,29 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         if($attendance['attendance_time']) {
             if (!($attendance->employee->schedule->time_in >= $attendance["attendance_time"]))
             {
-                $employee_late = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
-                if($employee_late){
-                    $eloquentLatetimeRepository->deleteLatetime($employee_late->latetime_id);
+                $late_time = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
+                if($late_time){
+                    $eloquentLatetimeRepository->deleteLatetime($late_time->latetime_id);
                 }
 
                 $attendance["status"] = 0;
                 $attendance->save();
-                $eloquentLatetimeRepository->createLatetime([
+                $late_time = $eloquentLatetimeRepository->createLatetime([
                     "emp_id" => $attendance["employee"]["emp_id"],
                     "attendance_time" => $attendance["attendance_time"],
                     "schedule_time_in" => $attendance->employee->schedule->time_in,
                     "latetime_date" => $attendance["attendance_date"]
                 ]);
+
+                $attendance["latetime_duration"]=$late_time["duration"];
+                $attendance["latetime_date"]=$late_time["latetime_date"];
             }
             else
             {
-                $employee_late = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
-                if($employee_late) {
-                    echo 44;
+                $late_time = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
+                if($late_time) {
                     $attendance["status"]=1;
-                    $eloquentLatetimeRepository->deleteLatetime($employee_late->latetime_id);
+                    $eloquentLatetimeRepository->deleteLatetime($late_time->latetime_id);
                     $attendance->save();
                 }
             }
@@ -198,6 +201,9 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         if(!$attendance) return null;
 
         $attendance->delete();
+        $eloquentLatetimeRepository = new EloquentLatetimeRepository();
+        $eloquentLatetimeRepository->deleteLatetime($attendance['latetime_id']);
+
         return $attendance;
     }
 

@@ -10,7 +10,18 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
 {
     public function getLeaveList(): array
     {
-        return Leave::query()->latest()->get()->toArray();
+        $leaves = Leave::query()->latest('leave_date')->paginate(10);
+        foreach ($leaves as $key => $leave) {
+            if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+                $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
+                $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+                $duration = $scheduleTimeOut->diff($leaveTime);
+                $leave["leaveBefore"] = $duration->format('%H:%I:%S');
+            }
+            $leave->employee->load('empData');
+        }
+
+        return $leaves->toArray();
     }
 
     public function getLeaveById(int $id): Leave|Builder|null
@@ -19,6 +30,15 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
 
         if(!$leave) return null;
 
+        if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+            $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
+            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+            $duration = $scheduleTimeOut->diff($leaveTime);
+
+            $leave["leaveBefore"] = $duration->format('%H:%I:%S');
+        }
+
+        $leave->employee->load('empData');
         return $leave;
     }
 
@@ -37,13 +57,28 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
             return null;
         }
 
-        return Leave::query()->create([
+        $leave = Leave::query()->create([
             'emp_id' => $data['emp_id'],
             'uid' => $data['uid'] ?? 0,
             'state' => $data['state'] ?? 1,
+            'status' => $data['status'] ?? 1,
             'leave_time' => $data['leave_time'],
             'leave_date' => $data['leave_date'],
         ]);
+
+
+        if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+            $leave["status"] =0;
+            $leave->save();
+            $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
+            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+            $duration = $scheduleTimeOut->diff($leaveTime);
+
+            $leave["leaveBefore"] = $duration->format('%H:%I:%S');
+        }
+
+        $leave->employee->load('empData');
+        return $leave;
     }
 
     public function updateLeave(int $id, array $data): Leave|Builder|null
@@ -58,12 +93,27 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
         $leave['status'] = $data['status'] ?? $leave['status'];
         $leave->save();
 
+
+        if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+            $leave["status"] =0;
+            $leave->save();
+            $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
+            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+            $duration = $scheduleTimeOut->diff($leaveTime);
+
+            $leave["leaveBefore"] = $duration->format('%H:%I:%S');
+        }
+        else{
+            $leave["status"] =1;
+            $leave->save();
+        }
+        $leave->employee->load('empData');
         return $leave;
     }
 
     public function deleteLeave($id): Leave|Builder|null
     {
-        $leave = Leave::query()->find($id);
+        $leave = $this->getLeaveById($id);
 
         if(!$leave) return null;
 
