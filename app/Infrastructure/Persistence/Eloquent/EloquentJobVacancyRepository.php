@@ -2,15 +2,16 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Domain\Repositories\JobVacancyRepositoryInterface;
 use App\Domain\Models\JobVacancy;
+use App\Domain\Repositories\JobVacancyRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 {
-    public function getJobVacancyList(): array
+    public function getJobVacancyList(): LengthAwarePaginator
     {
-        return JobVacancy::with('department','vacancyStatus')->get()->toArray();
+        return JobVacancy::with('department', 'vacancyStatus')->paginate(10);
     }
 
     public function getJobVacancyById(int $id): JobVacancy|Builder|null
@@ -22,14 +23,14 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function createJobVacancy(array $data): JobVacancy|Builder
     {
-        $jobVacancy= JobVacancy::query()->create([
+        $jobVacancy = JobVacancy::query()->create([
             'dep_id' => $data['dep_id'],
             'name' => $data['name'],
             'description' => $data['description'],
             'count' => $data['count'],
             'vacancy_status_id' => 1,
         ]);
-        return $jobVacancy->load('department', 'vacancyStatus');;
+        return $jobVacancy->load('department', 'vacancyStatus');
     }
 
     public function updateJobVacancy(int $id, array $data): JobVacancy|Builder
@@ -46,22 +47,21 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function deleteJobVacancy($id): JobVacancy|Builder
     {
-        $jobVacancy =JobVacancy::query()->with('jobApplications')->find($id);
-        if($jobVacancy->jobApplications->isEmpty()){
+        $jobVacancy = JobVacancy::query()->with('jobApplications')->find($id);
+        if ($jobVacancy->jobApplications->isEmpty()) {
             $jobVacancy::find($id)->delete();
-        }
-        else{
+        } else {
             foreach ($jobVacancy->jobApplications as $jobApplication) {
-                if($jobApplication->applicationStatus->app_status_id==1) {
+                if ($jobApplication->applicationStatus->app_status_id == 1) {
                     $jobVacancy['status'] = 400;
                     return $jobVacancy;
                 }
             }
             foreach ($jobVacancy->jobApplications as $jobApplication) {
-                $jobApplication->app_status_id=3;
+                $jobApplication->app_status_id = 3;
                 $jobApplication->save();
             }
-            $jobVacancy->vacancy_status_id =3;
+            $jobVacancy->vacancy_status_id = 3;
             $jobVacancy->save();
             $jobVacancy['status'] = 200;
         }
