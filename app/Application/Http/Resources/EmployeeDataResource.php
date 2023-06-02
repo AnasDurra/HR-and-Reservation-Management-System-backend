@@ -52,7 +52,7 @@ class EmployeeDataResource extends JsonResource
                 'full_name' => $this->full_name,
                 'personal_photo' => $this->personal_photo,
                 'father_name' => $this->father_name,
-                'grand-father_name' => $this->grand_father_name,
+                'grand_father_name' => $this->grand_father_name,
                 'birth_date' => $this->birth_date,
                 'birth_place' => $this->birth_place,
                 'marital_status' => $this->marital_status,
@@ -60,7 +60,7 @@ class EmployeeDataResource extends JsonResource
 
             // Job Data
             'job_data' => [
-                'start-working_date' => $this->start_working_date,
+                'start_working_date' => $this->start_working_date,
                 'is_employed' => $this->is_employed,
             ],
 
