@@ -3,7 +3,6 @@
 
 namespace App\Application\Http\Resources;
 
-
 use App\Domain\Models\Address;
 use App\Domain\Models\DrivingLicence;
 use App\Domain\Models\Passport;

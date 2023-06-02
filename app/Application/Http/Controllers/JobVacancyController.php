@@ -5,6 +5,7 @@ namespace App\Application\Http\Controllers;
 use App\Application\Http\Resources\JobVacancyResource;
 use App\Domain\Services\JobVacancyService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
 
 class JobVacancyController extends Controller
@@ -16,12 +17,10 @@ class JobVacancyController extends Controller
         $this->JobVacancyService = $JobVacancyService;
     }
 
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $jobVacancies = $this->JobVacancyService->getJobVacancyList();
-        return response()->json([
-            'data' => JobVacancyResource::collection($jobVacancies)
-        ], 200);
+        return JobVacancyResource::collection($jobVacancies);
     }
 
     public function show(int $id): JsonResponse
