@@ -615,8 +615,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 if (!isset($jobApplication->empData->passport)) {
                     $jobApplication->empData->passport()->create([
                         "passport_number" => $passportData['passport_number'],
-                        "place_of_issue" => $passportData['place_of_issue'],
-                        "date_of_issue" => $passportData['date_of_issue'],
+                        "place_of_issue" => $passportData['passport_place_of_issue'],
+                        "date_of_issue" => $passportData['passport_date_of_issue'],
                     ]);
                 } else {
                     // check passport number
