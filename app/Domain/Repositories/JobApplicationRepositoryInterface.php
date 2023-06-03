@@ -17,5 +17,5 @@ interface JobApplicationRepositoryInterface
 
     public function updateJobApplication(int $id, array $data): Builder|Model;
 
-    public function deleteJobApplication($id): bool;
+    public function deleteJobApplication($id): Builder|Model;
 }

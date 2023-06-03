@@ -4,28 +4,27 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 
-use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use MongoDB\Driver\BulkWrite;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
 
-    public function getEmployeeList(): array
+    public function getEmployeeList(): LengthAwarePaginator
     {
-        return Employee::all()->toArray();
+        return Employee::query()->paginate(10);
     }
 
     public function getEmployeeListByDepId(int $dep_id): array
     {
-        return Employee::query()->where('cur_dep','=',$dep_id)->get()->toArray();
+        return Employee::query()->where('cur_dep', '=', $dep_id)->get()->toArray();
     }
 
     public function getEmployeeListByTitleId(int $title_id): array
     {
-        return Employee::query()->where('cur_title','=',$title_id)->get()->toArray();
+        return Employee::query()->where('cur_title', '=', $title_id)->get()->toArray();
     }
 
     public function getEmployeeById(int $id): ?Employee
@@ -96,26 +95,26 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 //        return $employee;
 //    }
 
-    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null
+    public function editEmployeePermissions(int $id, array $data): Employee|Builder|null
     {
         $employee = Employee::query()
             ->with(['staffings' => function ($query) {
-                $query->with('jobTitle','permissions')->whereNull('end_date')->latest();
+                $query->with('jobTitle', 'permissions')->whereNull('end_date')->latest();
             }])
             ->find($id);
-        if(!$employee){
+        if (!$employee) {
             return $employee;
         }
-        if(!$employee->staffings->first()){
+        if (!$employee->staffings->first()) {
             $employee['message'] = "employee no longer works in any department";
             $employee['status'] = 400;
             return $employee;
         }
 
 
-        $current_job_title_permissions_ids =null;
-        $new_job_title_permissions_ids =null;
-        $new_additional_permissions_ids =null;
+        $current_job_title_permissions_ids = null;
+        $new_job_title_permissions_ids = null;
+        $new_additional_permissions_ids = null;
 
         $current_job_title_permissions = $employee->staffings->first()->jobTitle->permissions;
         foreach ($current_job_title_permissions as $current_job_title_permission)
@@ -123,10 +122,10 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 
 
         // Update the job title (if its updated)
-        if(array_key_exists('job_title_id', $data)) {
+        if (array_key_exists('job_title_id', $data)) {
             if ($employee->cur_title != $data['job_title_id']) {
 
-                if(!empty($current_job_title_permissions_ids)) {
+                if (!empty($current_job_title_permissions_ids)) {
                     $employee->staffings->first()->permissions()
                         ->wherePivotIn('perm_id', $current_job_title_permissions_ids)
                         ->wherePivot('status', 0)
@@ -147,14 +146,13 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         }
 
         // Update the additional permissions (if they are updated)
-        if(array_key_exists('additional_permissions_ids', $data)) {
+        if (array_key_exists('additional_permissions_ids', $data)) {
 
             if (empty($data['additional_permissions_ids'])) {
                 $employee->staffings->first()->permissions()
                     ->wherePivot('status', 1)
                     ->detach();
-            }
-            else {
+            } else {
                 foreach ($data['additional_permissions_ids'] as $additional_permissions_id) {
                     if ($new_job_title_permissions_ids == null) {
                         if (in_array($additional_permissions_id, $current_job_title_permissions_ids)) {
@@ -171,11 +169,11 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             }
         }
 
-        if(array_key_exists('deleted_permissions_ids', $data)) {
+        if (array_key_exists('deleted_permissions_ids', $data)) {
             foreach ($data['deleted_permissions_ids'] as $deleted_permissions_id) {
                 if (($new_job_title_permissions_ids !== null && in_array($deleted_permissions_id, $new_job_title_permissions_ids)) ||
                     ($current_job_title_permissions_ids !== null && in_array($deleted_permissions_id, $current_job_title_permissions_ids)) &&
-                    !($employee->staffings->first()->permissions()->wherePivot('perm_id',$deleted_permissions_id)->wherePivot('status',0)->exists())) {
+                    !($employee->staffings->first()->permissions()->wherePivot('perm_id', $deleted_permissions_id)->wherePivot('status', 0)->exists())) {
                     $employee->staffings->first()->permissions()->attach($deleted_permissions_id, [
                         'status' => 0,
                         'created_at' => now(),
@@ -185,7 +183,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             }
         }
 
-        if($new_additional_permissions_ids != null) {
+        if ($new_additional_permissions_ids != null) {
             $employee->staffings->first()->permissions()
                 ->wherePivot('status', 1)
                 ->detach();
@@ -209,7 +207,5 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         ]);
 
         return $employee;
-    }
-
     }
 }

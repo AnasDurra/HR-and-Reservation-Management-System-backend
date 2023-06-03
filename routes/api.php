@@ -26,7 +26,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Register the routes for the JobApplicationController
+Route::post("job-applications/update/{id}", [JobApplicationController::class, 'update']);
 Route::apiResource("job-applications", JobApplicationController::class);
+
+// Register the routes for the EmployeeController
+Route::apiResource('employees', EmployeeController::class);
 
 // Register the routes for the DepartmentController
 Route::apiResource('departments', DepartmentController::class);
@@ -38,13 +42,11 @@ Route::apiResource('job-vacancies', JobVacancyController::class);
 Route::apiResource('job-titles', JobTitleController::class);
 
 // Register the routes for the PermissionController
-Route::get('permissions', [PermissionController::class,'index']);
-Route::get('permissions/{id}', [PermissionController::class,'show']);
+Route::get('permissions', [PermissionController::class, 'index']);
+Route::get('permissions/{id}', [PermissionController::class, 'show']);
 
 // Register the routes for the EmployeeController
-Route::post('employees/edit-permissions/{id}', [EmployeeController::class,'editPermissions']);
+Route::post('employees/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
 
 // Register the routes for the ScheduleController
 Route::apiResource('schedules', ScheduleController::class);
-
-

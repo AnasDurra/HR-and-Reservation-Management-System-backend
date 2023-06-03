@@ -42,7 +42,7 @@ class JobApplicationService
         return $this->jobApplicationRepository->updateJobApplication($id, $data);
     }
 
-    public function deleteJobApplication($id): bool
+    public function deleteJobApplication($id): Builder|Model
     {
         return $this->jobApplicationRepository->deleteJobApplication($id);
     }
