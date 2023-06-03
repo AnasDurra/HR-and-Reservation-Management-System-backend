@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Skill[] skills
  * @property Language[] languages
  * @property Reference[] references
+ * @property mixed full_name
  */
 class EmpData extends Model
 {

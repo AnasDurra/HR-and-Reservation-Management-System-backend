@@ -2,7 +2,6 @@
 
 namespace App\Domain\Models;
 
-use App\Models\Relative;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -82,8 +81,20 @@ class Employee extends Model
     }
 
 
-    public function relatives(){
+    public function relatives(): HasMany
+    {
         return $this->hasMany(Relative::class, 'emp_id', 'emp_id');
     }
 
+    /**
+     * Get Current Employment Status Mutator.
+     *
+     * the employment status is the current status of the employee
+     * is the record in the pivot table employee_statuses, where the end_date is null
+     * and the start_date is the max start_date.
+     */
+    public function getCurrentEmploymentStatusAttribute(): Model|BelongsTo|null
+    {
+        return $this->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first();
+    }
 }

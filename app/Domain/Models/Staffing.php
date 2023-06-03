@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property Department current_department
+ * @property JobTitle current_job_title
+ */
 class Staffing extends Model
 {
     use HasFactory;
@@ -34,5 +38,25 @@ class Staffing extends Model
         return $this->belongsToMany(Permission::class, 'staff_permissions', 'staff_id', 'perm_id',
             'staff_id', 'perm_id')
             ->withPivot('status');
+    }
+
+    /**
+     * Get Current Department Mutator.
+     * this function is used to get the current department of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentDepartmentAttribute(): Model|BelongsTo|null
+    {
+        return $this->department()->whereNull('end_date')->first();
+    }
+
+    /**
+     * Get Current Job Title Mutator.
+     * this function is used to get the current job title of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentJobTitleAttribute(): Model|BelongsTo|null
+    {
+        return $this->jobTitle()->whereNull('end_date')->first();
     }
 }

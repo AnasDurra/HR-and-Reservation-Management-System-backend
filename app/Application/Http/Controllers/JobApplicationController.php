@@ -46,6 +46,7 @@ class JobApplicationController extends Controller
         // create job application
         $jobApplication = $this->jobApplicationService->createJobApplication($validated);
 
+
         // return job application in json format
         return new JobApplicationBriefResource($jobApplication);
     }
@@ -58,6 +59,8 @@ class JobApplicationController extends Controller
 
     public function destroy(int $id): JobApplicationBriefResource
     {
+
+        // delete job application
         $employee = $this->jobApplicationService->deleteJobApplication($id);
         return new JobApplicationBriefResource($employee);
     }

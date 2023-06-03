@@ -1,20 +1,23 @@
 <?php
+
 namespace App\Domain\Services;
-use App\Domain\Repositories\EmployeeRepositoryInterface;
+
 use App\Domain\Models\Employee;
+use App\Domain\Repositories\EmployeeRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
 class EmployeeService
 {
     /** @var EmployeeRepositoryInterface */
-    private $employeeRepository;
+    private EmployeeRepositoryInterface $employeeRepository;
 
     public function __construct(EmployeeRepositoryInterface $employeeRepository)
     {
         $this->employeeRepository = $employeeRepository;
     }
 
-    public function getEmployeeList(): array
+    public function getEmployeeList(): LengthAwarePaginator
     {
         return $this->employeeRepository->getEmployeeList();
     }
@@ -49,8 +52,8 @@ class EmployeeService
         return $this->employeeRepository->deleteEmployee($id);
     }
 
-    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null
+    public function editEmployeePermissions(int $id, array $data): Employee|Builder|null
     {
-        return $this->employeeRepository->editEmployeePermissions($id , $data);
+        return $this->employeeRepository->editEmployeePermissions($id, $data);
     }
 }

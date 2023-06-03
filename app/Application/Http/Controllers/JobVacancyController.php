@@ -5,6 +5,7 @@ namespace App\Application\Http\Controllers;
 use App\Application\Http\Resources\JobVacancyResource;
 use App\Domain\Services\JobVacancyService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
 
 class JobVacancyController extends Controller
@@ -16,20 +17,20 @@ class JobVacancyController extends Controller
         $this->JobVacancyService = $JobVacancyService;
     }
 
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $jobVacancies = $this->JobVacancyService->getJobVacancyList();
-        return response()->json([
-            'data' => JobVacancyResource::collection($jobVacancies)
-        ], 200);
+        return JobVacancyResource::collection($jobVacancies);
     }
 
     public function show(int $id): JsonResponse
     {
         $jobVacancy = $this->JobVacancyService->getJobVacancyById($id);
         if (!$jobVacancy) {
-            return response()->json(['message' => 'Job Vacancy not found']
-                , 404);
+            return response()->json(
+                ['message' => 'Job Vacancy not found'],
+                404
+            );
         }
         return response()->json([
             'data' => new JobVacancyResource($jobVacancy)
@@ -41,7 +42,7 @@ class JobVacancyController extends Controller
         $validator = Validator::make(request()->all(), [
             'dep_id' => ['required', 'integer', 'exists:departments,dep_id'],
             'name' => ['required', 'string', 'max:50', 'unique:job_vacancies,name'],
-            'description' => ['required','max:255','string','nullable'],
+            'description' => ['required', 'max:255', 'string', 'nullable'],
             'count' => ['required', 'integer'],
         ]);
         if ($validator->fails()) {
@@ -61,7 +62,7 @@ class JobVacancyController extends Controller
     {
         $validator = Validator::make(request()->all(), [
             'name' => ['string', 'max:50', 'unique:job_vacancies,name,' . $id . ',job_vacancy_id'],
-            'description' => ['string','max:255','nullable'],
+            'description' => ['string', 'max:255', 'nullable'],
             'count' => ['integer'],
             'vacancy_status_id' => ['integer', 'exists:vacancy_statuses,vacancy_status_id'],
         ]);
@@ -73,8 +74,10 @@ class JobVacancyController extends Controller
         }
         $jobVacancy = $this->JobVacancyService->getJobVacancyById($id);
         if (!$jobVacancy) {
-            return response()->json(['message' => 'Job Vacancy not found']
-                , 404);
+            return response()->json(
+                ['message' => 'Job Vacancy not found'],
+                404
+            );
         }
         if ($jobVacancy->vacancyStatus->vacancy_status_id == 2 || $jobVacancy->vacancyStatus->vacancy_status_id == 3) {
             return response()->json([
@@ -92,8 +95,10 @@ class JobVacancyController extends Controller
     {
         $jobVacancy = $this->JobVacancyService->getJobVacancyById($id);
         if (!$jobVacancy) {
-            return response()->json(['message' => 'Job Vacancy not found']
-                , 404);
+            return response()->json(
+                ['message' => 'Job Vacancy not found'],
+                404
+            );
         }
         if ($jobVacancy->vacancyStatus->vacancy_status_id == 2) {
             return response()->json([

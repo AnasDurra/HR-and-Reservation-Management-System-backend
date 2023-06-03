@@ -196,7 +196,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         "specialize" => optional($record)['specialize'],
                         "grade" => optional($record)['grade'],
                     ]);
-
                 }
             }
 
@@ -295,13 +294,13 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             // save employee data
             $employeeData->save();
 
-            // create job application
-            $jobApplication = JobApplication::query()->create([
-                "emp_data_id" => $employeeData->getAttribute("emp_data_id"),
-                "app_status_id" => 1, // set app status id by default to 1 (pending)
+            
+            // create a job application with this employee data
+            $jobApplication = $employeeData->jobApplication()->create([
                 "job_vacancy_id" => $data['job_application']["job_vacancy_id"],
                 "section_man_notes" => optional($data['job_application'])["section_man_notes"],
                 "vice_man_rec" => optional($data['job_application'])["vice_man_rec"],
+                "app_status_id" => 1, // set app status id by default to 1 (pending)
             ]);
 
             DB::commit();
@@ -337,20 +336,26 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 $jobApplicationData = $data['job_application'];
 
                 // check job vacancy id
-                if (optional($jobApplicationData)['job_vacancy_id'] &&
-                    optional($jobApplicationData)['job_vacancy_id'] != $jobApplication->getAttribute("job_vacancy_id")) {
+                if (
+                    optional($jobApplicationData)['job_vacancy_id'] &&
+                    optional($jobApplicationData)['job_vacancy_id'] != $jobApplication->getAttribute("job_vacancy_id")
+                ) {
                     $updated['job_vacancy_id'] = $jobApplicationData['job_vacancy_id'];
                 }
 
                 // check section manager notes
-                if (optional($jobApplicationData)['section_man_notes'] &&
-                    optional($jobApplicationData)['section_man_notes'] != $jobApplication->getAttribute("section_man_notes")) {
+                if (
+                    optional($jobApplicationData)['section_man_notes'] &&
+                    optional($jobApplicationData)['section_man_notes'] != $jobApplication->getAttribute("section_man_notes")
+                ) {
                     $updated['section_man_notes'] = $jobApplicationData['section_man_notes'];
                 }
 
                 // check vice manager recommendation
-                if (optional($jobApplicationData)['vice_man_rec'] &&
-                    optional($jobApplicationData)['vice_man_rec'] != $jobApplication->getAttribute("vice_man_rec")) {
+                if (
+                    optional($jobApplicationData)['vice_man_rec'] &&
+                    optional($jobApplicationData)['vice_man_rec'] != $jobApplication->getAttribute("vice_man_rec")
+                ) {
                     $updated['vice_man_rec'] = $jobApplicationData['vice_man_rec'];
                 }
 
@@ -370,20 +375,26 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 if (isset($jobApplication->empData)) {
 
                     // check first name
-                    if (optional($personalData)['first_name'] &&
-                        optional($personalData)['first_name'] != $jobApplication->empData->getAttribute("first_name")) {
+                    if (
+                        optional($personalData)['first_name'] &&
+                        optional($personalData)['first_name'] != $jobApplication->empData->getAttribute("first_name")
+                    ) {
                         $updated['first_name'] = $personalData['first_name'];
                     }
 
                     // check last name
-                    if (optional($personalData)['last_name'] &&
-                        optional($personalData)['last_name'] != $jobApplication->empData->getAttribute("last_name")) {
+                    if (
+                        optional($personalData)['last_name'] &&
+                        optional($personalData)['last_name'] != $jobApplication->empData->getAttribute("last_name")
+                    ) {
                         $updated['last_name'] = $personalData['last_name'];
                     }
 
                     // check personal photo
-                    if (optional($personalData)['personal_photo'] &&
-                        optional($personalData)['personal_photo'] != $jobApplication->empData->getAttribute("personal_photo")) {
+                    if (
+                        optional($personalData)['personal_photo'] &&
+                        optional($personalData)['personal_photo'] != $jobApplication->empData->getAttribute("personal_photo")
+                    ) {
 
                         // in this case, the user has sent a file instead of a the file url.
                         // so we will delete the old file and store the new one.
@@ -393,32 +404,42 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                     }
 
                     // check father name
-                    if (optional($personalData)['father_name'] &&
-                        optional($personalData)['father_name'] != $jobApplication->empData->getAttribute("father_name")) {
+                    if (
+                        optional($personalData)['father_name'] &&
+                        optional($personalData)['father_name'] != $jobApplication->empData->getAttribute("father_name")
+                    ) {
                         $updated['father_name'] = $personalData['father_name'];
                     }
 
                     // check grand father name
-                    if (optional($personalData)['grand-father_name'] &&
-                        optional($personalData)['grand-father_name'] != $jobApplication->empData->getAttribute("grand_father_name")) {
+                    if (
+                        optional($personalData)['grand-father_name'] &&
+                        optional($personalData)['grand-father_name'] != $jobApplication->empData->getAttribute("grand_father_name")
+                    ) {
                         $updated['grand_father_name'] = $personalData['grand-father_name'];
                     }
 
                     // check birth date
-                    if (optional($personalData)['birth_date'] &&
-                        optional($personalData)['birth_date'] != $jobApplication->empData->getAttribute("birth_date")) {
+                    if (
+                        optional($personalData)['birth_date'] &&
+                        optional($personalData)['birth_date'] != $jobApplication->empData->getAttribute("birth_date")
+                    ) {
                         $updated['birth_date'] = $personalData['birth_date'];
                     }
 
                     // check birth place
-                    if (optional($personalData)['birth_place'] &&
-                        optional($personalData)['birth_place'] != $jobApplication->empData->getAttribute("birth_place")) {
+                    if (
+                        optional($personalData)['birth_place'] &&
+                        optional($personalData)['birth_place'] != $jobApplication->empData->getAttribute("birth_place")
+                    ) {
                         $updated['birth_place'] = $personalData['birth_place'];
                     }
 
                     // check marital status
-                    if (optional($personalData)['marital_status'] &&
-                        optional($personalData)['marital_status'] != $jobApplication->empData->getAttribute("marital_status")) {
+                    if (
+                        optional($personalData)['marital_status'] &&
+                        optional($personalData)['marital_status'] != $jobApplication->empData->getAttribute("marital_status")
+                    ) {
                         $updated['marital_status'] = $personalData['marital_status'];
                     }
 
@@ -427,7 +448,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $jobApplication->empData->update($updated);
                     }
                 }
-
             }
 
             // Employee data (job data)
@@ -440,14 +460,18 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 if (isset($jobApplication->empData)) {
 
                     // check start working date
-                    if (optional($jobData)['start-working_date'] &&
-                        optional($jobData)['start-working_date'] != $jobApplication->empData->getAttribute("start_working_date")) {
+                    if (
+                        optional($jobData)['start-working_date'] &&
+                        optional($jobData)['start-working_date'] != $jobApplication->empData->getAttribute("start_working_date")
+                    ) {
                         $updated['start_working_date'] = $jobData['start-working_date'];
                     }
 
                     // check is employed
-                    if (!is_null(optional($jobData)['is_employed']) &&
-                        optional($jobData)['is_employed'] != $jobApplication->empData->getAttribute("is_employed")) {
+                    if (
+                        !is_null(optional($jobData)['is_employed']) &&
+                        optional($jobData)['is_employed'] != $jobApplication->empData->getAttribute("is_employed")
+                    ) {
                         $updated['is_employed'] = $jobData['is_employed'];
                     }
 
@@ -456,7 +480,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $jobApplication->empData->update($updated);
                     }
                 }
-
             }
 
             // Employee data (personal card data)
@@ -469,20 +492,26 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 if (isset($jobApplication->empData->personalCard)) {
 
                     // check card number
-                    if (optional($personalCardData)['card_number'] &&
-                        $personalCardData['card_number'] != $jobApplication->empData->personalCard->getAttribute("card_number")) {
+                    if (
+                        optional($personalCardData)['card_number'] &&
+                        $personalCardData['card_number'] != $jobApplication->empData->personalCard->getAttribute("card_number")
+                    ) {
                         $updated['card_number'] = $personalCardData['card_number'];
                     }
 
                     // check card place of issue
-                    if (optional($personalCardData)['card_place_of_issue'] &&
-                        optional($personalCardData)['card_place_of_issue'] != $jobApplication->empData->personalCard->getAttribute("place_of_issue")) {
+                    if (
+                        optional($personalCardData)['card_place_of_issue'] &&
+                        optional($personalCardData)['card_place_of_issue'] != $jobApplication->empData->personalCard->getAttribute("place_of_issue")
+                    ) {
                         $updated['place_of_issue'] = $personalCardData['card_place_of_issue'];
                     }
 
                     // check card date of issue
-                    if (optional($personalCardData)['card_date_of_issue'] &&
-                        optional($personalCardData)['card_date_of_issue'] != $jobApplication->empData->personalCard->getAttribute("date_of_issue")) {
+                    if (
+                        optional($personalCardData)['card_date_of_issue'] &&
+                        optional($personalCardData)['card_date_of_issue'] != $jobApplication->empData->personalCard->getAttribute("date_of_issue")
+                    ) {
                         $updated['date_of_issue'] = $personalCardData['card_date_of_issue'];
                     }
 
@@ -491,7 +520,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $jobApplication->empData->personalCard->update($updated);
                     }
                 }
-
             }
 
             // Employee data (address data)
@@ -504,50 +532,66 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 if (isset($jobApplication->empData)) {
 
                     // check state
-                    if (optional($addressData)['state'] &&
-                        optional($addressData)['state'] != $jobApplication->empData->address->getAttribute("state")) {
+                    if (
+                        optional($addressData)['state'] &&
+                        optional($addressData)['state'] != $jobApplication->empData->address->getAttribute("state")
+                    ) {
                         $updated['state'] = $addressData['state'];
                     }
 
                     // check city
-                    if (optional($addressData)['city'] &&
-                        optional($addressData)['city'] != $jobApplication->empData->address->getAttribute("city")) {
+                    if (
+                        optional($addressData)['city'] &&
+                        optional($addressData)['city'] != $jobApplication->empData->address->getAttribute("city")
+                    ) {
                         $updated['city'] = $addressData['city'];
                     }
 
                     // check street
-                    if (optional($addressData)['street'] &&
-                        optional($addressData)['street'] != $jobApplication->empData->address->getAttribute("street")) {
+                    if (
+                        optional($addressData)['street'] &&
+                        optional($addressData)['street'] != $jobApplication->empData->address->getAttribute("street")
+                    ) {
                         $updated['street'] = $addressData['street'];
                     }
 
                     // check postal code
-                    if (optional($addressData)['postal_code'] &&
-                        optional($addressData)['postal_code'] != $jobApplication->empData->address->getAttribute("postal_code")) {
+                    if (
+                        optional($addressData)['postal_code'] &&
+                        optional($addressData)['postal_code'] != $jobApplication->empData->address->getAttribute("postal_code")
+                    ) {
                         $updated['postal_code'] = $addressData['postal_code'];
                     }
 
                     // check email
-                    if (optional($addressData)['email'] &&
-                        optional($addressData)['email'] != $jobApplication->empData->address->getAttribute("email")) {
+                    if (
+                        optional($addressData)['email'] &&
+                        optional($addressData)['email'] != $jobApplication->empData->address->getAttribute("email")
+                    ) {
                         $updated['email'] = $addressData['email'];
                     }
 
                     // check mobile no
-                    if (optional($addressData)['mobile_no'] &&
-                        optional($addressData)['mobile_no'] != $jobApplication->empData->address->getAttribute("mobile_no")) {
+                    if (
+                        optional($addressData)['mobile_no'] &&
+                        optional($addressData)['mobile_no'] != $jobApplication->empData->address->getAttribute("mobile_no")
+                    ) {
                         $updated['mobile_no'] = $addressData['mobile_no'];
                     }
 
                     // check home phone no
-                    if (optional($addressData)['home_phone_no'] &&
-                        optional($addressData)['home_phone_no'] != $jobApplication->empData->address->getAttribute("home_phone_no")) {
+                    if (
+                        optional($addressData)['home_phone_no'] &&
+                        optional($addressData)['home_phone_no'] != $jobApplication->empData->address->getAttribute("home_phone_no")
+                    ) {
                         $updated['home_phone_no'] = $addressData['home_phone_no'];
                     }
 
                     // check work phone no
-                    if (optional($addressData)['work_phone_no'] &&
-                        optional($addressData)['work_phone_no'] != $jobApplication->empData->address->getAttribute("work_phone_no")) {
+                    if (
+                        optional($addressData)['work_phone_no'] &&
+                        optional($addressData)['work_phone_no'] != $jobApplication->empData->address->getAttribute("work_phone_no")
+                    ) {
                         $updated['work_phone_no'] = $addressData['work_phone_no'];
                     }
 
@@ -576,20 +620,26 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                     ]);
                 } else {
                     // check passport number
-                    if (optional($passportData)['passport_number'] &&
-                        optional($passportData)['passport_number'] != $jobApplication->empData->passport->getAttribute("passport_number")) {
+                    if (
+                        optional($passportData)['passport_number'] &&
+                        optional($passportData)['passport_number'] != $jobApplication->empData->passport->getAttribute("passport_number")
+                    ) {
                         $updated['passport_number'] = $passportData['passport_number'];
                     }
 
                     // check passport place of issue
-                    if (optional($passportData)['passport_place_of_issue'] &&
-                        optional($passportData)['passport_place_of_issue'] != $jobApplication->empData->passport->getAttribute("place_of_issue")) {
+                    if (
+                        optional($passportData)['passport_place_of_issue'] &&
+                        optional($passportData)['passport_place_of_issue'] != $jobApplication->empData->passport->getAttribute("place_of_issue")
+                    ) {
                         $updated['place_of_issue'] = $passportData['passport_place_of_issue'];
                     }
 
                     // check passport date of issue
-                    if (optional($passportData)['passport_date_of_issue'] &&
-                        optional($passportData)['passport_date_of_issue'] != $jobApplication->empData->passport->getAttribute("date_of_issue")) {
+                    if (
+                        optional($passportData)['passport_date_of_issue'] &&
+                        optional($passportData)['passport_date_of_issue'] != $jobApplication->empData->passport->getAttribute("date_of_issue")
+                    ) {
                         $updated['date_of_issue'] = $passportData['passport_date_of_issue'];
                     }
 
@@ -598,7 +648,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $jobApplication->empData->passport->update($updated);
                     }
                 }
-
             }
 
             // Employee data (driving licence data)
@@ -626,41 +675,52 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                     // Set the foreign key value in the emp_data table
                     $jobApplication->empData->driving_licence_id = $drivingLicenceObj->driving_licence_id;
                     $jobApplication->empData->save();
-
                 } else {
                     // check driving licence category
-                    if (optional($drivingLicenceData)['category'] &&
-                        optional($drivingLicenceData)['category'] != $jobApplication->empData->drivingLicence->getAttribute("category")) {
+                    if (
+                        optional($drivingLicenceData)['category'] &&
+                        optional($drivingLicenceData)['category'] != $jobApplication->empData->drivingLicence->getAttribute("category")
+                    ) {
                         $updated['category'] = $drivingLicenceData['category'];
                     }
 
                     // check driving licence number
-                    if (optional($drivingLicenceData)['number'] &&
-                        optional($drivingLicenceData)['number'] != $jobApplication->empData->drivingLicence->getAttribute("number")) {
+                    if (
+                        optional($drivingLicenceData)['number'] &&
+                        optional($drivingLicenceData)['number'] != $jobApplication->empData->drivingLicence->getAttribute("number")
+                    ) {
                         $updated['number'] = $drivingLicenceData['number'];
                     }
 
                     // check driving licence date of issue
-                    if (optional($drivingLicenceData)['date_of_issue'] &&
-                        optional($drivingLicenceData)['date_of_issue'] != $jobApplication->empData->drivingLicence->getAttribute("date_of_issue")) {
+                    if (
+                        optional($drivingLicenceData)['date_of_issue'] &&
+                        optional($drivingLicenceData)['date_of_issue'] != $jobApplication->empData->drivingLicence->getAttribute("date_of_issue")
+                    ) {
                         $updated['date_of_issue'] = $drivingLicenceData['date_of_issue'];
                     }
 
                     // check driving licence expiry date
-                    if (optional($drivingLicenceData)['expiry_date'] &&
-                        optional($drivingLicenceData)['expiry_date'] != $jobApplication->empData->drivingLicence->getAttribute("expiry_date")) {
+                    if (
+                        optional($drivingLicenceData)['expiry_date'] &&
+                        optional($drivingLicenceData)['expiry_date'] != $jobApplication->empData->drivingLicence->getAttribute("expiry_date")
+                    ) {
                         $updated['expiry_date'] = $drivingLicenceData['expiry_date'];
                     }
 
                     // check driving licence place of issue
-                    if (optional($drivingLicenceData)['place_of_issue'] &&
-                        optional($drivingLicenceData)['place_of_issue'] != $jobApplication->empData->drivingLicence->getAttribute("place_of_issue")) {
+                    if (
+                        optional($drivingLicenceData)['place_of_issue'] &&
+                        optional($drivingLicenceData)['place_of_issue'] != $jobApplication->empData->drivingLicence->getAttribute("place_of_issue")
+                    ) {
                         $updated['place_of_issue'] = $drivingLicenceData['place_of_issue'];
                     }
 
                     // check driving licence blood group
-                    if (optional($drivingLicenceData)['blood_group'] &&
-                        optional($drivingLicenceData)['blood_group'] != $jobApplication->empData->drivingLicence->getAttribute("blood_group")) {
+                    if (
+                        optional($drivingLicenceData)['blood_group'] &&
+                        optional($drivingLicenceData)['blood_group'] != $jobApplication->empData->drivingLicence->getAttribute("blood_group")
+                    ) {
                         $updated['blood_group'] = $drivingLicenceData['blood_group'];
                     }
 
@@ -691,29 +751,36 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             $dependantObj = $jobApplication->empData->dependents()->find($dependant['dependent_id']);
 
                             // check dependant name
-                            if (optional($dependant)['name'] &&
-                                optional($dependant)['name'] != $dependantObj->getAttribute("name")) {
+                            if (
+                                optional($dependant)['name'] &&
+                                optional($dependant)['name'] != $dependantObj->getAttribute("name")
+                            ) {
                                 $dependantObj->update(['name' => $dependant['name']]);
                             }
 
                             // check dependant age
-                            if (optional($dependant)['age'] &&
-                                optional($dependant)['age'] != $dependantObj->getAttribute("age")) {
+                            if (
+                                optional($dependant)['age'] &&
+                                optional($dependant)['age'] != $dependantObj->getAttribute("age")
+                            ) {
                                 $dependantObj->update(['age' => $dependant['age']]);
                             }
 
                             // check dependant relationship
-                            if (optional($dependant)['relationship'] &&
-                                optional($dependant)['relationship'] != $dependantObj->getAttribute("relation")) {
+                            if (
+                                optional($dependant)['relationship'] &&
+                                optional($dependant)['relationship'] != $dependantObj->getAttribute("relation")
+                            ) {
                                 $dependantObj->update(['relation' => $dependant['relationship']]);
                             }
 
                             // check dependant address
-                            if (optional($dependant)['address'] &&
-                                optional($dependant)['address'] != $dependantObj->getAttribute("address")) {
+                            if (
+                                optional($dependant)['address'] &&
+                                optional($dependant)['address'] != $dependantObj->getAttribute("address")
+                            ) {
                                 $dependantObj->update(['address' => $dependant['address']]);
                             }
-
                         } else {
                             // create dependant
                             $jobApplication->empData->dependants()->create($dependant);
@@ -742,62 +809,82 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             $previousEmploymentRecordObj = $jobApplication->empData->previousEmploymentRecords()->find($previousEmploymentRecord['prev_emp_record_id']);
 
                             // check previous employment record employer name
-                            if (optional($previousEmploymentRecord)['employer_name'] &&
-                                optional($previousEmploymentRecord)['employer_name'] != $previousEmploymentRecordObj->getAttribute("employer_name")) {
+                            if (
+                                optional($previousEmploymentRecord)['employer_name'] &&
+                                optional($previousEmploymentRecord)['employer_name'] != $previousEmploymentRecordObj->getAttribute("employer_name")
+                            ) {
                                 $previousEmploymentRecordObj->update(['employer_name' => $previousEmploymentRecord['employer_name']]);
                             }
 
                             // check previous employment record address
-                            if (optional($previousEmploymentRecord)['address'] &&
-                                optional($previousEmploymentRecord)['address'] != $previousEmploymentRecordObj->getAttribute("address")) {
+                            if (
+                                optional($previousEmploymentRecord)['address'] &&
+                                optional($previousEmploymentRecord)['address'] != $previousEmploymentRecordObj->getAttribute("address")
+                            ) {
                                 $previousEmploymentRecordObj->update(['address' => $previousEmploymentRecord['address']]);
                             }
 
                             // check previous employment record telephone
-                            if (optional($previousEmploymentRecord)['telephone'] &&
-                                optional($previousEmploymentRecord)['telephone'] != $previousEmploymentRecordObj->getAttribute("telephone")) {
+                            if (
+                                optional($previousEmploymentRecord)['telephone'] &&
+                                optional($previousEmploymentRecord)['telephone'] != $previousEmploymentRecordObj->getAttribute("telephone")
+                            ) {
                                 $previousEmploymentRecordObj->update(['telephone' => $previousEmploymentRecord['telephone']]);
                             }
 
                             // check previous employment record job title
-                            if (optional($previousEmploymentRecord)['job_title'] &&
-                                optional($previousEmploymentRecord)['job_title'] != $previousEmploymentRecordObj->getAttribute("job_title")) {
+                            if (
+                                optional($previousEmploymentRecord)['job_title'] &&
+                                optional($previousEmploymentRecord)['job_title'] != $previousEmploymentRecordObj->getAttribute("job_title")
+                            ) {
                                 $previousEmploymentRecordObj->update(['job_title' => $previousEmploymentRecord['job_title']]);
                             }
 
                             // check previous employment record job description
-                            if (optional($previousEmploymentRecord)['job_description'] &&
-                                optional($previousEmploymentRecord)['job_description'] != $previousEmploymentRecordObj->getAttribute("job_description")) {
+                            if (
+                                optional($previousEmploymentRecord)['job_description'] &&
+                                optional($previousEmploymentRecord)['job_description'] != $previousEmploymentRecordObj->getAttribute("job_description")
+                            ) {
                                 $previousEmploymentRecordObj->update(['job_description' => $previousEmploymentRecord['job_description']]);
                             }
 
                             // check previous employment record start date
-                            if (optional($previousEmploymentRecord)['start_date'] &&
-                                optional($previousEmploymentRecord)['start_date'] != $previousEmploymentRecordObj->getAttribute("start_date")) {
+                            if (
+                                optional($previousEmploymentRecord)['start_date'] &&
+                                optional($previousEmploymentRecord)['start_date'] != $previousEmploymentRecordObj->getAttribute("start_date")
+                            ) {
                                 $previousEmploymentRecordObj->update(['start_date' => $previousEmploymentRecord['start_date']]);
                             }
 
                             // check previous employment record end date
-                            if (optional($previousEmploymentRecord)['end_date'] &&
-                                optional($previousEmploymentRecord)['end_date'] != $previousEmploymentRecordObj->getAttribute("end_date")) {
+                            if (
+                                optional($previousEmploymentRecord)['end_date'] &&
+                                optional($previousEmploymentRecord)['end_date'] != $previousEmploymentRecordObj->getAttribute("end_date")
+                            ) {
                                 $previousEmploymentRecordObj->update(['end_date' => $previousEmploymentRecord['end_date']]);
                             }
 
                             // check previous employment record salary
-                            if (optional($previousEmploymentRecord)['salary'] &&
-                                optional($previousEmploymentRecord)['salary'] != $previousEmploymentRecordObj->getAttribute("salary")) {
+                            if (
+                                optional($previousEmploymentRecord)['salary'] &&
+                                optional($previousEmploymentRecord)['salary'] != $previousEmploymentRecordObj->getAttribute("salary")
+                            ) {
                                 $previousEmploymentRecordObj->update(['salary' => $previousEmploymentRecord['salary']]);
                             }
 
                             // check previous employment record allowance
-                            if (optional($previousEmploymentRecord)['allowance'] &&
-                                optional($previousEmploymentRecord)['allowance'] != $previousEmploymentRecordObj->getAttribute("allowance")) {
+                            if (
+                                optional($previousEmploymentRecord)['allowance'] &&
+                                optional($previousEmploymentRecord)['allowance'] != $previousEmploymentRecordObj->getAttribute("allowance")
+                            ) {
                                 $previousEmploymentRecordObj->update(['allowance' => $previousEmploymentRecord['allowance']]);
                             }
 
                             // check previous employment record quit reason
-                            if (optional($previousEmploymentRecord)['quit_reason'] &&
-                                optional($previousEmploymentRecord)['quit_reason'] != $previousEmploymentRecordObj->getAttribute("quit_reason")) {
+                            if (
+                                optional($previousEmploymentRecord)['quit_reason'] &&
+                                optional($previousEmploymentRecord)['quit_reason'] != $previousEmploymentRecordObj->getAttribute("quit_reason")
+                            ) {
                                 $previousEmploymentRecordObj->update(['quit_reason' => $previousEmploymentRecord['quit_reason']]);
                             }
                         }
@@ -825,8 +912,10 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             $convictionObj = $jobApplication->empData->convictions()->find($conviction['conviction_id']);
 
                             // check conviction description
-                            if (optional($conviction)['description'] &&
-                                optional($conviction)['description'] != $convictionObj->getAttribute("description")) {
+                            if (
+                                optional($conviction)['description'] &&
+                                optional($conviction)['description'] != $convictionObj->getAttribute("description")
+                            ) {
                                 $convictionObj->update(['description' => $conviction['description']]);
                             }
                         } else {
@@ -892,14 +981,12 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             if (optional($education)['grade']) {
                                 $educationLevel->pivot->update(['grade' => $education['grade']]);
                             }
-
                         } else {
                             // create a new record in the pivot table
                             $jobApplication->empData->educationLevels()->attach($educationLevelId, $education);
                         }
                     }
                 }
-
             }
 
             // Employee data (training courses data)
@@ -922,41 +1009,52 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             $trainingCourseObj = $jobApplication->empData->trainingCourses()->find($trainingCourse['training_course_id']);
 
                             // check training course name
-                            if (optional($trainingCourse)['course_name'] &&
-                                optional($trainingCourse)['course_name'] != $trainingCourseObj->getAttribute("name")) {
+                            if (
+                                optional($trainingCourse)['course_name'] &&
+                                optional($trainingCourse)['course_name'] != $trainingCourseObj->getAttribute("name")
+                            ) {
                                 $trainingCourseObj->update(['name' => $trainingCourse['course_name']]);
                             }
 
                             // check training course institute name
-                            if (optional($trainingCourse)['institute_name'] &&
-                                optional($trainingCourse)['institute_name'] != $trainingCourseObj->getAttribute("institute_name")) {
+                            if (
+                                optional($trainingCourse)['institute_name'] &&
+                                optional($trainingCourse)['institute_name'] != $trainingCourseObj->getAttribute("institute_name")
+                            ) {
                                 $trainingCourseObj->update(['institute_name' => $trainingCourse['institute_name']]);
                             }
 
                             // check training course city
-                            if (optional($trainingCourse)['city'] &&
-                                optional($trainingCourse)['city'] != $trainingCourseObj->getAttribute("city")) {
+                            if (
+                                optional($trainingCourse)['city'] &&
+                                optional($trainingCourse)['city'] != $trainingCourseObj->getAttribute("city")
+                            ) {
                                 $trainingCourseObj->update(['city' => $trainingCourse['city']]);
                             }
 
                             // check training course start date
-                            if (optional($trainingCourse)['start_date'] &&
-                                optional($trainingCourse)['start_date'] != $trainingCourseObj->getAttribute("start_date")) {
+                            if (
+                                optional($trainingCourse)['start_date'] &&
+                                optional($trainingCourse)['start_date'] != $trainingCourseObj->getAttribute("start_date")
+                            ) {
                                 $trainingCourseObj->update(['start_date' => $trainingCourse['start_date']]);
                             }
 
                             // check training course end date
-                            if (optional($trainingCourse)['end_date'] &&
-                                optional($trainingCourse)['end_date'] != $trainingCourseObj->getAttribute("end_date")) {
+                            if (
+                                optional($trainingCourse)['end_date'] &&
+                                optional($trainingCourse)['end_date'] != $trainingCourseObj->getAttribute("end_date")
+                            ) {
                                 $trainingCourseObj->update(['end_date' => $trainingCourse['end_date']]);
                             }
 
                             // check training course specialize
-                            if (optional($trainingCourse)['specialize'] &&
-                                optional($trainingCourse)['specialize'] != $trainingCourseObj->getAttribute("specialize")) {
+                            if (
+                                optional($trainingCourse)['specialize'] &&
+                                optional($trainingCourse)['specialize'] != $trainingCourseObj->getAttribute("specialize")
+                            ) {
                                 $trainingCourseObj->update(['specialize' => $trainingCourse['specialize']]);
                             }
-
                         } else {
                             // create training course
                             $jobApplication->empData->trainingCourses()->create($trainingCourse);
@@ -1047,7 +1145,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             if (optional($language)['speaking']) {
                                 $languageObj->pivot->update(['speaking_level' => $language['speaking']]);
                             }
-
                         } else {
                             // create a new record in the pivot table
                             $jobApplication->empData->languages()->attach($lang->language_id, [
@@ -1095,7 +1192,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             if (optional($computerSkill)['level']) {
                                 $skillObj->pivot->update(['level' => $computerSkill['level']]);
                             }
-
                         } else {
                             // create a new record in the pivot table
                             $jobApplication->empData->computerSkills()->attach($skillRecord->computer_skill_id, [
@@ -1158,7 +1254,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                                     $referenceObj->update(['address' => $reference['address']]);
                                 }
                             }
-
                         } else {
                             // create a new reference
                             $jobApplication->empData->references()->create([
@@ -1204,10 +1299,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
                                     // update the file url
                                     $certificateObj->update(['file_url' => $filePath]);
-
                                 }
                             }
-
                         } else {
 
                             // store the file
@@ -1218,7 +1311,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                                 'name' => $certificate['certificate_name'],
                                 'file_url' => $filePath,
                             ]);
-
                         }
                     }
                 }
@@ -1306,10 +1398,25 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
         }
     }
 
-    public function deleteJobApplication($id): bool
+    public function deleteJobApplication($id): Builder|Model
     {
-        // TODO: Implement deleteJobApplication() method.
+        $jobApplication = JobApplication::findOrFail($id);
+
+        // extract the file urls from the certificates
+        $fileUrls = $jobApplication->empData->certificates()->pluck('file_url')->toArray();
+
+        // get the personal photo url
+        $personalPhotoUrl = $jobApplication->empData->personal_photo;
+
+        // create the complete array of file urls
+        $fileUrls[] = $personalPhotoUrl;
+
+        // delete the files from the storage for the given file urls
+        StorageUtilities::deleteFiles($fileUrls);
+
+        // delete the job application
+        $jobApplication->delete();
+
+        return $jobApplication;
     }
-
-
 }

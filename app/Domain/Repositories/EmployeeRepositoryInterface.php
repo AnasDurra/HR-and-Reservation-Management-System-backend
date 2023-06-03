@@ -3,11 +3,13 @@
 namespace App\Domain\Repositories;
 
 use App\Domain\Models\Employee;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 interface EmployeeRepositoryInterface
 {
-    public function getEmployeeList(): array;
+    public function getEmployeeList(): LengthAwarePaginator;
 
     public function getEmployeeListByDepId(int $dep_id): array;
 
@@ -19,7 +21,7 @@ interface EmployeeRepositoryInterface
 
     public function updateEmployee(int $id, array $data): bool;
 
-    public function deleteEmployee($id): bool;
+    public function deleteEmployee($id): Builder|Model;
 
-    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null;
+    public function editEmployeePermissions(int $id, array $data): Employee|Builder|null;
 }
