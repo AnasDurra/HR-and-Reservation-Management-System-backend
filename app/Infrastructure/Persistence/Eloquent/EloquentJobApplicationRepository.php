@@ -461,10 +461,10 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
                     // check start working date
                     if (
-                        optional($jobData)['start-working_date'] &&
-                        optional($jobData)['start-working_date'] != $jobApplication->empData->getAttribute("start_working_date")
+                        optional($jobData)['start_working_date'] &&
+                        optional($jobData)['start_working_date'] != $jobApplication->empData->getAttribute("start_working_date")
                     ) {
-                        $updated['start_working_date'] = $jobData['start-working_date'];
+                        $updated['start_working_date'] = $jobData['start_working_date'];
                     }
 
                     // check is employed
