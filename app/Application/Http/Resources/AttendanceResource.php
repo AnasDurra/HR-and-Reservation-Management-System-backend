@@ -9,7 +9,7 @@ class AttendanceResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        if(!$this["data"]){
+        if(!isset($this->resource['data'])){
             return [
                 'attendance_id' => $this["attendance_id"],
                 'emp_id' => $this["emp_id"],

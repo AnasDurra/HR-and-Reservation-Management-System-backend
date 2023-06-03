@@ -2,9 +2,12 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Models\Attendance;
 use App\Domain\Repositories\FingerDeviceRepositoryInterface;
 use App\Domain\Models\FingerDevice;
+use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentLeaveRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Rats\Zkteco\Lib\ZKTeco;
 
@@ -86,4 +89,63 @@ class FingerDeviceService
 
         return true;
     }
+
+    public function storeAttendanceFromFingerDevices(): bool
+    {
+        $fingerDeviceList = $this->getFingerDeviceList();
+        foreach ($fingerDeviceList as $fingerDevice) {
+            $device = new ZKTeco($fingerDevice->ip, 4370);
+            $device->connect();
+
+            // Get attendance log from the device
+            $data = $device->getAttendance();
+
+            // Disable the device so that no one can check in OR check out while storing the attendances log
+            $device->disableDevice(); // TODO Check this
+
+            $employeeService = new EmployeeService(new EloquentEmployeeRepository());
+            $attendanceService = new AttendanceService(new EloquentAttendanceRepository());
+            $leaveService = new LeaveService(new EloquentLeaveRepository());
+
+            foreach ($data as $key => $value) {
+
+                if( $value['type']==0){
+                    if ( $employeeService->getEmployeeById($value["id"]) != null ) {
+
+                            $att["uid"] = $value['uid'];
+                            $att["emp_id"] = $value['id'];
+                            $att["state"] = $value['state'];
+                            $att["attendance_time"] = date('H:i:s', strtotime($value['timestamp']));
+                            $att["attendance_date"] = date('Y-m-d', strtotime($value['timestamp']));
+                            $att["type"] = $value['type'];
+
+                            $attendanceService->createAttendance($att);
+                    }
+                }
+
+                else{
+                    if ( $employeeService->getEmployeeById($value["id"]) != null ) {
+
+                            $lve["uid"] = $value['uid'];
+                            $lve["emp_id"] = $value['id'];
+                            $lve["state"] = $value['state'];
+                            $lve["leave_time"] = date('H:i:s', strtotime($value['timestamp']));
+                            $lve["leave_date"] = date('Y-m-d', strtotime($value['timestamp']));
+                            $lve["type"] = $value['type'];
+
+                            $leaveService->createLeave($lve);
+                    }
+                }
+            }
+
+            // Enable the device
+            $device->enableDevice();
+
+            // Clear attendance log from the device
+            $device->clearAttendance();   // TODO Check this
+        }
+
+        return true;
+    }
+
 }
