@@ -294,7 +294,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             // save employee data
             $employeeData->save();
 
-            
+
             // create a job application with this employee data
             $jobApplication = $employeeData->jobApplication()->create([
                 "job_vacancy_id" => $data['job_application']["job_vacancy_id"],
@@ -887,6 +887,9 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             ) {
                                 $previousEmploymentRecordObj->update(['quit_reason' => $previousEmploymentRecord['quit_reason']]);
                             }
+                        } else {
+                            // create previous employment record
+                            $jobApplication->empData->previousEmploymentRecords()->create($previousEmploymentRecord);
                         }
                     }
                 }
