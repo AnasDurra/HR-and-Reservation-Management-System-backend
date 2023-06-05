@@ -12,6 +12,7 @@ use App\Domain\Repositories\JobVacancyRepositoryInterface;
 use App\Domain\Repositories\LeaveRepositoryInterface;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\ScheduleRepositoryInterface;
+use App\Domain\Repositories\WorkingDayRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
@@ -22,6 +23,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentJobVacancyRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentLeaveRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentPermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentScheduleRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentWorkingDayRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FingerDeviceRepositoryInterface::class, EloquentFingerDeviceRepository::class);
         $this->app->bind(AttendanceRepositoryInterface::class, EloquentAttendanceRepository::class);
         $this->app->bind(LeaveRepositoryInterface::class, EloquentLeaveRepository::class);
+        $this->app->bind(WorkingDayRepositoryInterface::class, EloquentWorkingDayRepository::class);
     }
 
 
