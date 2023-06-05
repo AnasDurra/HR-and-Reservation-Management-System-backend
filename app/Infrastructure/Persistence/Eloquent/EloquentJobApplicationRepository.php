@@ -783,7 +783,12 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             }
                         } else {
                             // create dependant
-                            $jobApplication->empData->dependents()->create($dependant);
+                            $jobApplication->empData->dependents()->create([
+                                "name" => $dependant['name'],
+                                "age" => $dependant['age'],
+                                "relation" => $dependant['relationship'],
+                                "address" => $dependant['address'],
+                            ]);
                         }
                     }
                 }
@@ -1060,7 +1065,14 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             }
                         } else {
                             // create training course
-                            $jobApplication->empData->trainingCourses()->create($trainingCourse);
+                            $jobApplication->empData->trainingCourses()->create([
+                                'name' => $trainingCourse['course_name'],
+                                'institute_name' => $trainingCourse['institute_name'],
+                                'city' => $trainingCourse['city'],
+                                'start_date' => $trainingCourse['start_date'],
+                                'end_date' => $trainingCourse['end_date'],
+                                'specialize' => $trainingCourse['specialize'],
+                            ]);
                         }
                     }
                 }
