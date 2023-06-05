@@ -50,21 +50,21 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
     public function deleteJobVacancy($id): JobVacancy|Builder
     {
         $jobVacancy =JobVacancy::with('jobApplications')->find($id);
-        if($jobVacancy->jobApplications->isEmpty()){
+        if($jobVacancy['jobApplications']->isEmpty()){
             $jobVacancy::find($id)->delete();
         }
         else{
-            foreach ($jobVacancy->jobApplications as $jobApplication) {
+            foreach ($jobVacancy['jobApplications'] as $jobApplication) {
                 if($jobApplication->applicationStatus->app_status_id==1) {
                     $jobVacancy['status'] = 400;
                     return $jobVacancy;
                 }
             }
-            foreach ($jobVacancy->jobApplications as $jobApplication) {
+            foreach ($jobVacancy['jobApplications'] as $jobApplication) {
                 $jobApplication->app_status_id=3;
                 $jobApplication->save();
             }
-            $jobVacancy->vacancy_status_id =3;
+            $jobVacancy['vacancy_status_id'] =3;
             $jobVacancy->save();
             $jobVacancy['status'] = 200;
         }

@@ -11,6 +11,7 @@ use App\Domain\Models\Language;
 use App\Domain\Models\Skill;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
 use App\Domain\Models\Employee;
+use App\Exceptions\EntryNotFoundException;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -308,5 +309,45 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
         // return image url
         return asset('storage/certificates/' . $fileName);
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function acceptJobApplicationRequest($id): JobApplication|Model|Builder
+    {
+        try {
+            $jobApplicationRequest = JobApplication::query()
+                ->whereIn("app_status_id", [1, 4])
+                ->findOrFail($id);
+
+            //update app_status_id to be 2 "accepted"
+            $jobApplicationRequest->update([
+                "app_status_id" => 2
+            ]);
+            return $jobApplicationRequest;
+        } catch (Exception $exception) {
+            throw new EntryNotFoundException("Job Application Request Not Found OR It's Already Accepted OR Rejected");
+        }
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function rejectJobApplicationRequest($id): Model|Builder
+    {
+        try {
+            $jobApplicationRequest = JobApplication::query()
+                ->whereIn("app_status_id", [1, 4])
+                ->findOrFail($id);
+
+            //update app_status_id to be 3 "rejected"
+            $jobApplicationRequest->update([
+                "app_status_id" => 3
+            ]);
+            return $jobApplicationRequest;
+        } catch (Exception $exception) {
+            throw new EntryNotFoundException("Job Application Request Not Found OR It's Already Accepted OR Rejected");
+        }
     }
 }
