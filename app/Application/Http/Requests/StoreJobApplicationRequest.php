@@ -70,12 +70,12 @@ class StoreJobApplicationRequest extends FormRequest
             'driving_licence.place_of_issue' => ['required_with:driving_licence', 'string', 'max:80'],
             "driving_licence.blood_group" => ['required_with:driving_licence', 'string', 'max:25'],
 
-            // dependants
-            "dependants" => ['sometimes', 'nullable', 'array'],
-            "dependants.*.name" => ['required', 'string', 'max:255'],
-            "dependants.*.age" => ['required', 'integer'],
-            "dependants.*.relationship" => ['required', 'string', 'max:255'],
-            "dependants.*.address" => ['required', 'string', 'max:255'],
+            // dependents
+            "dependents" => ['sometimes', 'nullable', 'array'],
+            "dependents.*.name" => ['required', 'string', 'max:255'],
+            "dependents.*.age" => ['required', 'integer'],
+            "dependents.*.relationship" => ['required', 'string', 'max:255'],
+            "dependents.*.address" => ['required', 'string', 'max:255'],
 
 
             // previous employment record

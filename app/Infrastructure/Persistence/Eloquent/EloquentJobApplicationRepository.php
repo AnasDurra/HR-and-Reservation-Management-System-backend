@@ -146,8 +146,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             }
 
             // dependents data (if exists)
-            if (isset($data['dependants'])) {
-                foreach ($data['dependants'] as $dependant) {
+            if (isset($data['dependents'])) {
+                foreach ($data['dependents'] as $dependant) {
                     $employeeData->dependents()->create([
                         "name" => $dependant['name'],
                         "age" => $dependant['age'],
@@ -731,19 +731,19 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 }
             }
 
-            // Employee data (dependants data)
-            if (optional($data)['dependants']) {
+            // Employee data (dependents data)
+            if (optional($data)['dependents']) {
 
-                $dependantsData = $data['dependants'];
+                $dependentsData = $data['dependents'];
 
                 /*
-                 * First we will check if the length of the dependants array is greater than 0,
+                 * First we will check if the length of the dependents array is greater than 0,
                  * if so, we will go through each dependant and check if it has an id,
                  * if so, we will update only the fields that are passed,
                  * otherwise we will create a new one. with the passed data.
                  */
-                if (count($dependantsData) > 0) {
-                    foreach ($dependantsData as $dependant) {
+                if (count($dependentsData) > 0) {
+                    foreach ($dependentsData as $dependant) {
                         // update dependant
                         if (isset(optional($dependant)['dependent_id'])) {
 
@@ -783,7 +783,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                             }
                         } else {
                             // create dependant
-                            $jobApplication->empData->dependants()->create($dependant);
+                            $jobApplication->empData->dependents()->create($dependant);
                         }
                     }
                 }
@@ -1320,8 +1320,8 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             // delete the records that have ids that are mentioned in the equivalent array
 
             // dependents
-            if (optional($data)['deleted_dependants']) {
-                $jobApplication->empData->dependents()->whereIn('dependent_id', $data['deleted_dependants'])->delete();
+            if (optional($data)['deleted_dependents']) {
+                $jobApplication->empData->dependents()->whereIn('dependent_id', $data['deleted_dependents'])->delete();
             }
 
             // previous employment records

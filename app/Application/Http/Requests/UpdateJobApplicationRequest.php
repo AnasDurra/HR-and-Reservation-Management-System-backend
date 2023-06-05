@@ -74,13 +74,13 @@ class UpdateJobApplicationRequest extends FormRequest
             'driving_licence.place_of_issue' => ['string', 'max:80'],
             "driving_licence.blood_group" => ['string', 'max:25'],
 
-            // dependants
-            "dependants" => ['sometimes', 'nullable', 'array'],
-            "dependants.*.dependent_id" => ['sometimes', 'integer', 'exists:dependents,dependent_id'],
-            "dependants.*.name" => ['sometimes', 'string', 'max:255'],
-            "dependants.*.age" => ['sometimes', 'integer'],
-            "dependants.*.relationship" => ['sometimes', 'string', 'max:255'],
-            "dependants.*.address" => ['sometimes', 'string', 'max:255'],
+            // dependents
+            "dependents" => ['sometimes', 'nullable', 'array'],
+            "dependents.*.dependent_id" => ['sometimes', 'integer', 'exists:dependents,dependent_id'],
+            "dependents.*.name" => ['sometimes', 'string', 'max:255'],
+            "dependents.*.age" => ['sometimes', 'integer'],
+            "dependents.*.relationship" => ['sometimes', 'string', 'max:255'],
+            "dependents.*.address" => ['sometimes', 'string', 'max:255'],
 
 
             // previous employment record
@@ -161,9 +161,9 @@ class UpdateJobApplicationRequest extends FormRequest
 
             // here we will add arrays of ids to be deleted
 
-            // dependants
-            "deleted_dependants" => ['sometimes', 'nullable', 'array'],
-            "deleted_dependants.*" => ['sometimes', 'integer', 'exists:dependents,dependent_id'],
+            // dependents
+            "deleted_dependents" => ['sometimes', 'nullable', 'array'],
+            "deleted_dependents.*" => ['sometimes', 'integer', 'exists:dependents,dependent_id'],
 
             // previous employment record
             "deleted_previous_employment_record" => ['sometimes', 'nullable', 'array'],
