@@ -4,11 +4,10 @@ namespace App\Domain\Services;
 
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
-use App\Domain\Repositories\EmployeeRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use Illuminate\Database\Eloquent\Builder;
-use Rats\Zkteco\Lib\ZKTeco;
+use Illuminate\Database\Eloquent\Model;
 
 class EmployeeService
 {
@@ -55,7 +54,7 @@ class EmployeeService
         return $this->employeeRepository->updateEmployee($id, $data);
     }
 
-    public function deleteEmployee($id): bool
+    public function deleteEmployee($id): Builder|Model|null
     {
         $employee = $this->employeeRepository->deleteEmployee($id);
 

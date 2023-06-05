@@ -8,15 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EloquentLatetimeRepository implements LatetimeRepositoryInterface
 {
-    public function getLatetimeList(): array
-    {
-        // TODO: Implement the logic to retrieve a list of Latetimes
-    }
-
-    public function getLatetimeById(int $id): Latetime|Builder|null
-    {
-        // TODO: Implement the logic to retrieve a Latetime by ID
-    }
 
     public function createLatetime(array $data): Latetime|Builder|null
     {
@@ -29,11 +20,6 @@ class EloquentLatetimeRepository implements LatetimeRepositoryInterface
             "duration" => $duration->format('%H:%I:%S'),
             "latetime_date"=>$data["latetime_date"]
         ]);
-    }
-
-    public function updateLatetime(int $id, array $data): Latetime|Builder|null
-    {
-        // TODO: Implement the logic to update a Latetime
     }
 
     public function deleteLatetime($id): Latetime|Builder|null

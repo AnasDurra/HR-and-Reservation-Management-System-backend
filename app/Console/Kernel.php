@@ -13,13 +13,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-//         $schedule->command('attendance:store')
-//             ->everyTenMinutes()
-//             ->between('06:00','19:00')
-//             ->appendOutputTo('scheduler.log');
-
          $schedule->command('attendance:store')
-             ->everyMinute()
+             ->everyTenMinutes()
+             ->between('06:00','19:00')
              ->appendOutputTo('scheduler.log');
     }
 

@@ -97,11 +97,12 @@ class FingerDeviceService
             $device = new ZKTeco($fingerDevice->ip, 4370);
             $device->connect();
 
+            // Disable the device so that no one can check in OR check out while storing the attendances log
+            $device->disableDevice(); // TODO Check this
+
             // Get attendance log from the device
             $data = $device->getAttendance();
 
-            // Disable the device so that no one can check in OR check out while storing the attendances log
-            $device->disableDevice(); // TODO Check this
 
             $employeeService = new EmployeeService(new EloquentEmployeeRepository());
             $attendanceService = new AttendanceService(new EloquentAttendanceRepository());

@@ -18,18 +18,4 @@ class EloquentPermissionRepository implements PermissionRepositoryInterface
         return Permission::query()->find($id);
     }
 
-//    public function createPermission(array $data): Permission|Builder|null
-//    {
-//        // TODO: Implement the logic to create a Permission
-//    }
-
-//    public function updatePermission(int $id, array $data): Permission|Builder|null
-//    {
-//        // TODO: Implement the logic to update a Permission
-//    }
-
-//    public function deletePermission($id): Permission|Builder|null
-//    {
-//        // TODO: Implement the logic to delete a Permission
-//    }
 }

@@ -21,7 +21,7 @@ interface EmployeeRepositoryInterface
 
     public function updateEmployee(int $id, array $data): bool;
 
-    public function deleteEmployee($id): Builder|Model;
+    public function deleteEmployee($id): Builder|Model|null;
 
     public function editEmployeePermissions(int $id , array $data): Employee|Builder|null;
 
