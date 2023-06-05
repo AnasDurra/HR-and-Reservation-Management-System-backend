@@ -67,13 +67,17 @@ class EmployeeDataResource extends JsonResource
             "personal_card" => new PersonalCardResource($this->personalCard),
 
             // Passport data
-            "passport" => new PassportResource($this->passport),
+            "passport" => isset($this->passport)
+                ? new PassportResource($this->passport)
+                : null,
 
             // Address data
             "address" => new AddressResource($this->address),
 
             // Driving License data (if exists)
-            "driving_licence" => new DrivingLicenseResource($this->drivingLicence),
+            "driving_licence" => isset($this->drivingLicence)
+                ? new DrivingLicenseResource($this->drivingLicence)
+                : null,
 
             // Dependents data (if exists)
             "dependents" => DependentResource::collection($this->dependents),
@@ -109,5 +113,4 @@ class EmployeeDataResource extends JsonResource
             "certificates" => CertificateResource::collection($this->certificates),
         ];
     }
-
 }
