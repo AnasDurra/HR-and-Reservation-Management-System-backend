@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('emp_id')->references('emp_id')->on('employees');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

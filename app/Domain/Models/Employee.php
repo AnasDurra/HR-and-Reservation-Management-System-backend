@@ -19,6 +19,9 @@ class Employee extends Model
         'job_app_id',
         'start_date',
         'leaves_balance',
+        'schedule_id',
+        'cur_title',
+        'cur_dep'
     ];
 
     public function leaves(): HasMany
@@ -74,10 +77,9 @@ class Employee extends Model
         return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
     }
 
-    public function schedules(): BelongsToMany
+    public function schedule(): BelongsTo
     {
-        return $this->belongsToMany(Schedule::class, 'schedule_employees', 'emp_id', 'schedule_id',
-            'emp_id', 'schedule_id');
+        return $this->belongsTo(Schedule::class, 'schedule_id', 'schedule_id');
     }
 
 

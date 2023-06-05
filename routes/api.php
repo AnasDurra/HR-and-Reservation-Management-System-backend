@@ -7,6 +7,9 @@ use App\Application\Http\Controllers\JobTitleController;
 use App\Application\Http\Controllers\PermissionController;
 use App\Application\Http\Controllers\EmployeeController;
 use App\Application\Http\Controllers\ScheduleController;
+use App\Application\Http\Controllers\BiometricDeviceController;
+use App\Application\Http\Controllers\AttendanceController;
+use App\Application\Http\Controllers\LeaveController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -50,3 +53,16 @@ Route::post('employees/edit-permissions/{id}', [EmployeeController::class, 'edit
 
 // Register the routes for the ScheduleController
 Route::apiResource('schedules', ScheduleController::class);
+
+// Register the routes for the BiometricDeviceController
+Route::apiResource('finger_device', BiometricDeviceController::class);
+
+// Register the routes for the AttendanceController
+Route::apiResource('attendance', AttendanceController::class);
+Route::get('employee/attendances/{emp_id}', [AttendanceController::class,'showEmployeeAttendance']);
+
+// Register the routes for the LeaveController
+Route::apiResource('leave', LeaveController::class);
+
+
+

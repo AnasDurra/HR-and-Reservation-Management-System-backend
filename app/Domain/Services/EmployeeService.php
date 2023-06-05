@@ -2,14 +2,16 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Models\Employee;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Rats\Zkteco\Lib\ZKTeco;
 
 class EmployeeService
 {
-    /** @var EmployeeRepositoryInterface */
     private EmployeeRepositoryInterface $employeeRepository;
 
     public function __construct(EmployeeRepositoryInterface $employeeRepository)
@@ -37,9 +39,15 @@ class EmployeeService
         return $this->employeeRepository->getEmployeeById($id);
     }
 
-    public function createEmployee(array $data): Employee
+    public function createEmployee(array $data): Employee|null
     {
-        return $this->employeeRepository->createEmployee($data);
+        $employee = $this->employeeRepository->createEmployee($data);
+
+        // Add employee to the finger device
+        $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
+        $fingerDeviceService->addEmployeeToFingerDevice($employee['emp_id']);
+
+        return $employee;
     }
 
     public function updateEmployee(int $id, array $data): bool
@@ -49,7 +57,15 @@ class EmployeeService
 
     public function deleteEmployee($id): bool
     {
-        return $this->employeeRepository->deleteEmployee($id);
+        $employee = $this->employeeRepository->deleteEmployee($id);
+
+        // Delete employee from finger device
+         if(!$employee) {
+            $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
+            $fingerDeviceService->deleteEmployeeFromFingerDevice($id);
+        }
+
+        return $employee;
     }
 
     public function editEmployeePermissions(int $id, array $data): Employee|Builder|null

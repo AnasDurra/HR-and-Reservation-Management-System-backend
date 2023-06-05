@@ -30,6 +30,8 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
     public function updateSchedule(int $id, array $data): Schedule|Builder|null
     {
         $schedule = Schedule::query()->find($id);
+        if(!$schedule) return null;
+
         $schedule["name"] = $data['name'] ?? $schedule["name"];
         $schedule["time_in"] = $data['time_in'] ?? $schedule["time_in"];
         $schedule["time_out"] = $data['time_out'] ?? $schedule["time_out"];

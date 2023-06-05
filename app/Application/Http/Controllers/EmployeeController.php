@@ -84,10 +84,9 @@ class EmployeeController extends Controller
                 'message' => $employee['message']
             ], 400);
         }
+
         return response()->json([
             'data' => new EmployeeBriefResource($employee)
         ], 200);
     }
-
-
 }
