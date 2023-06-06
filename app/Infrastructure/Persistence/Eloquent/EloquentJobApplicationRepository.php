@@ -3,7 +3,6 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-
 use App\Domain\Models\Address;
 use App\Domain\Models\ComputerSkill;
 use App\Domain\Models\EmpData;
@@ -263,9 +262,11 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             // relatives (from center employees) (if exists)
             if (isset($data['relatives'])) {
                 foreach ($data['relatives'] as $relative) {
-                    // TODO: Check that if it's working or not
-                    // attach relative to this employee data
-                    $employeeData->relatives()->attach($relative["emp_id"]);
+
+                    // create relative
+                    $employeeData->relatives()->create([
+                        "relative_data_id" => $relative['relative_data_id'],
+                    ]);
                 }
             }
 
@@ -1285,6 +1286,19 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 }
             }
 
+            // relatives
+            if (optional($data)['relatives']) {
+                if (count($data['relatives']) > 0) {
+                    $relativeData = $data['relatives'];
+
+                    foreach ($relativeData as $relative) {
+                        if (isset($relative['relative_data_id'])) {
+
+                        }
+                    }
+                }
+            }
+
             // Employee data (certificates)
             if (optional($data)['certificates']) {
                 if (count($data['certificates']) > 0) {
@@ -1415,26 +1429,32 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
         }
     }
 
-    public function deleteJobApplication($id): Builder|Model
+    // returns an array of job applications that have the given ids
+    public function deleteJobApplications(array $data): Builder
     {
-        $jobApplication = JobApplication::findOrFail($id);
+        // job applications that has the mentioned ids
+        $jobApplications = JobApplication::query()->whereIn('job_app_id', $data['ids']);
 
-        // extract the file urls from the certificates
-        $fileUrls = $jobApplication->empData->certificates()->pluck('file_url')->toArray();
+        // for each job application, delete the files from the storage
+        $jobApplications->each(function ($jobApplication) {
+            // extract the file urls from the certificates
+            $fileUrls = $jobApplication->empData->certificates()->pluck('file_url')->toArray();
 
-        // get the personal photo url
-        $personalPhotoUrl = $jobApplication->empData->personal_photo;
+            // get the personal photo url
+            $personalPhotoUrl = $jobApplication->empData->personal_photo;
 
-        // create the complete array of file urls
-        $fileUrls[] = $personalPhotoUrl;
+            // create the complete array of file urls
+            $fileUrls[] = $personalPhotoUrl;
 
-        // delete the files from the storage for the given file urls
-        StorageUtilities::deleteFiles($fileUrls);
+            // delete the files from the storage for the given file urls
+            StorageUtilities::deleteFiles($fileUrls);
 
-        // delete the job application
-        $jobApplication->delete();
+            // delete the job application
+            $jobApplication->delete();
+        });
 
-        return $jobApplication;
+
+        return $jobApplications;
     }
 
     /**
