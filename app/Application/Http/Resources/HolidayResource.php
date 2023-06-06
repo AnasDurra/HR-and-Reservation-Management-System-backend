@@ -11,6 +11,7 @@ class HolidayResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'holiday_id' => $this['holiday_id'],
             'name' => $this['name'],
             'date' => $this['date'],
             'is_recurring' => $this['is_recurring']

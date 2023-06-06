@@ -8,6 +8,7 @@ use App\Domain\Models\Employee;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
@@ -42,7 +43,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         // TODO: Implement updateEmployee() method.
     }
 
-    public function deleteEmployee($id): bool
+    public function deleteEmployee($id): Builder|Model|null
     {
         // TODO: Implement deleteEmployee() method.
     }

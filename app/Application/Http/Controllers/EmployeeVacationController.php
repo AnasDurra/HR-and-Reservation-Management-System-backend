@@ -17,9 +17,9 @@ class EmployeeVacationController extends Controller
 
     public function index(): JsonResponse
     {
-        $employeeVacations = $this->EmployeeVacationService->getEmployeeVacationList();
+        $employeesVacations = $this->EmployeeVacationService->getEmployeeVacationList();
         return response()->json([
-            'data'=>EmployeeVacationResource::collection($employeeVacations)
+            'data'=>EmployeeVacationResource::collection($employeesVacations)
             ], 200);
     }
 
@@ -40,11 +40,11 @@ class EmployeeVacationController extends Controller
     public function store(): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'emp_id' => 'required|integer|exists:employees,emp_id',
+            'emp_id' => ['required','integer','exists:employees,emp_id'],
             'start_date' => ['required','date',
                 Rule::unique('employee_vacations', 'start_date')->whereNull('deleted_at')],
-            'total_days' => 'required|integer|min:1',
-            'remaining_days' => 'integer|min:0',
+            'total_days' => ['required','integer','min:1'],
+            'remaining_days' => ['integer','min:0']
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -62,11 +62,11 @@ class EmployeeVacationController extends Controller
     public function update(int $id): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'emp_id' => 'integer|exists:employees,emp_id',
+            'emp_id' => ['integer','exists:employees,emp_id'],
             'start_date' => ['date',
                 Rule::unique('employee_vacations', 'start_date')->whereNull('deleted_at')],
-            'total_days' => 'integer|min:1',
-            'remaining_days' => 'integer|min:0',
+            'total_days' => ['integer','min:1'],
+            'remaining_days' => ['integer','min:0']
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -98,5 +98,19 @@ class EmployeeVacationController extends Controller
         return response()->json([
             'data'=> new EmployeeVacationResource($employeeVacation)
             ], 200);
+    }
+
+    public function showEmployeeVacations($emp_id): JsonResponse
+    {
+        $employeeVacations = $this->EmployeeVacationService->getEmployeeVacations($emp_id);
+
+        if(isset($employeeVacations["message"])){
+            return response()->json(['message'=>'Employee not found']
+                , 404);
+        }
+
+        return response()->json([
+            'data'=> EmployeeVacationResource::collection($employeeVacations)
+        ], 200);
     }
 }

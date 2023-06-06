@@ -10,7 +10,18 @@ class EmployeeVacationResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+
+        if(!isset($this['employee'])){
+            return [
+                'employee_vacation_id' =>$this['employee_vacation_id'],
+                'emp_id' => $this['emp_id'],
+                'start_date' => $this['start_date'],
+                'total_days' => $this['total_days'],
+                'remaining_days' => $this['remaining_days'],
+                ];
+        }
         return [
+            'employee_vacation_id' =>$this['employee_vacation_id'],
             'emp_id' => $this['emp_id'],
             'start_date' => $this['start_date'],
             'total_days' => $this['total_days'],

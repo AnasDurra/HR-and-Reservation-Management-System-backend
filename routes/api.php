@@ -75,7 +75,8 @@ Route::put('working_days/{id}', [WorkingDayController::class,'update']);
 Route::apiResource('holidays', HolidayController::class);
 
 // Register the routes for the EmployeeVacationController
-Route::apiResource('employee-vacations', EmployeeVacationController::class);
+Route::apiResource('employees-vacations', EmployeeVacationController::class);
+Route::get('employee-vacations/{emp_id}', [EmployeeVacationController::class,'showEmployeeVacations']);
 
 
 

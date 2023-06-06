@@ -53,4 +53,13 @@ class EloquentEmployeeVacationRepository implements EmployeeVacationRepositoryIn
         $vacation->delete();
         return $vacation;
     }
+
+    public function getEmployeeVacations($emp_id): array
+    {
+//        $eloquentEmployeeRepository = new EloquentEmployeeRepository();
+//        $employee = $eloquentEmployeeRepository->getEmployeeById($emp_id);
+//
+//        if(!$employee) return ["message"=>'employee not found'];
+        return EmployeeVacation::query()->where('emp_id',$emp_id)->latest('start_date')->get()->toArray();
+    }
 }

@@ -39,4 +39,9 @@ class EmployeeVacationService
     {
         return $this->EmployeeVacationRepository->deleteEmployeeVacation($id);
     }
+
+    public function getEmployeeVacations($emp_id): array
+    {
+        return $this->EmployeeVacationRepository->getEmployeeVacations($emp_id);
+    }
 }

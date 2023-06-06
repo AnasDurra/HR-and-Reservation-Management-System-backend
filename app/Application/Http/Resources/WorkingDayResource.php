@@ -11,6 +11,7 @@ class WorkingDayResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "working_day_id" => $this["working_day_id"],
             "name" => $this["name"],
             "status" => $this["status"]
         ];

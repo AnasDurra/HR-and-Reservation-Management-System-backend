@@ -16,4 +16,6 @@ interface EmployeeVacationRepositoryInterface
     public function updateEmployeeVacation(int $id, array $data): EmployeeVacation|Builder|null;
 
     public function deleteEmployeeVacation($id): EmployeeVacation|Builder|null;
+
+    public function getEmployeeVacations($emp_id): array;
 }
