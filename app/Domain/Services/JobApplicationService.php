@@ -42,9 +42,9 @@ class JobApplicationService
         return $this->jobApplicationRepository->updateJobApplication($id, $data);
     }
 
-    public function deleteJobApplication($id): Builder|Model
+    public function deleteJobApplications(array $data): Builder
     {
-        return $this->jobApplicationRepository->deleteJobApplication($id);
+        return $this->jobApplicationRepository->deleteJobApplications($data);
     }
 
     public function acceptJobApplicationRequest($id): Model|Builder

@@ -9,6 +9,8 @@ use App\Application\Http\Requests\UpdateJobApplicationRequest;
 use App\Application\Http\Resources\JobApplicationBriefResource;
 use App\Application\Http\Resources\JobApplicationDetailsResource;
 use App\Domain\Services\JobApplicationService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Throwable;
 
@@ -57,12 +59,21 @@ class JobApplicationController extends Controller
         return new JobApplicationDetailsResource($employee);
     }
 
-    public function destroy(int $id): JobApplicationBriefResource
+    public function destroy(Request $request): JsonResponse
     {
-
+        // validate array of ids
+        $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['required', 'integer', 'exists:job_applications,job_app_id']
+        ]);
         // delete job application
-        $employee = $this->jobApplicationService->deleteJobApplication($id);
-        return new JobApplicationBriefResource($employee);
+        $jobApplications = $this->jobApplicationService->deleteJobApplications($request->input('ids'));
+
+        // return job applications in json format
+        return response()->json([
+            "message" => "Job application(s) deleted successfully",
+            "data" => JobApplicationBriefResource::collection($jobApplications)
+        ]);
     }
 
     public function acceptJobApplication($id): JobApplicationBriefResource
