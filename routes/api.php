@@ -11,6 +11,8 @@ use App\Application\Http\Controllers\BiometricDeviceController;
 use App\Application\Http\Controllers\AttendanceController;
 use App\Application\Http\Controllers\LeaveController;
 use App\Application\Http\Controllers\WorkingDayController;
+use App\Application\Http\Controllers\HolidayController;
+use App\Application\Http\Controllers\EmployeeVacationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -68,6 +70,12 @@ Route::apiResource('leave', LeaveController::class);
 // Register the routes for the WorkingDayController
 Route::get('working_days', [WorkingDayController::class,'index']);
 Route::put('working_days/{id}', [WorkingDayController::class,'update']);
+
+// Register the routes for the HolidayController
+Route::apiResource('holidays', HolidayController::class);
+
+// Register the routes for the EmployeeVacationController
+Route::apiResource('employee-vacations', EmployeeVacationController::class);
 
 
 

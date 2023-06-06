@@ -99,4 +99,9 @@ class Employee extends Model
     {
         return $this->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first();
     }
+
+    public function vacations(): HasMany
+    {
+        return $this->hasMany(EmployeeVacation::class, 'emp_id', 'emp_id');
+    }
 }
