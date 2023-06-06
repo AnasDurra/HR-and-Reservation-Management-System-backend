@@ -49,11 +49,6 @@ class EmployeeService
         return $employee;
     }
 
-    public function updateEmployee(int $id, array $data): bool
-    {
-        return $this->employeeRepository->updateEmployee($id, $data);
-    }
-
     public function deleteEmployee($id): Builder|Model|null
     {
         $employee = $this->employeeRepository->deleteEmployee($id);
@@ -71,4 +66,5 @@ class EmployeeService
     {
         return $this->employeeRepository->editEmployeePermissions($id, $data);
     }
+
 }

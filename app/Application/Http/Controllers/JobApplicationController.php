@@ -64,4 +64,16 @@ class JobApplicationController extends Controller
         $employee = $this->jobApplicationService->deleteJobApplication($id);
         return new JobApplicationBriefResource($employee);
     }
+
+    public function acceptJobApplication($id): JobApplicationBriefResource
+    {
+        $jobApplication = $this->jobApplicationService->acceptJobApplicationRequest($id);
+        return new JobApplicationBriefResource($jobApplication);
+    }
+
+    public function rejectJobApplication($id): JobApplicationBriefResource
+    {
+        $jobApplication = $this->jobApplicationService->rejectJobApplicationRequest($id);
+        return new JobApplicationBriefResource($jobApplication);
+    }
 }

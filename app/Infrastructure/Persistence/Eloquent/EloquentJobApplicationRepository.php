@@ -13,6 +13,8 @@ use App\Domain\Models\Passport;
 use App\Domain\Models\PersonalCard;
 use App\Domain\Models\Skill;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
+use App\Domain\Models\Employee;
+use App\Exceptions\EntryNotFoundException;
 use App\Utils\StorageUtilities;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -1433,5 +1435,45 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
         $jobApplication->delete();
 
         return $jobApplication;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function acceptJobApplicationRequest($id): JobApplication|Model|Builder
+    {
+        try {
+            $jobApplicationRequest = JobApplication::query()
+                ->whereIn("app_status_id", [1, 4])
+                ->findOrFail($id);
+
+            //update app_status_id to be 2 "accepted"
+            $jobApplicationRequest->update([
+                "app_status_id" => 2
+            ]);
+            return $jobApplicationRequest;
+        } catch (Exception $exception) {
+            throw new EntryNotFoundException("Job Application Request Not Found OR It's Already Accepted OR Rejected");
+        }
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function rejectJobApplicationRequest($id): Model|Builder
+    {
+        try {
+            $jobApplicationRequest = JobApplication::query()
+                ->whereIn("app_status_id", [1, 4])
+                ->findOrFail($id);
+
+            //update app_status_id to be 3 "rejected"
+            $jobApplicationRequest->update([
+                "app_status_id" => 3
+            ]);
+            return $jobApplicationRequest;
+        } catch (Exception $exception) {
+            throw new EntryNotFoundException("Job Application Request Not Found OR It's Already Accepted OR Rejected");
+        }
     }
 }

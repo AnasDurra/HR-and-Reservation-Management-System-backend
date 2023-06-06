@@ -46,4 +46,14 @@ class JobApplicationService
     {
         return $this->jobApplicationRepository->deleteJobApplication($id);
     }
+
+    public function acceptJobApplicationRequest($id): Model|Builder
+    {
+        return $this->jobApplicationRepository->acceptJobApplicationRequest($id);
+    }
+
+    public function rejectJobApplicationRequest($id): Model|Builder
+    {
+        return $this->jobApplicationRepository->rejectJobApplicationRequest($id);
+    }
 }

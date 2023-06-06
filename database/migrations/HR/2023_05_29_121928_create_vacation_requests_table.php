@@ -13,11 +13,13 @@ return new class extends Migration {
         Schema::create('vacation_requests', function (Blueprint $table) {
             $table->id('vacation_req_id');
             $table->unsignedBigInteger('emp_id');
-            $table->Integer('req_stat');
-            $table->text('description');
+            $table->Integer('req_stat')->default(1);
+            $table->text('description')->nullable();
             $table->datetime('start_date');
             $table->datetime('end_date');
             $table->timestamps();
+
+            $table->foreign('emp_id')->references('emp_id')->on('employees')->onDelete('cascade');
         });
     }
 
