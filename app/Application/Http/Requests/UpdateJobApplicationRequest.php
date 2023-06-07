@@ -22,6 +22,7 @@ class UpdateJobApplicationRequest extends FormRequest
             "job_application.job_vacancy_id" => ['sometimes', 'integer', 'exists:job_vacancies,job_vacancy_id'],
             "job_application.section_man_notes" => ['sometimes', 'nullable', 'string'],
             "job_application.vice_man_rec" => ['sometimes', 'nullable', 'string'],
+            "job_application.app_status_id" => ['sometimes', 'integer', 'exists:application_statuses,app_status_id'],
 
 
             // employee data
