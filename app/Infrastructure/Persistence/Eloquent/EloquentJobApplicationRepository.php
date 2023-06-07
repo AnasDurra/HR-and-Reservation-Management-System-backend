@@ -1293,7 +1293,22 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
                     foreach ($relativeData as $relative) {
                         if (isset($relative['relative_data_id'])) {
+                            $relativeObj = $jobApplication->empData
+                                ->relatives()
+                                ->where('relative_data_id', $relative['relative_data_id'])
+                                ->first();
 
+                            if ($relativeObj) {
+
+                                // check relative data id
+                                if (optional($relative)['relative_data_id']) {
+                                    $relativeObj->update(['relative_data_id' => $relative['relative_data_id']]);
+                                }
+                            }else{
+                                $jobApplication->empData->relatives()->create([
+                                    'relative_data_id' => $relative['relative_data_id'],
+                                ]);
+                            }
                         }
                     }
                 }
@@ -1400,6 +1415,11 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 $jobApplication->empData->references()->whereIn('reference_id', $data['deleted_references'])->delete();
             }
 
+            // relatives
+            if (optional($data)['deleted_relatives']) {
+                $jobApplication->empData->relatives()->whereIn('relative_id', $data['deleted_relatives'])->delete();
+            }
+
             // certificates
             if (optional($data)['deleted_certificates']) {
 
@@ -1433,7 +1453,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
     public function deleteJobApplications(array $data): Builder
     {
         // job applications that has the mentioned ids
-        $jobApplications = JobApplication::query()->whereIn('job_app_id', $data['ids']);
+        $jobApplications = JobApplication::query()->whereIn('job_app_id', $data);
 
         // for each job application, delete the files from the storage
         $jobApplications->each(function ($jobApplication) {

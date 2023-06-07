@@ -6,6 +6,7 @@ namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property mixed certificate_id
@@ -20,7 +21,7 @@ class CertificateResource extends JsonResource
         return [
             'certificate_id' => $this->certificate_id,
             'certificate_name' => $this->name,
-            'file' => $this->file_url,
+            'file' => $this->file_url ? Storage::url($this->file_url) : null,
         ];
     }
 }
