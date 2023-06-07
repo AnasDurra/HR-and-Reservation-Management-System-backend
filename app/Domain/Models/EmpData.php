@@ -143,9 +143,9 @@ class EmpData extends Model
     }
 
     // TODO: needs to be fixed
-    public function relatives(): BelongsTo
+    public function relatives(): HasMany
     {
-        return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
+        return $this->hasMany(EmpData::class, 'emp_data_id', 'emp_data_id');
     }
 
     public function references(): HasMany

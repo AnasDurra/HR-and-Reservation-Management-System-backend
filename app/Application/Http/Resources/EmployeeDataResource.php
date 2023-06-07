@@ -105,7 +105,7 @@ class EmployeeDataResource extends JsonResource
             "computer_skills" => ComputerSkillResource::collection($this->computerSkills),
 
             // Relatives (that represents employees) data (if exists) TODO: FIX IT
-            "relatives" => $this->relatives ? RelativeResource::collection($this->relatives) : null,
+            "relatives" => /*$this->relatives ? RelativeResource::collection($this->relatives) : null*/[],
 
             // References data (if exists)
             "references" => ReferenceResource::collection($this->references),
