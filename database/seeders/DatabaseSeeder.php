@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
             ApplicationStatusSeeder::class,
             EducationLevelSeeder::class,
             EmploymentStatusSeeder::class,
-            RequestStatusSeeder::class,
             VacancyStatusSeeder::class,
         ]);
     }
