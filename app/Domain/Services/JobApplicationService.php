@@ -7,6 +7,7 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Throwable;
 
@@ -42,7 +43,7 @@ class JobApplicationService
         return $this->jobApplicationRepository->updateJobApplication($id, $data);
     }
 
-    public function deleteJobApplications(array $data): Builder
+    public function deleteJobApplications(array $data): array|Collection
     {
         return $this->jobApplicationRepository->deleteJobApplications($data);
     }
