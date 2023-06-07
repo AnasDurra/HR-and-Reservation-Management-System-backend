@@ -362,6 +362,14 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                     $updated['vice_man_rec'] = $jobApplicationData['vice_man_rec'];
                 }
 
+                // check app status id
+                if (
+                    optional($jobApplicationData)['app_status_id'] &&
+                    optional($jobApplicationData)['app_status_id'] != $jobApplication->getAttribute("app_status_id")
+                ) {
+                    $updated['app_status_id'] = $jobApplicationData['app_status_id'];
+                }
+
                 // check if there is any update
                 if (count($updated) > 0) {
                     $jobApplication->update($updated);
@@ -1304,7 +1312,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                                 if (optional($relative)['relative_data_id']) {
                                     $relativeObj->update(['relative_data_id' => $relative['relative_data_id']]);
                                 }
-                            }else{
+                            } else {
                                 $jobApplication->empData->relatives()->create([
                                     'relative_data_id' => $relative['relative_data_id'],
                                 ]);
