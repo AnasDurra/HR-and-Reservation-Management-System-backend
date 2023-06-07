@@ -1450,10 +1450,10 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
     }
 
     // returns an array of job applications that have the given ids
-    public function deleteJobApplications(array $data): Builder
+    public function deleteJobApplications(array $data): array|Collection
     {
         // job applications that has the mentioned ids
-        $jobApplications = JobApplication::query()->whereIn('job_app_id', $data);
+        $jobApplications = JobApplication::query()->whereIn('job_app_id', $data)->get();
 
         // for each job application, delete the files from the storage
         $jobApplications->each(function ($jobApplication) {

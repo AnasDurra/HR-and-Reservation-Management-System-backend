@@ -17,7 +17,7 @@ interface JobApplicationRepositoryInterface
 
     public function updateJobApplication(int $id, array $data): Builder|Model;
 
-    public function deleteJobApplications(array $data): Builder;
+    public function deleteJobApplications(array $data): array|Collection;
 
     public function acceptJobApplicationRequest($id): Model|Builder;
 
