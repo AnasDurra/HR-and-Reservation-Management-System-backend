@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('mobile_no', 25)->nullable();
             $table->string('email', 50)->nullable();
             $table->string('postal_code', 10)->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

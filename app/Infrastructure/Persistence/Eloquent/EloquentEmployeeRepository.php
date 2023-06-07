@@ -38,7 +38,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         // TODO: Implement createEmployee() method.
     }
 
-    public function updateEmployee(int $id, array $data): bool
+    public function updateEmployee(int $id, array $data): Builder|Model
     {
         // TODO: Implement updateEmployee() method.
     }

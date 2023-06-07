@@ -18,8 +18,9 @@ return new class extends Migration
             $table->date('end_date');
             $table->string('specialize', 70);
 
-            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');
+            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data')->cascadeOnDelete();
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

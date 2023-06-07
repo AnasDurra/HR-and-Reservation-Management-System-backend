@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'emp_id';
     protected $fillable = [
@@ -25,11 +26,6 @@ class Employee extends Model
     ];
 
     public function leaves(): HasMany
-    {
-        return $this->hasMany(Leave::class, 'emp_id', 'emp_id');
-    }
-
-    public function checks(): HasMany
     {
         return $this->hasMany(Leave::class, 'emp_id', 'emp_id');
     }
@@ -72,20 +68,9 @@ class Employee extends Model
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
-    public function empData(): BelongsTo
-    {
-        return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
-    }
-
     public function schedule(): BelongsTo
     {
         return $this->belongsTo(Schedule::class, 'schedule_id', 'schedule_id');
-    }
-
-
-    public function relatives(): HasMany
-    {
-        return $this->hasMany(Relative::class, 'emp_id', 'emp_id');
     }
 
     /**

@@ -14,8 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('computer_skill_id');
             $table->integer('level');
 
-            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');
-            $table->foreign('computer_skill_id')->references('computer_skill_id')->on('computer_skills');
+            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data')->cascadeOnDelete();
+            $table->foreign('computer_skill_id')->references('computer_skill_id')->on('computer_skills')->cascadeOnDelete();
 
             $table->timestamps();
         });
