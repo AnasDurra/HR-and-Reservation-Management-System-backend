@@ -16,8 +16,8 @@ return new class extends Migration
             $table->integer('writing_level');
             $table->integer('reading_level');
 
-            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');
-            $table->foreign('language_id')->references('language_id')->on('languages');
+            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data')->cascadeOnDelete();
+            $table->foreign('language_id')->references('language_id')->on('languages')->cascadeOnDelete();
 
             $table->timestamps();
         });

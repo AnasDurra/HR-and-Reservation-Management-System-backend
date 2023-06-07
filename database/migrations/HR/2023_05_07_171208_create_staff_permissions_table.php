@@ -14,8 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('perm_id');
             $table->tinyInteger('status');
 
-            $table->foreign('staff_id')->references('staff_id')->on('staffings');
-            $table->foreign('perm_id')->references('perm_id')->on('permissions');
+            $table->foreign('staff_id')->references('staff_id')->on('staffings')->cascadeOnDelete();
+            $table->foreign('perm_id')->references('perm_id')->on('permissions')->cascadeOnDelete();
 
             $table->timestamps();
         });

@@ -13,8 +13,9 @@ return new class extends Migration
             $table->unsignedBigInteger('emp_data_id');
             $table->text('description');
 
-            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');
+            $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data')->cascadeOnDelete();
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

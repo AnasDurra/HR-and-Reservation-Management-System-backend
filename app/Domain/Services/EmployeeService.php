@@ -38,6 +38,11 @@ class EmployeeService
         return $this->employeeRepository->getEmployeeById($id);
     }
 
+    public function updateEmployee(int $id, array $data): Builder|Model
+    {
+        return $this->employeeRepository->updateEmployee($id, $data);
+    }
+
     public function createEmployee(array $data): Employee|null
     {
         $employee = $this->employeeRepository->createEmployee($data);
@@ -54,7 +59,7 @@ class EmployeeService
         $employee = $this->employeeRepository->deleteEmployee($id);
 
         // Delete employee from finger device
-         if(!$employee) {
+        if (!$employee) {
             $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
             $fingerDeviceService->deleteEmployeeFromFingerDevice($id);
         }
@@ -66,5 +71,4 @@ class EmployeeService
     {
         return $this->employeeRepository->editEmployeePermissions($id, $data);
     }
-
 }

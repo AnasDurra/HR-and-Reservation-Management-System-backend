@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('company', 70);
             $table->string('telephone', 25);
             $table->text('address');
+
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('emp_data_id')->references('emp_data_id')->on('emp_data');

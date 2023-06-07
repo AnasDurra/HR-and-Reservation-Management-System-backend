@@ -24,12 +24,14 @@ return new class extends Migration
             $table->unsignedBigInteger('passport_id')->nullable();
             $table->unsignedBigInteger('driving_licence_id')->unique()->nullable();
             $table->unsignedBigInteger('address_id');
+
+            $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('card_id')->references('personal_card_id')->on('personal_cards')->onDelete('cascade');
-            $table->foreign('passport_id')->references('passport_id')->on('passports')->onDelete('cascade');
-            $table->foreign('address_id')->references('address_id')->on('addresses')->onDelete('cascade');
-            $table->foreign('driving_licence_id')->references('driving_licence_id')->on('driving_licences')->onDelete('cascade');
+            $table->foreign('card_id')->references('personal_card_id')->on('personal_cards');
+            $table->foreign('passport_id')->references('passport_id')->on('passports');
+            $table->foreign('address_id')->references('address_id')->on('addresses');
+            $table->foreign('driving_licence_id')->references('driving_licence_id')->on('driving_licences');
         });
     }
 

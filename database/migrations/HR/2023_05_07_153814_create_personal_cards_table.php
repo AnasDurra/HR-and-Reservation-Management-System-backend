@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('card_number', 25);
             $table->string('place_of_issue', 50);
             $table->date('date_of_issue');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

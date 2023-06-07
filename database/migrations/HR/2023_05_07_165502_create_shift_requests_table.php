@@ -18,7 +18,8 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
 
-            $table->foreign('emp_id')->references('emp_id')->on('employees');
+            $table->foreign('emp_id')->references('emp_id')->on('employees')->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

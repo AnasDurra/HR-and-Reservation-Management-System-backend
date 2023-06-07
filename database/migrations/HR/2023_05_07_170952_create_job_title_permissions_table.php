@@ -14,8 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('job_title_id');
             $table->unsignedBigInteger('perm_id');
 
-            $table->foreign('job_title_id')->references('job_title_id')->on('job_titles');
-            $table->foreign('perm_id')->references('perm_id')->on('permissions');
+            $table->foreign('job_title_id')->references('job_title_id')->on('job_titles')->cascadeOnDelete();
+            $table->foreign('perm_id')->references('perm_id')->on('permissions')->cascadeOnDelete();
 
             $table->timestamps();
             $table->softDeletes();
