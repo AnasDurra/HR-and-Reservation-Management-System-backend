@@ -73,8 +73,9 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             // convert it to array of integers
             $jobVacancyIds = array_map('intval', $jobVacancyIds);
 
+
             // filter the query by the extracted ids
-            $query->whereIn('job_vacancies.job_vacancy_id', $jobVacancyIds);
+            $query->whereIn('job_vacancy_id', $jobVacancyIds);
         }
 
         // check if the request has search by employee name
@@ -93,9 +94,9 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             $query->whereHas('empData', function ($query) use ($name) {
 
                 // search after ignoring the case
-                $query->whereRaw('LOWER(first_name) LIKE ?', ["%{$name}%"])
-                    ->orWhereRaw('LOWER(last_name) LIKE ?', ["%{$name}%"])
-                    ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%{$name}%"]);
+                $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                    ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                    ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
 
             });
         }
