@@ -104,4 +104,10 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeVacation::class, 'emp_id', 'emp_id');
     }
+
+
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
 }

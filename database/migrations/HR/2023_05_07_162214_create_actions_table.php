@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id('action_id');
             $table->string('name', 50);
             $table->text('description')->nullable();
+            $table->integer('severity');
             $table->timestamps();
         });
     }

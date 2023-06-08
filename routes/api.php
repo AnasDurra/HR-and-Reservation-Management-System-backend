@@ -4,6 +4,7 @@ use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
 use App\Application\Http\Controllers\JobTitleController;
+use App\Application\Http\Controllers\LogController;
 use App\Application\Http\Controllers\PermissionController;
 use App\Application\Http\Controllers\EmployeeController;
 use App\Application\Http\Controllers\ScheduleController;
@@ -94,3 +95,7 @@ Route::apiResource('holidays', HolidayController::class);
 Route::apiResource('employees-vacations', EmployeeVacationController::class);
 Route::get('employee-vacations/{emp_id}', [EmployeeVacationController::class,'showEmployeeVacations']);
 
+//Register the routes for the LogController
+Route::get('log/all-action', [LogController::class,'getAllAction']);
+Route::get('log/all-affected-user', [LogController::class,'getAllAffectedUser']);
+Route::get('log/all-user', [LogController::class,'getAllUser']);
