@@ -23,20 +23,17 @@ class JobApplicationDetailsResource extends JsonResource
             // Job application data
             'job_application' => [
                 'id' => $this->job_app_id,
-                'status' => $this->applicationStatus->app_status_id,
+                'status' => new ApplicationStatusResource($this->applicationStatus),
                 'section_man_notes' => $this->section_man_notes,
                 'vice_man_rec' => $this->vice_man_rec,
-                'job_vacancy'=> new JobVacancyResource($this->jobVacancy)
+                'job_vacancy' => new JobVacancyResource($this->jobVacancy)
             ],
 
             // Employee data
             'employee_data' => new EmployeeDataResource($this->empData),
 
             // Application status data
-            'application_status' => [
-                'id' => $this->applicationStatus->app_status_id,
-                'name' => $this->applicationStatus->name,
-            ],
+            'application_status' => new ApplicationStatusResource($this->applicationStatus),
         ];
     }
 
