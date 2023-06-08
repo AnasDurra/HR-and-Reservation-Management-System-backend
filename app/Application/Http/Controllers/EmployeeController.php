@@ -4,6 +4,7 @@ namespace App\Application\Http\Controllers;
 
 use App\Application\Http\Requests\StoreEmployeeRequest;
 use App\Application\Http\Resources\EmployeeBriefResource;
+use App\Application\Http\Resources\EmployeeJobTitleResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -86,7 +87,7 @@ class EmployeeController extends Controller
         }
 
         return response()->json([
-            'data' => new EmployeeBriefResource($employee)
+            'data' => new EmployeeJobTitleResource($employee)
         ], 200);
     }
 }
