@@ -15,8 +15,8 @@ class UserTypeSeeder extends Seeder
         $userTypes = [
             // employee
             [
-                'name' => 'employee',
-                'description' => 'Center Employee',
+                'name' => 'موظف',
+                'description' => 'موظف يعمل ضمن المركز',
             ],
 
             // TODO: Add Consultant
