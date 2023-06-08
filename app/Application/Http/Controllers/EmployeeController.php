@@ -2,6 +2,7 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Requests\StoreEmployeeRequest;
 use App\Application\Http\Resources\EmployeeBriefResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
@@ -32,12 +33,11 @@ class EmployeeController extends Controller
         ], 200);
     }
 
-    public function store(): JsonResponse
+    public function store(StoreEmployeeRequest $request): EmployeeBriefResource
     {
-        $employee = $this->employeeService->createEmployee(request()->all());
-        return response()->json([
-            'data' => new EmployeeBriefResource($employee) //Modify it as needed
-        ], 200);
+        $validated = $request->validated();
+        $employee = $this->employeeService->createEmployee($validated);
+        return new EmployeeBriefResource($employee);
     }
 
     public function update(int $id): JsonResponse

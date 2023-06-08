@@ -43,13 +43,14 @@ class EmployeeService
         return $this->employeeRepository->updateEmployee($id, $data);
     }
 
-    public function createEmployee(array $data): Employee|null
+    public function createEmployee(array $data): Builder|Model
     {
         $employee = $this->employeeRepository->createEmployee($data);
 
+        // TODO: REACTIVATE THIS CODE
         // Add employee to the finger device
-        $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
-        $fingerDeviceService->addEmployeeToFingerDevice($employee['emp_id']);
+//        $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
+//        $fingerDeviceService->addEmployeeToFingerDevice($employee['emp_id']);
 
         return $employee;
     }

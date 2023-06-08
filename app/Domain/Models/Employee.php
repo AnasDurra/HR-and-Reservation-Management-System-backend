@@ -52,9 +52,14 @@ class Employee extends Model
 
     public function employmentStatuses(): BelongsToMany
     {
-        return $this->belongsToMany(EmploymentStatus::class, 'employee_statuses', 'emp_id', 'emp_status_id',
-            'emp_id', 'emp_status_id')
-            ->withPivot('start_date', 'end_date');
+        return $this->belongsToMany(
+            EmploymentStatus::class,
+            'employee_statuses',
+            'emp_id',
+            'emp_status_id',
+            'emp_id',
+            'emp_status_id'
+        )->withPivot('start_date', 'end_date');
     }
 
 
@@ -73,6 +78,11 @@ class Employee extends Model
         return $this->belongsTo(Schedule::class, 'schedule_id', 'schedule_id');
     }
 
+    public function jobApplication(): BelongsTo
+    {
+        return $this->belongsTo(JobApplication::class, 'job_app_id', 'job_app_id');
+    }
+
     /**
      * Get Current Employment Status Mutator.
      *
@@ -85,8 +95,63 @@ class Employee extends Model
         return $this->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first();
     }
 
+    /**
+     * Get Current Department Mutator.
+     * this function is used to get the current department of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentDepartmentAttribute(): Model|BelongsTo|null
+    {
+        // if there is no staffing record with null end_date
+        // then the employee is not working in any department
+        if (!$this->staffings()->whereNull('end_date')->exists()) {
+            return null;
+        }
+
+        return $this->staffings()->whereNull('end_date')->first()->department;
+    }
+
+    /**
+     * Get Current Job Title Mutator.
+     * this function is used to get the current job title of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentJobTitleAttribute(): Model|BelongsTo|null
+    {
+        // if there is no staffing record with null end_date
+        // then the employee does not have a job title
+        if (!$this->staffings()->whereNull('end_date')->exists()) {
+            return null;
+        }
+        return $this->staffings()->whereNull('end_date')->first()->jobTitle;
+    }
+
+    /**
+     * Get Start Working date Mutator.
+     *
+     * this represents the start date of the first
+     * staffing record of the employee
+     */
+    public function getStartWorkingDateAttribute(): string|null
+    {
+        // if employee doesn't have any staffing records
+        // then he didn't start working yet
+        if (!$this->staffings()->exists()) {
+            return null;
+        }
+        return $this->staffings()->orderBy('start_date')->first()->start_date;
+    }
+
     public function vacations(): HasMany
     {
         return $this->hasMany(EmployeeVacation::class, 'emp_id', 'emp_id');
+    }
+
+    /**
+     * Get Employee Full Name Mutator.
+     */
+    public function getFullNameAttribute(): string
+    {
+        return $this->jobApplication()->first()->empData->first_name . ' ' . $this->jobApplication()->first()->empData->last_name;
     }
 }

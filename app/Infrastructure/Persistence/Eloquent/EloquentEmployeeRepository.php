@@ -5,14 +5,34 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 
 use App\Domain\Models\Employee;
+use App\Domain\Models\EmploymentStatus;
+use App\Domain\Models\JobApplication;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
+use App\Domain\Repositories\UserRepositoryInterface;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
+    private UserRepositoryInterface $userRepository;
 
+    public function __construct()
+    {
+        // initialize the user repository
+        try {
+            $this->userRepository = app()->make(UserRepositoryInterface::class);
+        } catch (ContainerExceptionInterface | NotFoundExceptionInterface $e) {
+            report($e);
+        }
+    }
+
+    /**
+     */
     public function getEmployeeList(): LengthAwarePaginator
     {
         return Employee::query()->paginate(10);
@@ -30,12 +50,67 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 
     public function getEmployeeById(int $id): ?Employee
     {
-        // TODO: Implement getEmployeeById() method.
+        return Employee::query()->findOrFail($id)->first();
     }
 
-    public function createEmployee(array $data): Employee
+    /**
+     * @throws Exception
+     */
+    public function createEmployee(array $data): Builder|Model
     {
-        // TODO: Implement createEmployee() method.
+        try {
+            // start transaction
+            DB::beginTransaction();
+
+            // first, user should be created
+            $user = $this->userRepository->createUser([
+                'user_type_id' => 1,
+                'email' => $data['email'],
+                'username' => $data['username'],
+                'password' => $data['password'],
+            ]);
+
+            // get the dep_id for the employee from the job vacancy
+            // that is associated with the job application
+            $dep_id = JobApplication::query()
+                ->where('job_app_id', '=', $data['job_app_id'])
+                ->firstOrFail()
+                ->jobVacancy
+                ->dep_id;
+
+            // then, employee should be created
+            $employee = Employee::query()->create([
+                'user_id' => $user->user_id,
+                'job_app_id' => $data['job_app_id'],
+                'schedule_id' => $data['schedule_id'],
+                'leaves_balance' => $data['leaves_balance'],
+
+                // meta data for employee
+                'cur_title' => $data['job_title_id'],
+                'cur_dep' => $dep_id,
+            ]);
+
+            // create a staffing record for the employee
+            $employee->staffings()->create([
+                'job_title_id' => $data['job_title_id'],
+                'dep_id' => $dep_id,
+                'start_date' => $data['start_date'],
+            ]);
+
+            // attach an employment status record for the employee (working by default)
+            $employee->employmentStatuses()->attach(EmploymentStatus::WORKING, [
+                'start_date' => $data['start_date'],
+            ]);
+
+            // commit transaction
+            DB::commit();
+
+            return $employee;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function updateEmployee(int $id, array $data): Builder|Model
