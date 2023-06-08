@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ApplicationStatus applicationStatus
  * @property JobVacancy jobVacancy
  * @property EmpData empData
+ * @property mixed full_name
  */
 class JobApplication extends Model
 {

@@ -11,6 +11,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property mixed email
+ * @property mixed username
+ * @property mixed usertype
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -45,5 +50,17 @@ class User extends Authenticatable
             ->withPivot('description', 'date');
     }
 
+    /**
+     * User and Action is M2M
+     * User and Log is M2M and Affected User is pivot table
+     *
+     *Here is a reference for the pivot table
+     */
+    public function logs(): BelongsToMany
+    {
+        return $this->belongsToMany(Log::class, 'affected_users', 'user_id', 'log_id',
+            'user_id', 'log_id')
+            ->withPivot('affected_user_id');
+    }
 
 }

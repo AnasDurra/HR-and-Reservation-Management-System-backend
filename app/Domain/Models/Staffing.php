@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property Department current_department
  * @property JobTitle current_job_title
+ * @property mixed jobTitle
  */
 class Staffing extends Model
 {

@@ -12,7 +12,6 @@ use App\Domain\Models\Passport;
 use App\Domain\Models\PersonalCard;
 use App\Domain\Models\Skill;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
-use App\Domain\Models\Employee;
 use App\Exceptions\EntryNotFoundException;
 use App\Utils\StorageUtilities;
 use Exception;
@@ -28,7 +27,80 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
     // implement get job applications list with pagination
     public function getJobApplicationsList(): LengthAwarePaginator
     {
-        return JobApplication::query()->paginate(10);
+
+        // define JobApplication query builder
+        $query = JobApplication::query();
+
+        // check if the request has filter by status
+        if (request()->has('status')) {
+            $applicationStatusIds = request()->query('status');
+
+            // extract the comma separated values
+            $applicationStatusIds = explode(',', $applicationStatusIds);
+
+            // convert it to array of integers
+            $applicationStatusIds = array_map('intval', $applicationStatusIds);
+
+            // filter the query by the extracted ids
+            $query->whereIn('app_status_id', $applicationStatusIds);
+        }
+
+        // check if the request has filter by department_ids
+        if (request()->has('dep')) {
+            $departmentIds = request()->query('dep');
+
+            // extract the comma separated values
+            $departmentIds = explode(',', $departmentIds);
+
+            // convert it to array of integers
+            $departmentIds = array_map('intval', $departmentIds);
+
+            // filter the result based on department IDs
+            // using the related 'job_vacancies' table
+            $query->whereHas('jobVacancy', function ($query) use ($departmentIds) {
+                $query->whereIn('dep_id', $departmentIds);
+            });
+        }
+
+
+        // check if the request has filter by job vacancy
+        if (request()->has('vacancy')) {
+            $jobVacancyIds = request()->query('vacancy');
+
+            // extract the comma separated values
+            $jobVacancyIds = explode(',', $jobVacancyIds);
+
+            // convert it to array of integers
+            $jobVacancyIds = array_map('intval', $jobVacancyIds);
+
+            // filter the query by the extracted ids
+            $query->whereIn('job_vacancies.job_vacancy_id', $jobVacancyIds);
+        }
+
+        // check if the request has search by employee name
+        if (request()->has('name')) {
+            $name = request()->query('name');
+
+            // trim the name
+            $name = trim($name);
+
+            // make the name lower case
+            $name = strtolower($name);
+
+            // access the empData table that is related to the job application table
+            // and compare the first name and last name with the given name
+            // and return the result
+            $query->whereHas('empData', function ($query) use ($name) {
+
+                // search after ignoring the case
+                $query->whereRaw('LOWER(first_name) LIKE ?', ["%{$name}%"])
+                    ->orWhereRaw('LOWER(last_name) LIKE ?', ["%{$name}%"])
+                    ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%{$name}%"]);
+
+            });
+        }
+
+        return $query->paginate(10);
     }
 
     /**

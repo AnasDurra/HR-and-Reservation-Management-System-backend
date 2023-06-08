@@ -1,21 +1,22 @@
 <?php
 
+
 namespace App\Application\Http\Resources;
 
-use Illuminate\Http\Request;
+
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property mixed dep_id
+ * @property mixed emp_status_id
  * @property mixed name
  * @property mixed description
  */
-class DepartmentResource extends JsonResource
+class EmploymentStatusResource extends JsonResource
 {
-    public function toArray(Request $request): array
+    public function toArray($request): array
     {
         return [
-            'dep_id' => $this->dep_id,
+            'emp_status_id' => $this->emp_status_id,
             'name' => $this->name,
             'description' => $this->description,
         ];

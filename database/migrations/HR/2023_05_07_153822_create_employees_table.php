@@ -12,11 +12,10 @@ return new class extends Migration {
             $table->id('emp_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('job_app_id')->nullable();
-            $table->date('start_date'); //TODO delete?
             $table->integer('leaves_balance');
             $table->unsignedBigInteger('schedule_id');
-            $table->unsignedBigInteger('cur_title');
-            $table->unsignedBigInteger('cur_dep');
+            $table->unsignedBigInteger('cur_title')->nullable();
+            $table->unsignedBigInteger('cur_dep')->nullable();
             $table->SoftDeletes();
             $table->timestamps();
 
