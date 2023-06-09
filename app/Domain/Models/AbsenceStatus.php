@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class VacancyStatus extends Model
+class AbsenceStatus extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'vacancy_status_id';
+    protected $primaryKey = 'absence_status_id';
     protected $fillable = ['name', 'description'];
 
-    public function jobVacancies(): HasMany
+    public function absences(): HasMany
     {
-        return $this->hasMany(JobVacancy::class, 'vacancy_status_id', 'vacancy_status_id');
+        return $this->hasMany(Absence::class, 'absence_status_id', 'absence_status_id');
     }
+
 }
