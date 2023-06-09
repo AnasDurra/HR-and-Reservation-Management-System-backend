@@ -15,7 +15,6 @@ use JetBrains\PhpStorm\Pure;
  * @property User user
  * @property integer emp_id
  * @property JobApplication jobApplication
- * @property Schedule schedule
  * @property Staffing[] staffings
  * @property integer leaves_balance
  * @property EmploymentStatus employmentStatus
@@ -24,6 +23,7 @@ use JetBrains\PhpStorm\Pure;
  * @property mixed current_job_title
  * @property mixed start_working_date
  * @property mixed full_name
+ * @property mixed schedule
  */
 class EmployeeDetailsResource extends JsonResource
 {

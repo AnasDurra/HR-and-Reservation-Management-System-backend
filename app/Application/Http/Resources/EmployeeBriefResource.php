@@ -6,6 +6,7 @@ namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * @property mixed emp_id
@@ -22,7 +23,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class EmployeeBriefResource extends JsonResource
 {
 
-    public function toArray(Request $request): array
+    #[Pure] public function toArray(Request $request): array
     {
         return [
             'emp_id' => $this->emp_id,
@@ -35,7 +36,7 @@ class EmployeeBriefResource extends JsonResource
                 ? $this->current_job_title->job_title_id
                 : null,
             'start_working_date' => $this->start_working_date,
-            'current_employment_status' => $this->current_employment_status,
+            'current_employment_status' => new EmploymentStatusResource($this->current_employment_status),
         ];
     }
 

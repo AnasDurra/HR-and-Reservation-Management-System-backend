@@ -63,6 +63,15 @@ class Employee extends Model
     }
 
 
+    public function schedule(): BelongsTo
+    {
+        return $this->belongsTo(
+            Schedule::class,
+            'schedule_id',
+            'schedule_id'
+        )->withTrashed();
+    }
+
     public function staffings(): HasMany
     {
         return $this->hasMany(Staffing::class, 'emp_id', 'emp_id');
@@ -71,11 +80,6 @@ class Employee extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
-    }
-
-    public function schedule(): BelongsTo
-    {
-        return $this->belongsTo(Schedule::class, 'schedule_id', 'schedule_id');
     }
 
     public function jobApplication(): BelongsTo
@@ -154,4 +158,12 @@ class Employee extends Model
     {
         return $this->jobApplication()->first()->empData->first_name . ' ' . $this->jobApplication()->first()->empData->last_name;
     }
+
+//    /**
+//     * Get Schedule Name Mutator.
+//     */
+//    public function getScheduleNameAttribute(): string
+//    {
+//        return $this->schedule()->first()->schedule_name;
+//    }
 }

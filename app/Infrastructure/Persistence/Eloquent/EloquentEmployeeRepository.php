@@ -134,9 +134,11 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return Employee::query()->where('cur_title', '=', $title_id)->get()->toArray();
     }
 
-    public function getEmployeeById(int $id): ?Employee
+    public function getEmployeeById(int $id): Builder|Model
     {
-        return Employee::query()->findOrFail($id)->first();
+        return Employee::query()
+            ->where('emp_id', '=', $id)
+            ->firstOrFail();
     }
 
     /**
