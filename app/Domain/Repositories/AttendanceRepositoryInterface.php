@@ -4,6 +4,7 @@ namespace App\Domain\Repositories;
 
 use App\Domain\Models\Attendance;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 interface AttendanceRepositoryInterface
 {
@@ -18,5 +19,7 @@ interface AttendanceRepositoryInterface
     public function deleteAttendance($id): Attendance|Builder|null;
 
     public function getEmployeeAttByDate($emp_id,$date): Attendance|Builder|null;
+
+    public function getAllEmployeesAttByDate($date): Collection|null;
 
 }

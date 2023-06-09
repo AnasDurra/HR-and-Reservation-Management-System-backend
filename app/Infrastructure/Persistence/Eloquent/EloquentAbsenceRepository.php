@@ -38,7 +38,21 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
             'absence_date' => $data['absence_date'] ?? \DateTime::createFromFormat('Y-m-d', now()),
         ]);
 
-        return $absence->load('employee','absenceStatus');
+        $absence->load('employee','absenceStatus');
+        $absence->employee->load('vacations');
+
+        foreach ($absence->employee->vacations as $vacation) {
+            if ($vacation->remaining_days != 0) {
+                $vacation->remaining_days--;
+                $vacation->save();
+
+                $absence["message"] = "employee is on vacation";
+                $absence->delete();
+                return $absence;
+            }
+        }
+
+        return $absence;
     }
 
     public function updateAbsenceStatus($id,$status): Absence|Builder|null
@@ -63,6 +77,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
         return Absence::query()
             ->with(['employee','absenceStatus'])
             ->latest('absence_date')
+            ->where('emp_id',$emp_id)
             ->get()
             ->map(function ($absence) {
                 $absence->employee->full_name = $absence->employee->getFullNameAttribute();

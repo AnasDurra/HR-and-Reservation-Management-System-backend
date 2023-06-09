@@ -5,6 +5,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Repositories\HolidayRepositoryInterface;
 use App\Domain\Models\Holiday;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EloquentHolidayRepository implements HolidayRepositoryInterface
 {
@@ -50,5 +51,10 @@ class EloquentHolidayRepository implements HolidayRepositoryInterface
 
         $holiday->delete();
         return $holiday;
+    }
+
+    public function getHolidaysByDate($date): Holiday|Builder|null
+    {
+        return Holiday::query()->where('date',$date)->first();
     }
 }

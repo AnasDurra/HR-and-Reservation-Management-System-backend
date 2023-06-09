@@ -4,6 +4,7 @@ namespace App\Domain\Repositories;
 
 use App\Domain\Models\Holiday;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 interface HolidayRepositoryInterface
 {
@@ -16,4 +17,6 @@ interface HolidayRepositoryInterface
     public function updateHoliday(int $id, array $data): Holiday|Builder|null;
 
     public function deleteHoliday($id): Holiday|Builder|null;
+
+    public function getHolidaysByDate($date): Holiday|Builder|null;
 }

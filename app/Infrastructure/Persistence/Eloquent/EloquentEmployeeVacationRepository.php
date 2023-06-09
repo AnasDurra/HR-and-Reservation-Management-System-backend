@@ -24,7 +24,7 @@ class EloquentEmployeeVacationRepository implements EmployeeVacationRepositoryIn
             "emp_id" => $data["emp_id"],
             "start_date" => $data["start_date"],
             "total_days" => $data["total_days"],
-            "remaining_days" => $data["remaining_days"] ?? 0
+            "remaining_days" => $data["remaining_days"] ?? $data["total_days"]
         ]);
     }
 
