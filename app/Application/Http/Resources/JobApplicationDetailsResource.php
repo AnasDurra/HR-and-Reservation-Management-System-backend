@@ -5,6 +5,7 @@ namespace App\Application\Http\Resources;
 
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * @property mixed job_app_id
@@ -16,7 +17,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class JobApplicationDetailsResource extends JsonResource
 {
-    public function toArray($request): array
+    #[Pure] public function toArray($request): array
     {
         return [
 

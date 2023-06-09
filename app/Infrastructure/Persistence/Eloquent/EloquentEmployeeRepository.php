@@ -26,7 +26,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         // initialize the user repository
         try {
             $this->userRepository = app()->make(UserRepositoryInterface::class);
-        } catch (ContainerExceptionInterface | NotFoundExceptionInterface $e) {
+        } catch (ContainerExceptionInterface $e) {
             report($e);
         }
     }
@@ -35,7 +35,93 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
      */
     public function getEmployeeList(): LengthAwarePaginator
     {
-        return Employee::query()->paginate(10);
+        // implement search, filtration, and pagination
+        $employees = Employee::query()
+            ->with('user');
+
+        // search by email
+        if (request()->has('email')) {
+            $employees->whereHas('user', function ($query) {
+                $query->where('email', 'like', '%' . request()->get('email') . '%');
+            });
+        }
+
+        // search by username
+        if (request()->has('username')) {
+            $employees->whereHas('user', function ($query) {
+                $query->where('username', 'like', '%' . request()->get('username') . '%');
+            });
+        }
+
+        // search by name (full name)
+        if (request()->has('name')) {
+
+            // get the name
+            $name = request()->get('name');
+
+            // trim & convert to lowercase
+            $name = strtolower(trim($name));
+
+            // search after ignoring the case
+            $employees->whereHas('jobApplication', function ($query) use ($name) {
+                $query->whereHas('empData', function ($query) use ($name) {
+                    $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+                });
+            });
+        }
+
+        // filter by scheduleId
+        if (request()->has('schedule')) {
+
+            // get the schedules
+            $schedules = request()->get('schedule');
+
+            // extract the comma separated values
+            $schedules = explode(',', $schedules);
+
+            // convert it to array of integers
+            $schedules = array_map('intval', $schedules);
+
+            // filter the result based on schedule IDs
+            $employees->whereIn('schedule_id', $schedules);
+        }
+
+        // filter by departmentId
+        if (request()->has('dep')) {
+
+            // get the departments
+            $departments = request()->get('dep');
+
+            // extract the comma separated values
+            $departments = explode(',', $departments);
+
+            // convert it to array of integers
+            $departments = array_map('intval', $departments);
+
+            // filter the result based on department IDs
+            $employees->whereIn('cur_dep', $departments);
+        }
+
+        // filter by titleId
+        if (request()->has('title')) {
+
+            // get the titles
+            $titles = request()->get('title');
+
+            // extract the comma separated values
+            $titles = explode(',', $titles);
+
+            // convert it to array of integers
+            $titles = array_map('intval', $titles);
+
+            // filter the result based on title IDs
+            $employees->whereIn('cur_title', $titles);
+        }
+
+        return $employees->paginate(10);
+
     }
 
     public function getEmployeeListByDepId(int $dep_id): array
