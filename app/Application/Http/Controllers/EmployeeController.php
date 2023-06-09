@@ -5,6 +5,7 @@ namespace App\Application\Http\Controllers;
 use App\Application\Http\Requests\StoreEmployeeRequest;
 use App\Application\Http\Resources\EmployeeBriefResource;
 use App\Application\Http\Resources\EmployeeDetailsResource;
+use App\Application\Http\Resources\EmployeeJobTitleResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
