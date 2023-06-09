@@ -15,7 +15,7 @@ interface EmployeeRepositoryInterface
 
     public function getEmployeeListByTitleId(int $title_id): array;
 
-    public function getEmployeeById(int $id): ?Employee;
+    public function getEmployeeById(int $id): Builder|Model;
 
     public function createEmployee(array $data): Builder|Model;
 

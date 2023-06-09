@@ -33,7 +33,7 @@ class EmployeeService
         return $this->employeeRepository->getEmployeeListByTitleId($title_id);
     }
 
-    public function getEmployeeById(int $id): ?Employee
+    public function getEmployeeById(int $id): Builder|Model
     {
         return $this->employeeRepository->getEmployeeById($id);
     }
