@@ -4,10 +4,12 @@ namespace App\Domain\Repositories;
 
 use App\Domain\Models\EmployeeVacation;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface EmployeeVacationRepositoryInterface
 {
-    public function getEmployeeVacationList(): array;
+    public function getEmployeeVacationList(): Collection;
 
     public function getEmployeeVacationById(int $id): EmployeeVacation|Builder|null;
 

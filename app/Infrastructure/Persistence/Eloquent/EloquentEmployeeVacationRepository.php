@@ -5,53 +5,144 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Repositories\EmployeeVacationRepositoryInterface;
 use App\Domain\Models\EmployeeVacation;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EloquentEmployeeVacationRepository implements EmployeeVacationRepositoryInterface
 {
-    public function getEmployeeVacationList(): array
+    public function getEmployeeVacationList(): Collection
     {
-        return EmployeeVacation::with('employee')->get()->toArray();
+        $results = EmployeeVacation::query()
+            ->with('employee')
+            ->latest('start_date')
+            ->paginate(10);
+
+        $modifiedResults = $results->getCollection()->map(function ($employee_vacation) {
+            $employee_vacation->employee->full_name = $employee_vacation->employee->getFullNameAttribute();
+
+            $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+            if ($cur_dep !== null) {
+                $employee_vacation->employee->cur_dep = $cur_dep->name;
+            }
+
+            $cur_title = $employee_vacation->employee->getCurrentJobTitleAttribute();
+            if ($cur_title !== null) {
+                $employee_vacation->employee->cur_title = $cur_title->name;
+            }
+
+            return $employee_vacation;
+        });
+
+        $results->setCollection($modifiedResults);
+
+        return collect($results);
+
     }
 
     public function getEmployeeVacationById(int $id): EmployeeVacation|Builder|null
     {
-        return EmployeeVacation::query()->with('employee')->find($id);
+        $employee_vacation = EmployeeVacation::query()
+            ->with('employee')
+            ->find($id);
+
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cut_title = $employee_vacation->employee->getCurrentJobTitleAttribute();
+        if($cut_title !== null){
+            $employee_vacation->employee->cur_title = $cut_title->name;
+        }
+
+        return $employee_vacation;
     }
 
     public function createEmployeeVacation(array $data): EmployeeVacation|Builder|null
     {
-        return EmployeeVacation::query()->with('employee')->create([
+        $employee_vacation = EmployeeVacation::query()->with('employee')->create([
             "emp_id" => $data["emp_id"],
             "start_date" => $data["start_date"],
             "total_days" => $data["total_days"],
             "remaining_days" => $data["remaining_days"] ?? $data["total_days"]
         ]);
+
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cut_title = $employee_vacation->employee->getCurrentJobTitleAttribute();
+        if($cut_title !== null){
+            $employee_vacation->employee->cur_title = $cut_title->name;
+        }
+
+        return $employee_vacation;
     }
 
     public function updateEmployeeVacation(int $id, array $data): EmployeeVacation|Builder|null
     {
-        $vacation = EmployeeVacation::query()->find($id);
+        $employee_vacation = EmployeeVacation::query()->find($id);
 
-        if(!$vacation) return null;
+        if(!$employee_vacation) return null;
 
-        $vacation["emp_id"] = $data["emp_id"] ?? $vacation["emp_id"];
-        $vacation["start_date"] = $data["start_date"] ?? $vacation["start_date"];
-        $vacation["total_days"] = $data["total_days"] ?? $vacation["total_days"];
-        $vacation["remaining_days"] = $data["remaining_days"] ?? $vacation["remaining_days"];
-        $vacation->save();
+        $employee_vacation["emp_id"] = $data["emp_id"] ?? $employee_vacation["emp_id"];
+        $employee_vacation["start_date"] = $data["start_date"] ?? $employee_vacation["start_date"];
+        $employee_vacation["total_days"] = $data["total_days"] ?? $employee_vacation["total_days"];
+        $employee_vacation["remaining_days"] = $data["remaining_days"] ?? $employee_vacation["remaining_days"];
+        $employee_vacation->save();
 
-        $vacation->employee();
-        return $vacation;
+        $employee_vacation->employee();
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cut_title = $employee_vacation->employee->getCurrentJobTitleAttribute();
+        if($cut_title !== null){
+            $employee_vacation->employee->cur_title = $cut_title->name;
+        }
+
+        return $employee_vacation;
     }
 
     public function deleteEmployeeVacation($id): EmployeeVacation|Builder|null
     {
-        $vacation = EmployeeVacation::query()->with('employee')->find($id);
+        $employee_vacation = EmployeeVacation::query()->with('employee')->find($id);
 
-        if(!$vacation) return null;
+        if(!$employee_vacation) return null;
 
-        $vacation->delete();
-        return $vacation;
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $employee_vacation->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cut_title = $employee_vacation->employee->getCurrentJobTitleAttribute();
+        if($cut_title !== null){
+            $employee_vacation->employee->cur_title = $cut_title->name;
+        }
+
+        $employee_vacation->delete();
+        return $employee_vacation;
     }
 
     public function getEmployeeVacations($emp_id): array

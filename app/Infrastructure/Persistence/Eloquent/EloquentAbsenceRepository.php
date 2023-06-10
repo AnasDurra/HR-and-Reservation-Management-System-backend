@@ -11,7 +11,32 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
 {
     public function getAbsenceList(): Collection
     {
-        return Absence::with(['employee','absenceStatus'])->latest('absence_date')->get();
+        $results = Absence::query()->
+        with(['employee','absenceStatus'])
+            ->latest('absence_date')
+            ->paginate(10);
+
+        $modifiedResults = $results->getCollection()->map(function ($employee_absence) {
+            $employee_absence->employee->full_name = $employee_absence->employee->getFullNameAttribute();
+
+            $cur_dep = $employee_absence->employee->getCurrentDepartmentAttribute();
+            if ($cur_dep !== null) {
+                $employee_absence->employee->cur_dep = $cur_dep->name;
+            }
+
+            $cur_title = $employee_absence->employee->getCurrentJobTitleAttribute();
+            if ($cur_title !== null) {
+                $employee_absence->employee->cur_title = $cur_title->name;
+            }
+
+            $employee_absence["absenceStatus"] =$employee_absence->absenceStatus->name;
+
+            return $employee_absence;
+        });
+
+        $results->setCollection($modifiedResults);
+
+        return collect($results);
     }
 
     public function getAbsenceById(int $id): Absence|Builder|null
@@ -19,6 +44,20 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
         $absence = Absence::query()->with(['employee','absenceStatus'])->find($id);
         if(!$absence)
             return null;
+
+        $absence->employee->full_name = $absence->employee->getFullNameAttribute();
+
+        $cur_dep = $absence->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $absence->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cur_title = $absence->employee->getCurrentJobTitleAttribute();
+        if ($cur_title !== null) {
+            $absence->employee->cur_title = $cur_title->name;
+        }
+
+        $absence["absenceStatus"] =$absence->absenceStatus->name;
 
         return $absence;
     }
@@ -28,6 +67,20 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
         $absence = Absence::query()->with(['employee','absenceStatus'])
             ->where('emp_id',$data['emp_id'])->where('absence_date',$data['absence_date'])->first();
         if($absence){
+            $absence->employee->full_name = $absence->employee->getFullNameAttribute();
+
+            $cur_dep = $absence->employee->getCurrentDepartmentAttribute();
+            if ($cur_dep !== null) {
+                $absence->employee->cur_dep = $cur_dep->name;
+            }
+
+            $cur_title = $absence->employee->getCurrentJobTitleAttribute();
+            if ($cur_title !== null) {
+                $absence->employee->cur_title = $cur_title->name;
+            }
+
+            $absence["absenceStatus"] =$absence->absenceStatus->name;
+
             $absence["message"]="Employee has already registered absent";
             return $absence;
         }
@@ -40,6 +93,21 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
 
         $absence->load('employee','absenceStatus');
         $absence->employee->load('vacations');
+
+        $absence->employee->full_name = $absence->employee->getFullNameAttribute();
+
+        $cur_dep = $absence->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $absence->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cur_title = $absence->employee->getCurrentJobTitleAttribute();
+        if ($cur_title !== null) {
+            $absence->employee->cur_title = $cur_title->name;
+        }
+
+        $absence["absenceStatus"] =$absence->absenceStatus->name;
+
 
         foreach ($absence->employee->vacations as $vacation) {
             if ($vacation->remaining_days != 0) {
@@ -57,14 +125,29 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
 
     public function updateAbsenceStatus($id,$status): Absence|Builder|null
     {
-        $absence = Absence::query()->find($id);
+        $absence = Absence::query()->with(['employee','absenceStatus'])->find($id);
         if(!$absence)
             return null;
 
         $absence->absence_status_id = $status;
         $absence->save();
 
-        return $absence->load('employee','absenceStatus');
+        $absence->employee->full_name = $absence->employee->getFullNameAttribute();
+
+        $cur_dep = $absence->employee->getCurrentDepartmentAttribute();
+        if ($cur_dep !== null) {
+            $absence->employee->cur_dep = $cur_dep->name;
+        }
+
+        $cur_title = $absence->employee->getCurrentJobTitleAttribute();
+        if ($cur_title !== null) {
+            $absence->employee->cur_title = $cur_title->name;
+        }
+
+        $absence->load('absenceStatus');
+        $absence["absenceStatus"] =$absence->absenceStatus->name;
+
+        return $absence;
     }
 
     public function getEmployeeAbsences($emp_id): Collection|null
@@ -79,8 +162,22 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
             ->latest('absence_date')
             ->where('emp_id',$emp_id)
             ->get()
-            ->map(function ($absence) {
-                $absence->employee->full_name = $absence->employee->getFullNameAttribute();
+            ->map(function ($absence){
+                $cur_dep = $absence->employee->getCurrentDepartmentAttribute();
+                if ($cur_dep !== null) {
+                    $absence->employee->cur_dep = $cur_dep->name;
+                }
+                return $absence;
+            })
+            ->map(function ($absence){
+                $cur_title = $absence->employee->getCurrentJobTitleAttribute();
+                if ($cur_title !== null) {
+                    $absence->employee->cur_title = $cur_title->name;
+                }
+                return $absence;
+            })
+            ->map(function ($absence){
+                $absence["absenceStatus"] =$absence->absenceStatus->name;
                 return $absence;
             });
     }

@@ -17,8 +17,23 @@ class AbsenceController extends Controller
     public function index(): JsonResponse
     {
         $absences = $this->AbsenceService->getAbsenceList();
+
         return response()->json([
-            'data'=>AbsenceResource::collection($absences)
+            'data'=>AbsenceResource::collection($absences["data"]),
+            'pagination' => [
+                'current_page' => $absences["current_page"],
+                'first_page_url' => $absences["first_page_url"],
+                'from' => $absences["from"],
+                'last_page' => $absences["last_page"],
+                'last_page_url' => $absences["last_page_url"],
+                'links' => $absences["links"],
+                'next_page_url' => $absences["next_page_url"],
+                'path' => $absences["path"],
+                'per_page' => $absences["per_page"],
+                'prev_page_url' => $absences["prev_page_url"],
+                'to' => $absences["to"],
+                'total' => $absences["total"],
+            ],
             ], 200);
     }
 

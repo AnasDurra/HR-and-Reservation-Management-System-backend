@@ -5,6 +5,8 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\EmployeeVacationRepositoryInterface;
 use App\Domain\Models\EmployeeVacation;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class EmployeeVacationService
 {
@@ -15,7 +17,7 @@ class EmployeeVacationService
         $this->EmployeeVacationRepository = $EmployeeVacationRepository;
     }
 
-    public function getEmployeeVacationList(): array
+    public function getEmployeeVacationList(): Collection
     {
         return $this->EmployeeVacationRepository->getEmployeeVacationList();
     }
