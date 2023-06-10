@@ -5,6 +5,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 use App\Domain\Models\Attendance;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 {
@@ -216,5 +217,11 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 
 
         return $attendance;
+    }
+
+    public function getAllEmployeesAttByDate($date): Collection|null
+    {
+        return Attendance::query()->with('employee')
+        ->where('attendance_date',$date)->latest('attendance_time')->get();
     }
 }

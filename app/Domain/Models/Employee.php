@@ -87,6 +87,11 @@ class Employee extends Model
         return $this->belongsTo(JobApplication::class, 'job_app_id', 'job_app_id');
     }
 
+    public function absences(): HasMany
+    {
+        return $this->hasMany(Absence::class, 'emp_id', 'emp_id');
+    }
+
     /**
      * Get Current Employment Status Mutator.
      *

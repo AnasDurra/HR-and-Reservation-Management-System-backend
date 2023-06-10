@@ -5,6 +5,7 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 use App\Domain\Models\Attendance;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class AttendanceService
 {
@@ -48,6 +49,11 @@ class AttendanceService
     public function getEmployeeAttByDate($emp_id,$date): Attendance|Builder|null
     {
         return $this->AttendanceRepository->getEmployeeAttByDate($emp_id,$date);
+    }
+
+    public function getAllEmployeesAttByDate($date): Collection|null
+    {
+        return $this->AttendanceRepository->getAllEmployeesAttByDate($date);
     }
 
 }

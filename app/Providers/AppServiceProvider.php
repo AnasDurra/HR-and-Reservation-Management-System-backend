@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Providers;
+use App\Domain\Repositories\AbsenceRepositoryInterface;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 
 use App\Domain\Repositories\DepartmentRepositoryInterface;
@@ -16,6 +17,7 @@ use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\ScheduleRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Repositories\WorkingDayRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\EloquentAbsenceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Domain\Repositories\ShiftRequestRepositoryInterface;
 use App\Domain\Repositories\VacationRequestRepositoryInterface;
@@ -61,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(HolidayRepositoryInterface::class, EloquentHolidayRepository::class);
         $this->app->bind(EmployeeVacationRepositoryInterface::class, EloquentEmployeeVacationRepository::class);
         $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
+        $this->app->bind(AbsenceRepositoryInterface::class, EloquentAbsenceRepository::class);
     }
 
 

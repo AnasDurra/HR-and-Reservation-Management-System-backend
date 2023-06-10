@@ -24,7 +24,7 @@ class EloquentEmployeeVacationRepository implements EmployeeVacationRepositoryIn
             "emp_id" => $data["emp_id"],
             "start_date" => $data["start_date"],
             "total_days" => $data["total_days"],
-            "remaining_days" => $data["remaining_days"] ?? 0
+            "remaining_days" => $data["remaining_days"] ?? $data["total_days"]
         ]);
     }
 
@@ -56,10 +56,10 @@ class EloquentEmployeeVacationRepository implements EmployeeVacationRepositoryIn
 
     public function getEmployeeVacations($emp_id): array
     {
-//        $eloquentEmployeeRepository = new EloquentEmployeeRepository();
-//        $employee = $eloquentEmployeeRepository->getEmployeeById($emp_id);
-//
-//        if(!$employee) return ["message"=>'employee not found'];
+        $eloquentEmployeeRepository = new EloquentEmployeeRepository();
+        $employee = $eloquentEmployeeRepository->getEmployeeById($emp_id);
+
+        if(!$employee) return ["message"=>'employee not found'];
         return EmployeeVacation::query()->where('emp_id',$emp_id)->latest('start_date')->get()->toArray();
     }
 }
