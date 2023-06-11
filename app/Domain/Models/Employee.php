@@ -171,4 +171,12 @@ class Employee extends Model
 //    {
 //        return $this->schedule()->first()->schedule_name;
 //    }
+
+
+
+    // Keep this
+    public function empData() : Model|BelongsTo|null
+    {
+        return $this->jobApplication()->first()->empData();
+    }
 }

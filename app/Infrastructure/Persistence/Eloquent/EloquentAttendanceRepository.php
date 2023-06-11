@@ -13,9 +13,9 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
     {
         return Attendance::query()
             ->with([
-                'employee:emp_id,schedule_id,emp_data_id,cur_dep',
+                'employee:emp_id,schedule_id,cur_dep,job_app_id',
                 'employee.schedule:schedule_id,name,time_in,time_out',
-                'employee.empData:emp_data_id,first_name,last_name',
+                'employee.jobApplication.empData:emp_data_id,first_name,last_name',
             ])
             ->select(
                 'attendances.attendance_id',
@@ -47,9 +47,10 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
     public function getAttendanceById(int $id): Attendance|Builder|null
     {
         $attendance = Attendance::query()->with([
-            'employee:emp_id,schedule_id,emp_data_id,cur_dep',
+            'employee:emp_id,schedule_id,cur_dep,job_app_id',
             'employee.schedule:schedule_id,name,time_in,time_out',
-            'employee.empData:emp_data_id,first_name,last_name'])
+            'employee.jobApplication.empData:emp_data_id,first_name,last_name',
+        ])
             ->find($id);
 
         if(!$attendance) return null;
@@ -69,9 +70,9 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
     {
         $attendances = Attendance::query()
             ->with([
-                'employee:emp_id,schedule_id,emp_data_id,cur_dep',
+                'employee:emp_id,schedule_id,cur_dep,job_app_id',
                 'employee.schedule:schedule_id,name,time_in,time_out',
-                'employee.empData:emp_data_id,first_name,last_name',
+                'employee.jobApplication.empData:emp_data_id,first_name,last_name',
             ])
             ->select(
                 'attendances.attendance_id',

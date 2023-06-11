@@ -18,7 +18,7 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
                 $duration = $scheduleTimeOut->diff($leaveTime);
                 $leave["leaveBefore"] = $duration->format('%H:%I:%S');
             }
-            $leave->employee->load('empData');
+            $leave->employee->load('jobApplication.empData:emp_data_id,first_name,last_name');
         }
 
         return $leaves->toArray();
@@ -38,7 +38,7 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
             $leave["leaveBefore"] = $duration->format('%H:%I:%S');
         }
 
-        $leave->employee->load('empData');
+        $leave->employee->load('jobApplication.empData:emp_data_id,first_name,last_name');
         return $leave;
     }
 
@@ -77,7 +77,7 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
             $leave["leaveBefore"] = $duration->format('%H:%I:%S');
         }
 
-        $leave->employee->load('empData');
+        $leave->employee->load('jobApplication.empData:emp_data_id,first_name,last_name');
         return $leave;
     }
 
@@ -107,7 +107,7 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
             $leave["status"] =1;
             $leave->save();
         }
-        $leave->employee->load('empData');
+        $leave->employee->load('jobApplication.empData:emp_data_id,first_name,last_name');
         return $leave;
     }
 

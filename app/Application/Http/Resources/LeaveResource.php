@@ -23,7 +23,7 @@ class LeaveResource extends JsonResource
                 $result[$i]["leaveBefore"] = $value["leaveBefore"] ?? null;
                 $result[$i]["deleted_at"] = $value["deleted_at"] ?? null;
                 $result[$i]["employee"] = [
-                    "full_name" => $value["employee"]["emp_data"]["first_name"].' '.$value["employee"]["emp_data"]["last_name"],
+                    "full_name" => $value["employee"]["job_application"]["emp_data"]["first_name"].' '.$value["employee"]["job_application"]["emp_data"]["last_name"],
                     "cur_dep" => $value["employee"]["cur_dep"],
                     "schedule" => [
                         "schedule_id" => $value["employee"]["schedule"]["schedule_id"],

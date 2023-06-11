@@ -44,6 +44,10 @@ class EloquentEmployeeVacationRepository implements EmployeeVacationRepositoryIn
             ->with('employee')
             ->find($id);
 
+        if(!$employee_vacation)
+            return null;
+
+
         $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
         if ($cur_dep !== null) {
             $employee_vacation->employee->cur_dep = $cur_dep->name;
