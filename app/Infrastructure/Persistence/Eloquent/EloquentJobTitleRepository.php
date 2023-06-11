@@ -5,13 +5,14 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Repositories\JobTitleRepositoryInterface;
 use App\Domain\Models\JobTitle;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EloquentJobTitleRepository implements JobTitleRepositoryInterface
 {
-    public function getJobTitleList(): array
+    public function getJobTitleList(): Collection
     {
         $employeeRepository = new EloquentEmployeeRepository();
-        $jobTitles = JobTitle::query()->with('permissions')->get()->toArray();
+        $jobTitles = JobTitle::query()->with('permissions')->get();
         foreach ($jobTitles as &$jobTitle)
             $jobTitle['employees_count']=count($employeeRepository->getEmployeeListByTitleId($jobTitle['job_title_id']));
 

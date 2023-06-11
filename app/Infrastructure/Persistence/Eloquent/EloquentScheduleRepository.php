@@ -5,12 +5,13 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Repositories\ScheduleRepositoryInterface;
 use App\Domain\Models\Schedule;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class EloquentScheduleRepository implements ScheduleRepositoryInterface
 {
-    public function getScheduleList(): array
+    public function getScheduleList(): Collection
     {
-        return Schedule::all()->toArray();
+        return Schedule::all();
     }
 
     public function getScheduleById(int $id): Schedule|Builder|null
@@ -47,7 +48,7 @@ class EloquentScheduleRepository implements ScheduleRepositoryInterface
 
         $schedule->employees->makeHidden(['pivot']);
 
-        if($schedule['employees']){
+        if(!empty($schedule['employees'])){
             return $schedule;
         }
 

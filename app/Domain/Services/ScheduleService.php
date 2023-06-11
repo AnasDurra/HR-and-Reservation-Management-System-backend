@@ -5,6 +5,7 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\ScheduleRepositoryInterface;
 use App\Domain\Models\Schedule;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class ScheduleService
 {
@@ -15,7 +16,7 @@ class ScheduleService
         $this->ScheduleRepository = $ScheduleRepository;
     }
 
-    public function getScheduleList(): array
+    public function getScheduleList(): Collection
     {
         return $this->ScheduleRepository->getScheduleList();
     }

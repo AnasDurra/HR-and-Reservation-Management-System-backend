@@ -4,10 +4,11 @@ namespace App\Domain\Repositories;
 
 use App\Domain\Models\JobTitle;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 interface JobTitleRepositoryInterface
 {
-    public function getJobTitleList(): array;
+    public function getJobTitleList(): Collection;
 
     public function getJobTitleById(int $id): JobTitle|Builder|null;
 
