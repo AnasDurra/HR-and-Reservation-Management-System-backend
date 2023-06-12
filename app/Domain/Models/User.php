@@ -63,4 +63,10 @@ class User extends Authenticatable
             ->withPivot('affected_user_id');
     }
 
+    public function affectedUser(): BelongsTo
+    {
+        return $this->belongsTo(AffectedUser::class, 'user_id', 'user_id');
+    }
+
+
 }

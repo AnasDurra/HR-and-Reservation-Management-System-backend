@@ -4,6 +4,7 @@ use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
 use App\Application\Http\Controllers\JobTitleController;
+use App\Application\Http\Controllers\LogController;
 use App\Application\Http\Controllers\PermissionController;
 use App\Application\Http\Controllers\EmployeeController;
 use App\Application\Http\Controllers\ScheduleController;
@@ -61,6 +62,7 @@ Route::apiResource('vacation-request', VacationRequestController::class);
 Route::post('/vacation-request/update/{id}', [VacationRequestController::class, 'update']);
 Route::post('/vacation-request/accept/{id}', [VacationRequestController::class, 'acceptVacationRequest']);
 Route::post('/vacation-request/reject/{id}', [VacationRequestController::class, 'rejectVacationRequest']);
+Route::apiResource('vacation-request' , VacationRequestController::class)->except(['update']);
 
 // Register the routes for the JobTitleController
 Route::apiResource('job-titles', JobTitleController::class);
@@ -96,6 +98,12 @@ Route::apiResource('holidays', HolidayController::class);
 Route::apiResource('employees-vacations', EmployeeVacationController::class);
 Route::get('employee-vacations/{emp_id}', [EmployeeVacationController::class, 'showEmployeeVacations']);
 
+//Register the routes for the LogController
+Route::get('log/all-action', [LogController::class,'getAllAction']);
+Route::get('log/all-affected-user', [LogController::class,'getAllAffectedUser']);
+Route::get('log/all-user', [LogController::class,'getAllUser']);
+
 // Register the routes for the AbsenceController
 Route::apiResource('absences', AbsenceController::class);
 Route::get('employee-absences/{emp_id}', [AbsenceController::class, 'showEmployeeAbsences']);
+

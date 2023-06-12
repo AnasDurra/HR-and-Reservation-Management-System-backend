@@ -157,26 +157,88 @@ class Employee extends Model
     }
 
     /**
+     * Get Current Department Mutator.
+     * this function is used to get the current department of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentDepartmentAttribute(): Model|BelongsTo|null
+    {
+        // if there is no staffing record with null end_date
+        // then the employee is not working in any department
+        if (!$this->staffings()->whereNull('end_date')->exists()) {
+            return null;
+        }
+
+        return $this->staffings()->whereNull('end_date')->first()->department;
+    }
+
+    /**
+     * Get Current Job Title Mutator.
+     * this function is used to get the current job title of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentJobTitleAttribute(): Model|BelongsTo|null
+    {
+        // if there is no staffing record with null end_date
+        // then the employee does not have a job title
+        if (!$this->staffings()->whereNull('end_date')->exists()) {
+            return null;
+        }
+        return $this->staffings()->whereNull('end_date')->first()->jobTitle;
+    }
+
+    /**
+     * Get Start Working date Mutator.
+     *
+     * this represents the start date of the first
+     * staffing record of the employee
+     */
+    public function getStartWorkingDateAttribute(): string|null
+    {
+        // if employee doesn't have any staffing records
+        // then he didn't start working yet
+        if (!$this->staffings()->exists()) {
+            return null;
+        }
+        return $this->staffings()->orderBy('start_date')->first()->start_date;
+    }
+
+
+    /**
      * Get Employee Full Name Mutator.
      */
     public function getFullNameAttribute(): string
     {
-        return $this->jobApplication()->first()->empData->first_name . ' ' . $this->jobApplication()->first()->empData->last_name;
+        return $this->jobApplication->empData->first_name . ' ' . $this->jobApplication->empData->last_name;
     }
 
-//    /**
-//     * Get Schedule Name Mutator.
-//     */
-//    public function getScheduleNameAttribute(): string
-//    {
-//        return $this->schedule()->first()->schedule_name;
-//    }
-
-
-
-    // Keep this
-    public function empData() : Model|BelongsTo|null
+    public function getFirstNameAttribute(): string
     {
-        return $this->jobApplication()->first()->empData();
+        $jobApp = $this->jobApplication;
+        if (isset($jobApp)) {
+            $empData = $jobApp->empData;
+
+            if (isset($empData)) {
+                // extract the first name
+                return $empData->first_name;
+            }
+        }
+
+        return '';
+    }
+
+    public function getLastNameAttribute(): string
+    {
+        $jobApp = $this->jobApplication;
+        if (isset($jobApp)) {
+            $empData = $jobApp->empData;
+
+            if (isset($empData)) {
+                // extract the last name
+                return $empData->last_name;
+            }
+        }
+
+        return '';
     }
 }
