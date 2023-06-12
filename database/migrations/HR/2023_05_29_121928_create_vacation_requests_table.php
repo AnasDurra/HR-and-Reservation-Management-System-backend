@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->Integer('req_stat')->default(1);
             $table->text('description')->nullable();
             $table->datetime('start_date');
-            $table->datetime('end_date');
+            $table->integer('duration');
             $table->timestamps();
 
             $table->foreign('emp_id')->references('emp_id')->on('employees')->onDelete('cascade');

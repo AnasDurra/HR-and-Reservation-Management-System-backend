@@ -2,19 +2,20 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\Models\Employee;
 use App\Domain\Models\VacationRequest;
 use App\Domain\Repositories\VacationRequestRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class EloquentVacationRequestRepository implements VacationRequestRepositoryInterface
 {
     public function getVacationRequestList(): LengthAwarePaginator
     {
-        $vacation_request = VacationRequest::query();
+        $vacation_requests = VacationRequest::query();
 
         $req_stat = request('req_stat');
         $start_date = request('start_date');
@@ -28,26 +29,25 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
 
 
         if ($req_stat) {
-            $vacation_request->where('req_stat', '=', $req_stat);
+            $vacation_requests->where('req_stat', '=', $req_stat);
         }
 
         if ($start_date) {
-            $vacation_request->where('start_date', '=', $start_date);
+            $vacation_requests->where('start_date', '=', $start_date);
         }
         if ($end_date) {
-            $vacation_request->where('end_date', '=', $end_date);
+            $vacation_requests->where('end_date', '=', $end_date);
         }
 
         //filter by date range
         if ($start_date_st && $end_date_st) {
-            $vacation_request->whereBetween('start_date', [$start_date_st, $end_date_st]);
+            $vacation_requests->whereBetween('start_date', [$start_date_st, $end_date_st]);
         }
         if ($start_date_ed && $end_date_ed) {
-            $vacation_request->whereBetween('end_date', [$start_date_ed, $end_date_ed]);
+            $vacation_requests->whereBetween('end_date', [$start_date_ed, $end_date_ed]);
         }
 
-        return $vacation_request->with(['employee'])->paginate(10);
-
+        return $vacation_requests->paginate(10);
     }
 
     /**
@@ -68,12 +68,23 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
      */
     public function createVacationRequest(array $data): VacationRequest|Builder
     {
+
+        // TODO : RE ENABLE THIS
+//        $user = Auth::user();
+//        $emp_id = $user->emp_id;
+
+        // get the user id from data
+        $user_id = $data['user_id'];
+
+        // get the employee id from the user id
+        $emp_id = Employee::query()->where('user_id', '=', $user_id)->firstOrFail()->emp_id;
+
         return VacationRequest::query()->create([
-            "emp_id" => $data["emp_id"],
-            "req_stat" => '1',
+            "emp_id" => $emp_id,
+            "req_stat" => 1,
             "description" => $data["description"],
             "start_date" => $data["start_date"],
-            "end_date" => $data["end_date"]
+            "duration" => $data["duration"]
         ]);
 
     }
@@ -84,14 +95,19 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
     public function updateVacationRequest(int $id, array $data): VacationRequest|Builder
     {
         try {
-            $vacationRequest = VacationRequest::query()->findOrFail($id);
-            $vacationRequest['description'] = $data["description"] ?? $vacationRequest['description'];
-            $vacationRequest['start_date'] = $data["start_date"] ?? $vacationRequest['start_date'];
-            $vacationRequest['end_date'] = $data["end_date"] ?? $vacationRequest['end_date'];
+            $vacationRequest = VacationRequest::query()
+                ->where('vacation_req_id', '=', $id)
+                ->firstOrFail();
+
+//            dd($vacationRequest);
+            $vacationRequest->description = $data["description"] ?? $vacationRequest->description;
+            $vacationRequest->start_date = $data["start_date"] ?? $vacationRequest->start_date;
+            $vacationRequest->duration = $data["duration"] ?? $vacationRequest->duration;
             $vacationRequest->save();
             return $vacationRequest;
         } catch (Exception $exception) {
-            throw new EntryNotFoundException("Entry with ID $id not found.");
+//            throw new EntryNotFoundException("Entry with ID $id not found.");
+            throw $exception;
         }
 
     }
@@ -102,9 +118,12 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
     public function deleteVacationRequest($id): VacationRequest|Builder|null
     {
         try {
-            $vacationRequest = VacationRequest::query()->findOrFail($id)->first();
+            $vacationRequest = VacationRequest::query()
+                ->where('vacation_req_id', '=', $id)
+                ->firstOrFail();
             $vacationRequest->delete();
             return $vacationRequest;
+
         } catch (Exception $exception) {
             throw new EntryNotFoundException("Entry with ID $id not found.");
         }

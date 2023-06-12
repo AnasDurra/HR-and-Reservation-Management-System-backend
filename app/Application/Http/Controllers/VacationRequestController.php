@@ -6,7 +6,9 @@ use App\Application\Http\Resources\ShiftRequestResource;
 use App\Application\Http\Resources\VacationRequestResource;
 use App\Domain\Services\VacationRequestService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 use Illuminate\Validation\ValidationException;
 
 class VacationRequestController extends Controller
@@ -18,10 +20,10 @@ class VacationRequestController extends Controller
         $this->VacationRequestService = $VacationRequestService;
     }
 
-    public function index(): VacationRequestResource
+    public function index(): AnonymousResourceCollection
     {
         $vacationRequests = $this->VacationRequestService->getVacationRequestList();
-        return new VacationRequestResource($vacationRequests);
+        return VacationRequestResource::collection($vacationRequests);
     }
 
     public function show(int $id): VacationRequestResource
@@ -33,14 +35,14 @@ class VacationRequestController extends Controller
     /**
      * @throws ValidationException
      */
-    public function store(): ShiftRequestResource|JsonResponse
+    public function store(): VacationRequestResource|JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'emp_id' => ['required', 'integer', 'exists:employees,emp_id'],
+            'user_id' => ['required', 'integer', 'exists:users,user_id'],
             //'req_stat' => ['required', 'string'],
             'description' => ['required', 'string'],
-            'start_date' => ['required', 'date', 'before:end_date'],
-            'end_date' => ['required', 'date', 'after:start_date'],
+            'start_date' => ['required', 'date', 'after:yesterday'],
+            'duration' => ['required', 'int'],
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -50,27 +52,26 @@ class VacationRequestController extends Controller
         }
         $vacationRequest = $this->VacationRequestService->createVacationRequest($validator->validated());
 
-        return new ShiftRequestResource($vacationRequest);
+        return new VacationRequestResource($vacationRequest);
 
     }
 
     /**
      * @throws ValidationException
      */
-    public function update(int $id): VacationRequestResource
+    public function update(int $id):MessageBag|VacationRequestResource
     {
         $validator = Validator::make(request()->all(), [
             'description' => ['string'],
-            'start_date' => ['date', 'before:end_date'],
-            'end_date' => ['date', 'after:start_date'],
+            'start_date' => ['date'],
+            'duration' => ['int'],
         ]);
 
         if ($validator->fails()) {
-            $errors = $validator->errors();
-            return new VacationRequestResource($errors);
+            return $validator->errors();
         }
-        $vacationRequest = $this->VacationRequestService->updateVacationRequest($id, $validator->validated());
 
+        $vacationRequest = $this->VacationRequestService->updateVacationRequest($id, $validator->validated());
         return new VacationRequestResource($vacationRequest);
     }
 

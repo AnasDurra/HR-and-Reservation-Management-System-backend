@@ -56,10 +56,10 @@ Route::post('/shift-request/accept/{id}', [ShiftRequestController::class, 'accep
 Route::post('/shift-request/reject/{id}', [ShiftRequestController::class, 'rejectShiftRequest']);
 
 //Register the routes for the VacationRequestController
-Route::apiResource('vacation-request' , VacationRequestController::class);
 Route::post('/vacation-request/update/{id}', [VacationRequestController::class, 'update']);
 Route::post('/vacation-request/accept/{id}', [VacationRequestController::class, 'acceptVacationRequest']);
 Route::post('/vacation-request/reject/{id}', [VacationRequestController::class, 'rejectVacationRequest']);
+Route::apiResource('vacation-request' , VacationRequestController::class)->except(['update']);
 
 // Register the routes for the JobTitleController
 Route::apiResource('job-titles', JobTitleController::class);
