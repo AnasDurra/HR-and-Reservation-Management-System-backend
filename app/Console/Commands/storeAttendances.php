@@ -15,8 +15,9 @@ class storeAttendances extends Command
 
     public function handle()
     {
-        $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
-        $fingerDeviceService->storeAttendanceFromFingerDevices();
+        // TODO Uncomment this part
+//        $fingerDeviceService = new FingerDeviceService(new EloquentFingerDeviceRepository());
+//        $fingerDeviceService->storeAttendanceFromFingerDevices();
 
         echo "All attendance has been taken for all employees , " . now() . "\n";
     }

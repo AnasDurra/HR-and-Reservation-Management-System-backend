@@ -11,7 +11,7 @@ class Action extends Model
     use HasFactory;
 
     protected $primaryKey = 'action_id';
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['name', 'description', 'severity'];
 
     public function users(): BelongsToMany
     {

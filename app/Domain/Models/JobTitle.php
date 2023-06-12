@@ -12,17 +12,28 @@ class JobTitle extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $primaryKey = 'job_title_id';
     protected $fillable = ['name', 'description'];
 
     public function staffings(): HasMany
     {
-        return $this->hasMany(Staffing::class, 'job_title_id', 'job_title_id');
+        return $this->hasMany(
+            Staffing::class,
+            'job_title_id',
+            'job_title_id'
+        );
     }
 
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class,'job_title_permissions','job_title_id','perm_id',
-            'job_title_id','perm_id');
+        return $this->belongsToMany(
+            Permission::class,
+            'job_title_permissions',
+            'job_title_id',
+            'perm_id',
+            'job_title_id',
+            'perm_id'
+        );
     }
 }

@@ -5,6 +5,7 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\HolidayRepositoryInterface;
 use App\Domain\Models\Holiday;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class HolidayService
 {
@@ -38,5 +39,10 @@ class HolidayService
     public function deleteHoliday($id): Holiday|Builder|null
     {
         return $this->HolidayRepository->deleteHoliday($id);
+    }
+
+    public function getHolidaysByDate($date): Holiday|Builder|null
+    {
+        return $this->HolidayRepository->getHolidaysByDate($date);
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property mixed first_name
@@ -45,7 +46,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class EmpData extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'emp_data_id';
     protected $fillable = [
@@ -143,9 +144,9 @@ class EmpData extends Model
     }
 
     // TODO: needs to be fixed
-    public function relatives(): BelongsTo
+    public function relatives(): HasMany
     {
-        return $this->belongsTo(EmpData::class, 'emp_data_id', 'emp_data_id');
+        return $this->hasMany(EmpData::class, 'emp_data_id', 'emp_data_id');
     }
 
     public function references(): HasMany

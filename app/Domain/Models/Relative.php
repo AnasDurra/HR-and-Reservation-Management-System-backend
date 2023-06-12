@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Relative extends Model
 {
     use HasFactory;
+
     protected $primaryKey = 'relative_id';
 
     protected $fillable = [
         'emp_data_id',
-        'emp_id',
+        'relative_data_id',
     ];
 
     public function empData(): HasOne
@@ -22,8 +23,8 @@ class Relative extends Model
         return $this->hasOne(EmpData::class, 'emp_data_id', 'emp_data_id');
     }
 
-    public function employee(): BelongsTo
+    public function relativeData(): HasOne
     {
-        return $this->belongsTo(Employee::class, 'emp_id', 'emp_id');
+        return $this->hasOne(EmpData::class, 'emp_data_id', 'relative_data_id');
     }
 }

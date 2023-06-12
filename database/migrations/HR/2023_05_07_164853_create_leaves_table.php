@@ -18,7 +18,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(0);
             $table->tinyInteger('type')->default(1);
 
-            $table->foreign('emp_id')->references('emp_id')->on('employees');
+            $table->foreign('emp_id')->references('emp_id')->on('employees')->cascadeOnDelete();
 
             $table->timestamps();
             $table->softDeletes();

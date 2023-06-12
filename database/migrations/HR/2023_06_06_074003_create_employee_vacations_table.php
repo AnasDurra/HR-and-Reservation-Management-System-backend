@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
 
     public function up(): void
     {
@@ -17,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('total_days');
             $table->unsignedInteger('remaining_days')->default(0);
 
-            $table->foreign('emp_id')->references('emp_id')->on('employees');
+            $table->foreign('emp_id')->references('emp_id')->on('employees')->cascadeOnDelete();
 
             $table->softDeletes();
             $table->timestamps();

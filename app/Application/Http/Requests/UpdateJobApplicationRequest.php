@@ -22,6 +22,7 @@ class UpdateJobApplicationRequest extends FormRequest
             "job_application.job_vacancy_id" => ['sometimes', 'integer', 'exists:job_vacancies,job_vacancy_id'],
             "job_application.section_man_notes" => ['sometimes', 'nullable', 'string'],
             "job_application.vice_man_rec" => ['sometimes', 'nullable', 'string'],
+            "job_application.app_status_id" => ['sometimes', 'integer', 'exists:application_statuses,app_status_id'],
 
 
             // employee data
@@ -141,7 +142,7 @@ class UpdateJobApplicationRequest extends FormRequest
 
             // relatives (from center employees)
             "relatives" => ['sometimes', 'nullable', 'array'],
-            "relatives.*.emp_id" => ['sometimes', 'integer', 'exists:employees,emp_id'],
+            "relatives.*.relative_data_id" => ['sometimes', 'integer', 'exists:employees,emp_id'],
 
             // references
             "references" => ['sometimes', 'nullable', 'array'],
@@ -194,8 +195,8 @@ class UpdateJobApplicationRequest extends FormRequest
             "deleted_computer_skills.*" => ['sometimes', 'integer', 'exists:computer_skills,computer_skill_id'],
 
 //            // relatives
-//            "deleted_relatives" => ['sometimes', 'nullable', 'array'],
-//            "deleted_relatives.*" => ['sometimes', 'integer', 'exists:relatives,relative_id'],
+            "deleted_relatives" => ['sometimes', 'nullable', 'array'],
+            "deleted_relatives.*" => ['sometimes', 'integer', 'exists:relatives,relative_id'],
 
             // references
             "deleted_references" => ['sometimes', 'nullable', 'array'],

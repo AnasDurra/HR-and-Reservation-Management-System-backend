@@ -9,6 +9,7 @@ use App\Domain\Models\Passport;
 use App\Domain\Models\PersonalCard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property string first_name
@@ -49,7 +50,7 @@ class EmployeeDataResource extends JsonResource
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
                 'full_name' => $this->full_name,
-                'personal_photo' => $this->personal_photo,
+                'personal_photo' => $this->personal_photo ? Storage::url($this->personal_photo) : null,
                 'father_name' => $this->father_name,
                 'grand_father_name' => $this->grand_father_name,
                 'birth_date' => $this->birth_date,
@@ -104,7 +105,7 @@ class EmployeeDataResource extends JsonResource
             "computer_skills" => ComputerSkillResource::collection($this->computerSkills),
 
             // Relatives (that represents employees) data (if exists) TODO: FIX IT
-            "relatives" => /*$this->relatives ? RelativeResource::collection($this->relatives) : null*/ [],
+            "relatives" => /*$this->relatives ? RelativeResource::collection($this->relatives) : null*/[],
 
             // References data (if exists)
             "references" => ReferenceResource::collection($this->references),

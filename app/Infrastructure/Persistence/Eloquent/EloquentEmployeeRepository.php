@@ -5,17 +5,123 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 
 use App\Domain\Models\Employee;
+use App\Domain\Models\EmploymentStatus;
+use App\Domain\Models\JobApplication;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
+use App\Domain\Repositories\UserRepositoryInterface;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
+    private UserRepositoryInterface $userRepository;
 
+    public function __construct()
+    {
+        // initialize the user repository
+        try {
+            $this->userRepository = app()->make(UserRepositoryInterface::class);
+        } catch (ContainerExceptionInterface $e) {
+            report($e);
+        }
+    }
+
+    /**
+     */
     public function getEmployeeList(): LengthAwarePaginator
     {
-        return Employee::query()->paginate(10);
+        // implement search, filtration, and pagination
+        $employees = Employee::query()
+            ->with('user');
+
+        // search by email
+        if (request()->has('email')) {
+            $employees->whereHas('user', function ($query) {
+                $query->where('email', 'like', '%' . request()->get('email') . '%');
+            });
+        }
+
+        // search by username
+        if (request()->has('username')) {
+            $employees->whereHas('user', function ($query) {
+                $query->where('username', 'like', '%' . request()->get('username') . '%');
+            });
+        }
+
+        // search by name (full name)
+        if (request()->has('name')) {
+
+            // get the name
+            $name = request()->get('name');
+
+            // trim & convert to lowercase
+            $name = strtolower(trim($name));
+
+            // search after ignoring the case
+            $employees->whereHas('jobApplication', function ($query) use ($name) {
+                $query->whereHas('empData', function ($query) use ($name) {
+                    $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+                });
+            });
+        }
+
+        // filter by scheduleId
+        if (request()->has('schedule')) {
+
+            // get the schedules
+            $schedules = request()->get('schedule');
+
+            // extract the comma separated values
+            $schedules = explode(',', $schedules);
+
+            // convert it to array of integers
+            $schedules = array_map('intval', $schedules);
+
+            // filter the result based on schedule IDs
+            $employees->whereIn('schedule_id', $schedules);
+        }
+
+        // filter by departmentId
+        if (request()->has('dep')) {
+
+            // get the departments
+            $departments = request()->get('dep');
+
+            // extract the comma separated values
+            $departments = explode(',', $departments);
+
+            // convert it to array of integers
+            $departments = array_map('intval', $departments);
+
+            // filter the result based on department IDs
+            $employees->whereIn('cur_dep', $departments);
+        }
+
+        // filter by titleId
+        if (request()->has('title')) {
+
+            // get the titles
+            $titles = request()->get('title');
+
+            // extract the comma separated values
+            $titles = explode(',', $titles);
+
+            // convert it to array of integers
+            $titles = array_map('intval', $titles);
+
+            // filter the result based on title IDs
+            $employees->whereIn('cur_title', $titles);
+        }
+
+        return $employees->paginate(10);
+
     }
 
     public function getEmployeeListByDepId(int $dep_id): array
@@ -28,17 +134,74 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return Employee::query()->where('cur_title', '=', $title_id)->get()->toArray();
     }
 
-    public function getEmployeeById(int $id): ?Employee
+    public function getEmployeeById(int $id): Builder|Model
     {
-        // TODO: Implement getEmployeeById() method.
+        return Employee::query()
+            ->where('emp_id', '=', $id)
+            ->firstOrFail();
     }
 
-    public function createEmployee(array $data): Employee
+    /**
+     * @throws Exception
+     */
+    public function createEmployee(array $data): Builder|Model
     {
-        // TODO: Implement createEmployee() method.
+        try {
+            // start transaction
+            DB::beginTransaction();
+
+            // first, user should be created
+            $user = $this->userRepository->createUser([
+                'user_type_id' => 1,
+                'email' => $data['email'],
+                'username' => $data['username'],
+                'password' => $data['password'],
+            ]);
+
+            // get the dep_id for the employee from the job vacancy
+            // that is associated with the job application
+            $dep_id = JobApplication::query()
+                ->where('job_app_id', '=', $data['job_app_id'])
+                ->firstOrFail()
+                ->jobVacancy
+                ->dep_id;
+
+            // then, employee should be created
+            $employee = Employee::query()->create([
+                'user_id' => $user->user_id,
+                'job_app_id' => $data['job_app_id'],
+                'schedule_id' => $data['schedule_id'],
+                'leaves_balance' => $data['leaves_balance'],
+
+                // meta data for employee
+                'cur_title' => $data['job_title_id'],
+                'cur_dep' => $dep_id,
+            ]);
+
+            // create a staffing record for the employee
+            $employee->staffings()->create([
+                'job_title_id' => $data['job_title_id'],
+                'dep_id' => $dep_id,
+                'start_date' => $data['start_date'],
+            ]);
+
+            // attach an employment status record for the employee (working by default)
+            $employee->employmentStatuses()->attach(EmploymentStatus::WORKING, [
+                'start_date' => $data['start_date'],
+            ]);
+
+            // commit transaction
+            DB::commit();
+
+            return $employee;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
-    public function updateEmployee(int $id, array $data): bool
+    public function updateEmployee(int $id, array $data): Builder|Model
     {
         // TODO: Implement updateEmployee() method.
     }

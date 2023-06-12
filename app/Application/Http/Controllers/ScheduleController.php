@@ -90,10 +90,10 @@ class ScheduleController extends Controller
                 , 404);
         }
 
-        if($schedule['employees']){
+        if(!empty($schedule['employees'])){
             return response()->json([
                 'message' => 'one or more employees associated with this Schedule',
-                'data' => $schedule
+                'data' => new ScheduleResource($schedule)
                 ], 400);
         }
 

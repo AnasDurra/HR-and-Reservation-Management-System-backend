@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('employment_statuses', function (Blueprint $table) {
             $table->id('emp_status_id');
             $table->string('name', 25);
-            $table->string('description', 255);
+            $table->string('description', 255)->nullable();
 
             $table->timestamps();
         });

@@ -59,12 +59,17 @@ class FingerDeviceService
 
             $device = new ZKTeco($fingerDevice->ip, 4370);
             $device->connect();
+
+            $device->disableDevice();
+
             $deviceUsers = collect($device->getUser())->pluck('uid');
 
             $employee_user_name = $employee->user()->username;
             if (!($deviceUsers->contains($employee->emp_id))) {
                 $device->setUser($employee->emp_id, $employee->emp_id, $employee_user_name, '', '0', '0');
             }
+
+            $device->enableDevice();
         }
 
         return true;
@@ -80,11 +85,16 @@ class FingerDeviceService
 
             $device = new ZKTeco($fingerDevice->ip, 4370);
             $device->connect();
+
+            $device->disableDevice();
+
             $deviceUsers = collect($device->getUser())->pluck('uid');
 
             if (($deviceUsers->contains($emp_id))) {
                 $device->removeUser($emp_id);
             }
+
+            $device->enableDevice();
         }
 
         return true;
@@ -113,37 +123,38 @@ class FingerDeviceService
                 if( $value['type']==0){
                     if ( $employeeService->getEmployeeById($value["id"]) != null ) {
 
-                            $att["uid"] = $value['uid'];
-                            $att["emp_id"] = $value['id'];
-                            $att["state"] = $value['state'];
-                            $att["attendance_time"] = date('H:i:s', strtotime($value['timestamp']));
-                            $att["attendance_date"] = date('Y-m-d', strtotime($value['timestamp']));
-                            $att["type"] = $value['type'];
+                        $att["uid"] = $value['uid'];
+                        $att["emp_id"] = $value['id'];
+                        $att["state"] = $value['state'];
+                        $att["attendance_time"] = date('H:i:s', strtotime($value['timestamp']));
+                        $att["attendance_date"] = date('Y-m-d', strtotime($value['timestamp']));
+                        $att["type"] = $value['type'];
 
-                            $attendanceService->createAttendance($att);
+                        $attendanceService->createAttendance($att);
                     }
                 }
 
                 else{
                     if ( $employeeService->getEmployeeById($value["id"]) != null ) {
 
-                            $lve["uid"] = $value['uid'];
-                            $lve["emp_id"] = $value['id'];
-                            $lve["state"] = $value['state'];
-                            $lve["leave_time"] = date('H:i:s', strtotime($value['timestamp']));
-                            $lve["leave_date"] = date('Y-m-d', strtotime($value['timestamp']));
-                            $lve["type"] = $value['type'];
+                        $lve["uid"] = $value['uid'];
+                        $lve["emp_id"] = $value['id'];
+                        $lve["state"] = $value['state'];
+                        $lve["leave_time"] = date('H:i:s', strtotime($value['timestamp']));
+                        $lve["leave_date"] = date('Y-m-d', strtotime($value['timestamp']));
+                        $lve["type"] = $value['type'];
 
-                            $leaveService->createLeave($lve);
+                        $leaveService->createLeave($lve);
                     }
                 }
             }
 
-            // Enable the device
-            $device->enableDevice();
 
             // Clear attendance log from the device
             $device->clearAttendance();   // TODO Check this
+
+            // Enable the device
+            $device->enableDevice();
         }
 
         return true;

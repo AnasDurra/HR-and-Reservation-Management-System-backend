@@ -5,6 +5,7 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\WorkingDayRepositoryInterface;
 use App\Domain\Models\WorkingDay;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class WorkingDayService
 {
@@ -15,7 +16,7 @@ class WorkingDayService
         $this->WorkingDayRepository = $WorkingDayRepository;
     }
 
-    public function getWorkingDayList(): array
+    public function getWorkingDayList(): Collection
     {
         return $this->WorkingDayRepository->getWorkingDayList();
     }

@@ -3,7 +3,6 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-
 use App\Domain\Models\Address;
 use App\Domain\Models\ComputerSkill;
 use App\Domain\Models\EmpData;
@@ -13,7 +12,6 @@ use App\Domain\Models\Passport;
 use App\Domain\Models\PersonalCard;
 use App\Domain\Models\Skill;
 use App\Domain\Repositories\JobApplicationRepositoryInterface;
-use App\Domain\Models\Employee;
 use App\Exceptions\EntryNotFoundException;
 use App\Utils\StorageUtilities;
 use Exception;
@@ -29,7 +27,81 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
     // implement get job applications list with pagination
     public function getJobApplicationsList(): LengthAwarePaginator
     {
-        return JobApplication::query()->paginate(10);
+
+        // define JobApplication query builder
+        $query = JobApplication::query();
+
+        // check if the request has filter by status
+        if (request()->has('status')) {
+            $applicationStatusIds = request()->query('status');
+
+            // extract the comma separated values
+            $applicationStatusIds = explode(',', $applicationStatusIds);
+
+            // convert it to array of integers
+            $applicationStatusIds = array_map('intval', $applicationStatusIds);
+
+            // filter the query by the extracted ids
+            $query->whereIn('app_status_id', $applicationStatusIds);
+        }
+
+        // check if the request has filter by department_ids
+        if (request()->has('dep')) {
+            $departmentIds = request()->query('dep');
+
+            // extract the comma separated values
+            $departmentIds = explode(',', $departmentIds);
+
+            // convert it to array of integers
+            $departmentIds = array_map('intval', $departmentIds);
+
+            // filter the result based on department IDs
+            // using the related 'job_vacancies' table
+            $query->whereHas('jobVacancy', function ($query) use ($departmentIds) {
+                $query->whereIn('dep_id', $departmentIds);
+            });
+        }
+
+
+        // check if the request has filter by job vacancy
+        if (request()->has('vacancy')) {
+            $jobVacancyIds = request()->query('vacancy');
+
+            // extract the comma separated values
+            $jobVacancyIds = explode(',', $jobVacancyIds);
+
+            // convert it to array of integers
+            $jobVacancyIds = array_map('intval', $jobVacancyIds);
+
+
+            // filter the query by the extracted ids
+            $query->whereIn('job_vacancy_id', $jobVacancyIds);
+        }
+
+        // check if the request has search by employee name
+        if (request()->has('name')) {
+            $name = request()->query('name');
+
+            // trim the name
+            $name = trim($name);
+
+            // make the name lower case
+            $name = strtolower($name);
+
+            // access the empData table that is related to the job application table
+            // and compare the first name and last name with the given name
+            // and return the result
+            $query->whereHas('empData', function ($query) use ($name) {
+
+                // search after ignoring the case
+                $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                    ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                    ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+
+            });
+        }
+
+        return $query->paginate(10);
     }
 
     /**
@@ -263,9 +335,11 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             // relatives (from center employees) (if exists)
             if (isset($data['relatives'])) {
                 foreach ($data['relatives'] as $relative) {
-                    // TODO: Check that if it's working or not
-                    // attach relative to this employee data
-                    $employeeData->relatives()->attach($relative["emp_id"]);
+
+                    // create relative
+                    $employeeData->relatives()->create([
+                        "relative_data_id" => $relative['relative_data_id'],
+                    ]);
                 }
             }
 
@@ -359,6 +433,14 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                     optional($jobApplicationData)['vice_man_rec'] != $jobApplication->getAttribute("vice_man_rec")
                 ) {
                     $updated['vice_man_rec'] = $jobApplicationData['vice_man_rec'];
+                }
+
+                // check app status id
+                if (
+                    optional($jobApplicationData)['app_status_id'] &&
+                    optional($jobApplicationData)['app_status_id'] != $jobApplication->getAttribute("app_status_id")
+                ) {
+                    $updated['app_status_id'] = $jobApplicationData['app_status_id'];
                 }
 
                 // check if there is any update
@@ -1285,6 +1367,34 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 }
             }
 
+            // relatives
+            if (optional($data)['relatives']) {
+                if (count($data['relatives']) > 0) {
+                    $relativeData = $data['relatives'];
+
+                    foreach ($relativeData as $relative) {
+                        if (isset($relative['relative_data_id'])) {
+                            $relativeObj = $jobApplication->empData
+                                ->relatives()
+                                ->where('relative_data_id', $relative['relative_data_id'])
+                                ->first();
+
+                            if ($relativeObj) {
+
+                                // check relative data id
+                                if (optional($relative)['relative_data_id']) {
+                                    $relativeObj->update(['relative_data_id' => $relative['relative_data_id']]);
+                                }
+                            } else {
+                                $jobApplication->empData->relatives()->create([
+                                    'relative_data_id' => $relative['relative_data_id'],
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
             // Employee data (certificates)
             if (optional($data)['certificates']) {
                 if (count($data['certificates']) > 0) {
@@ -1386,6 +1496,11 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 $jobApplication->empData->references()->whereIn('reference_id', $data['deleted_references'])->delete();
             }
 
+            // relatives
+            if (optional($data)['deleted_relatives']) {
+                $jobApplication->empData->relatives()->whereIn('relative_id', $data['deleted_relatives'])->delete();
+            }
+
             // certificates
             if (optional($data)['deleted_certificates']) {
 
@@ -1415,26 +1530,32 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
         }
     }
 
-    public function deleteJobApplication($id): Builder|Model
+    // returns an array of job applications that have the given ids
+    public function deleteJobApplications(array $data): array|Collection
     {
-        $jobApplication = JobApplication::findOrFail($id);
+        // job applications that has the mentioned ids
+        $jobApplications = JobApplication::query()->whereIn('job_app_id', $data)->get();
 
-        // extract the file urls from the certificates
-        $fileUrls = $jobApplication->empData->certificates()->pluck('file_url')->toArray();
+        // for each job application, delete the files from the storage
+        $jobApplications->each(function ($jobApplication) {
+            // extract the file urls from the certificates
+            $fileUrls = $jobApplication->empData->certificates()->pluck('file_url')->toArray();
 
-        // get the personal photo url
-        $personalPhotoUrl = $jobApplication->empData->personal_photo;
+            // get the personal photo url
+            $personalPhotoUrl = $jobApplication->empData->personal_photo;
 
-        // create the complete array of file urls
-        $fileUrls[] = $personalPhotoUrl;
+            // create the complete array of file urls
+            $fileUrls[] = $personalPhotoUrl;
 
-        // delete the files from the storage for the given file urls
-        StorageUtilities::deleteFiles($fileUrls);
+            // delete the files from the storage for the given file urls
+            StorageUtilities::deleteFiles($fileUrls);
 
-        // delete the job application
-        $jobApplication->delete();
+            // delete the job application
+            $jobApplication->delete();
+        });
 
-        return $jobApplication;
+
+        return $jobApplications;
     }
 
     /**

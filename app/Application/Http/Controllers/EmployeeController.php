@@ -2,7 +2,10 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Requests\StoreEmployeeRequest;
 use App\Application\Http\Resources\EmployeeBriefResource;
+use App\Application\Http\Resources\EmployeeDetailsResource;
+use App\Application\Http\Resources\EmployeeJobTitleResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,27 +27,24 @@ class EmployeeController extends Controller
         return EmployeeBriefResource::collection($employees);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(int $id): EmployeeDetailsResource
     {
         $employee = $this->employeeService->getEmployeeById($id);
-        return response()->json([
-            'data' => new EmployeeBriefResource($employee) //Modify it as needed
-        ], 200);
+        return new EmployeeDetailsResource($employee);
     }
 
-    public function store(): JsonResponse
+    public function store(StoreEmployeeRequest $request): EmployeeBriefResource
     {
-        $employee = $this->employeeService->createEmployee(request()->all());
-        return response()->json([
-            'data' => new EmployeeBriefResource($employee) //Modify it as needed
-        ], 200);
+        $validated = $request->validated();
+        $employee = $this->employeeService->createEmployee($validated);
+        return new EmployeeBriefResource($employee);
     }
 
     public function update(int $id): JsonResponse
     {
         $employee = $this->employeeService->updateEmployee($id, request()->all());
         return response()->json([
-            'data' => new EmployeeBriefResource($employee) //Modify it as needed
+            'data' => new EmployeeDetailsResource($employee) //Modify it as needed
         ], 200);
     }
 
@@ -52,7 +52,7 @@ class EmployeeController extends Controller
     {
         $employee = $this->employeeService->deleteEmployee($id);
         return response()->json([
-            'data' => new EmployeeBriefResource($employee) //Modify it as needed
+            'data' => new EmployeeDetailsResource($employee) //Modify it as needed
         ], 200);
     }
 
@@ -86,7 +86,7 @@ class EmployeeController extends Controller
         }
 
         return response()->json([
-            'data' => new EmployeeBriefResource($employee)
+            'data' => new EmployeeJobTitleResource($employee)
         ], 200);
     }
 }

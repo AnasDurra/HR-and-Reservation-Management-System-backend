@@ -68,7 +68,7 @@ class AttendanceResource extends JsonResource
             }
 
 
-            $data[$i]["employee"]["full_name"] = $element['employee']['emp_data']['first_name'] . ' ' . $element['employee']['emp_data']['last_name'];
+            $data[$i]["employee"]["full_name"] = $element['employee']["job_application"]['emp_data']['first_name'] . ' ' . $element['employee']["job_application"]['emp_data']['last_name'];
             $data[$i]["employee"]["cur_dep"] = $element["employee"]["cur_dep"];
             $data[$i]["employee"]["schedule"]["schedule_id"] = $element["employee"]["schedule"]["schedule_id"];
             $data[$i]["employee"]["schedule"]["name"] = $element["employee"]["schedule"]["name"];

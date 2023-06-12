@@ -5,6 +5,7 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class PermissionService
 {
@@ -16,7 +17,7 @@ class PermissionService
         $this->PermissionRepository = $PermissionRepository;
     }
 
-    public function getPermissionList(): array
+    public function getPermissionList(): Collection
     {
         return $this->PermissionRepository->getPermissionList();
     }

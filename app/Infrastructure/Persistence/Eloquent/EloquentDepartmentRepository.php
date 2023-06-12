@@ -5,15 +5,15 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Models\Department;
 use App\Domain\Repositories\DepartmentRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class EloquentDepartmentRepository implements DepartmentRepositoryInterface
 {
-    public function getList(): array
+    public function getList(): Collection
     {
-        $departments = Department::all()->toArray();
+        $departments = Department::all();
         $employeeRepository = new EloquentEmployeeRepository();
         foreach ($departments as &$department) {
-            //TODO add this function into Employee Repository :
             $department['employees_count'] = count($employeeRepository->getEmployeeListByDepId($department['dep_id']));
         }
         return $departments;

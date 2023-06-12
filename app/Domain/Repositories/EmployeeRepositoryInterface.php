@@ -15,11 +15,11 @@ interface EmployeeRepositoryInterface
 
     public function getEmployeeListByTitleId(int $title_id): array;
 
-    public function getEmployeeById(int $id): ?Employee;
+    public function getEmployeeById(int $id): Builder|Model;
 
-    public function createEmployee(array $data): Employee;
+    public function createEmployee(array $data): Builder|Model;
 
-    public function updateEmployee(int $id, array $data): bool;
+    public function updateEmployee(int $id, array $data): Builder|Model;
 
     public function deleteEmployee($id): Builder|Model|null;
 

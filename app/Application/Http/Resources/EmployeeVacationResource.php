@@ -29,9 +29,10 @@ class EmployeeVacationResource extends JsonResource
             'employee' => [
                 'emp_id' => $this['employee']["emp_id"],
                 'user_id' => $this['employee']["user_id"],
-                'cur_dep' => $this['employee']["cur_dep"],
-                'cur_title' => $this['employee']["cur_title"],
-            ]
+                'full_name' => $this['employee']["full_name"],
+                'cur_dep' => $this['employee']["cur_dep"] ?? null,
+                'cur_title' => $this['employee']["cur_title"] ?? null,
+            ],
         ];
     }
 }

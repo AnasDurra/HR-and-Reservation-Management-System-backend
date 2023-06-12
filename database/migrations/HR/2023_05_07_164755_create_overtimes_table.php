@@ -14,8 +14,9 @@ return new class extends Migration
             $table->time('duration');
             $table->date('overtime_date');
 
-            $table->foreign('emp_id')->references('emp_id')->on('employees');
+            $table->foreign('emp_id')->references('emp_id')->on('employees')->cascadeOnDelete();
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

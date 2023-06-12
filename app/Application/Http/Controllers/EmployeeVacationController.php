@@ -19,7 +19,21 @@ class EmployeeVacationController extends Controller
     {
         $employeesVacations = $this->EmployeeVacationService->getEmployeeVacationList();
         return response()->json([
-            'data'=>EmployeeVacationResource::collection($employeesVacations)
+            'data'=> EmployeeVacationResource::collection($employeesVacations["data"]),
+            'pagination' => [
+                'current_page' => $employeesVacations["current_page"],
+                'first_page_url' => $employeesVacations["first_page_url"],
+                'from' => $employeesVacations["from"],
+                'last_page' => $employeesVacations["last_page"],
+                'last_page_url' => $employeesVacations["last_page_url"],
+                'links' => $employeesVacations["links"],
+                'next_page_url' => $employeesVacations["next_page_url"],
+                'path' => $employeesVacations["path"],
+                'per_page' => $employeesVacations["per_page"],
+                'prev_page_url' => $employeesVacations["prev_page_url"],
+                'to' => $employeesVacations["to"],
+                'total' => $employeesVacations["total"],
+            ],
             ], 200);
     }
 

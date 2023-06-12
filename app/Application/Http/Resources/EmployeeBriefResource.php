@@ -3,30 +3,40 @@
 
 namespace App\Application\Http\Resources;
 
-use App\Domain\Models\Department;
-use App\Domain\Models\EmpData;
-use App\Domain\Models\EmploymentStatus;
-use App\Domain\Models\Staffing;
+
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use JetBrains\PhpStorm\Pure;
 
 /**
- * @property integer emp_id
- * @property EmpData empData
- * @property Department current_department
- * @property Staffing staffings
- * @property EmploymentStatus current_employment_status
- *
+ * @property mixed emp_id
+ * @property mixed user
+ * @property mixed job_app_id
+ * @property mixed schedule_id
+ * @property mixed leaves_balance
+ * @property mixed job_title_id
+ * @property mixed start_date
+ * @property mixed start_working_date
+ * @property mixed current_employment_status
+ * @property mixed current_job_title
  */
 class EmployeeBriefResource extends JsonResource
 {
-    public function toArray($request): array
+
+    #[Pure] public function toArray(Request $request): array
     {
         return [
             'emp_id' => $this->emp_id,
-            'name' => $this->empData->full_name,
-            'department' => new DepartmentResource($this->staffings->current_department),
-            'job_title' => new JobTitleResource($this->staffings->current_job_title),
-            'status' => $this->current_employment_status->getAttribute('name'),
+            'email' => $this->user->email,
+            'username' => $this->user->username,
+            'job_app_id' => $this->job_app_id,
+            'schedule_id' => $this->schedule_id,
+            'leaves_balance' => $this->leaves_balance,
+            'job_title_id' => $this->current_job_title
+                ? $this->current_job_title->job_title_id
+                : null,
+            'start_working_date' => $this->start_working_date,
+            'current_employment_status' => new EmploymentStatusResource($this->current_employment_status),
         ];
     }
 

@@ -44,7 +44,7 @@ class StoreJobApplicationRequest extends FormRequest
             "personal_card.card_date_of_issue" => ['required', 'date'],
 
             // passport data
-            "passport" => ['sometimes','nullable'],
+            "passport" => ['sometimes', 'nullable'],
             'passport.passport_number' => ['required_with:passport', 'string', 'max:25'],
             'passport.passport_place_of_issue' => ['required_with:passport', 'string', 'max:80'],
             'passport.passport_date_of_issue' => ['required_with:passport', 'date'],
@@ -102,7 +102,7 @@ class StoreJobApplicationRequest extends FormRequest
             "education.*.city" => ['required', 'string', 'max:255'],
             "education.*.start_date" => ['required', 'date'],
             "education.*.end_date" => ['required', 'date'],
-            "education.*.specialize" => ['sometimes','nullable', 'string', 'max:255'],
+            "education.*.specialize" => ['sometimes', 'nullable', 'string', 'max:255'],
             "education.*.grade" => ['sometimes', 'nullable', 'numeric'],
             "education.*.education_level_id" => ['required', 'integer', 'exists:education_levels,education_level_id'],
 
@@ -133,7 +133,7 @@ class StoreJobApplicationRequest extends FormRequest
 
             // relatives (from center employees)
             "relatives" => ['sometimes', 'nullable', 'array'],
-            "relatives.*.emp_id" => ['required', 'integer', 'exists:employees,emp_id'],
+            "relatives.*.relative_data_id" => ['required', 'integer', 'exists:emp_data,emp_data_id'],
 
             // references
             "references" => ['sometimes', 'nullable', 'array'],
