@@ -124,21 +124,23 @@ class Employee extends Model
         return $this->hasMany(EmployeeVacation::class, 'emp_id', 'emp_id');
     }
 
-    /**
-     * Get Current Department Mutator.
-     * this function is used to get the current department of the employee
-     * by checking the end_date of the staffing record
-     */
-    public function getCurrentDepartmentAttribute(): Model|BelongsTo|null
-    {
-        // if there is no staffing record with null end_date
-        // then the employee is not working in any department
-        if (!$this->staffings()->whereNull('end_date')->exists()) {
-            return null;
-        }
+//    /**
+//     * Get Current Department Mutator.
+//     * this function is used to get the current department of the employee
+//     * by checking the end_date of the staffing record
+//     */
+//    public function getCurrentDepartmentAttribute(): Model|BelongsTo|null
+//    {
+//        // if there is no staffing record with null end_date
+//        // then the employee is not working in any department
+//        if (!$this->staffings()->whereNull('end_date')->exists()) {
+//            return null;
+//        }
+//
+//        return $this->staffings()->whereNull('end_date')->first()->department;
+//    }
 
-        return $this->staffings()->whereNull('end_date')->first()->department;
-    }
+
 
     /**
      * Get Current Job Title Mutator.
@@ -154,6 +156,8 @@ class Employee extends Model
         }
         return $this->staffings()->whereNull('end_date')->first()->jobTitle;
     }
+
+
 
     /**
      * Get Employee Full Name Mutator.
@@ -192,4 +196,12 @@ class Employee extends Model
 
         return '';
     }
+
+
+    // Keep this
+    public function empData() : Model|BelongsTo|null
+    {
+        return $this->jobApplication()->first()->empData();
+    }
+
 }

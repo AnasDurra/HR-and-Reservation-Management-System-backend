@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('name', 50);
             $table->integer('severity');
             $table->text('description')->nullable();
-            $table->integer('severity');
+//            $table->integer('severity');
             $table->timestamps();
         });
     }
