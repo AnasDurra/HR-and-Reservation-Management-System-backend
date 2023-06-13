@@ -18,8 +18,10 @@ class VacationRequestResource extends JsonResource
             'description' => $this->description,
             'start_date' => $this->start_date,
             'duration' => $this->duration,
-            'current_job_title' => new JobTitleResource($this->employee->current_job_title),
-            'current_department' => new DepartmentResource($this->employee->current_department),
+            'current_job_title' =>$this->employee->current_job_title ? $this->employee->current_job_title->name:null,
+//            'current_job_title' => new JobTitleResource($this->employee->current_job_title->name),
+            'current_department' =>$this->employee->current_department ? $this->employee->current_department->name:null,
+//            'current_department' => new DepartmentResource($this->employee->current_department/*->name*/),
             'first_name' => $this->employee->first_name,
             'last_name' => $this->employee->last_name,
         ];

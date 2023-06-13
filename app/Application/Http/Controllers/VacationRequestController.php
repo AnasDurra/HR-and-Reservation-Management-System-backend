@@ -2,10 +2,8 @@
 
 namespace App\Application\Http\Controllers;
 
-use App\Application\Http\Resources\ShiftRequestResource;
 use App\Application\Http\Resources\VacationRequestResource;
 use App\Domain\Services\VacationRequestService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
@@ -35,7 +33,7 @@ class VacationRequestController extends Controller
     /**
      * @throws ValidationException
      */
-    public function store(): VacationRequestResource|JsonResponse
+    public function store(): VacationRequestResource|MessageBag
     {
         $validator = Validator::make(request()->all(), [
             'user_id' => ['required', 'integer', 'exists:users,user_id'],
@@ -45,11 +43,9 @@ class VacationRequestController extends Controller
             'duration' => ['required', 'int'],
         ]);
         if ($validator->fails()) {
-            $errors = $validator->errors();
-            return response(new VacationRequestResource($errors))->json([
-                'data' => new VacationRequestResource($errors)
-            ], 400);
+            return $validator->errors();
         }
+
         $vacationRequest = $this->VacationRequestService->createVacationRequest($validator->validated());
 
         return new VacationRequestResource($vacationRequest);
@@ -59,7 +55,7 @@ class VacationRequestController extends Controller
     /**
      * @throws ValidationException
      */
-    public function update(int $id):MessageBag|VacationRequestResource
+    public function update(int $id): MessageBag|VacationRequestResource
     {
         $validator = Validator::make(request()->all(), [
             'description' => ['string'],
