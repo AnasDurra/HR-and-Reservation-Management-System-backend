@@ -241,4 +241,12 @@ class Employee extends Model
 
         return '';
     }
+
+
+    // Keep this
+    public function empData() : Model|BelongsTo|null
+    {
+        return $this->jobApplication()->first()->empData();
+    }
+
 }

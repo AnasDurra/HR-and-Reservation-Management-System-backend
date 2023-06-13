@@ -29,7 +29,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
                 $employee_absence->employee->cur_title = $cur_title->name;
             }
 
-            $employee_absence["absenceStatus"] =$employee_absence->absenceStatus->name;
+            $employee_absence["absenceStatus"] =$employee_absence->absenceStatus->absence_status_id;
 
             return $employee_absence;
         });
@@ -57,7 +57,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
             $absence->employee->cur_title = $cur_title->name;
         }
 
-        $absence["absenceStatus"] =$absence->absenceStatus->name;
+        $absence["absenceStatus"] =$absence->absenceStatus->absence_status_id;
 
         return $absence;
     }
@@ -79,7 +79,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
                 $absence->employee->cur_title = $cur_title->name;
             }
 
-            $absence["absenceStatus"] =$absence->absenceStatus->name;
+            $absence["absenceStatus"] =$absence->absenceStatus->absence_status_id;
 
             $absence["message"]="Employee has already registered absent";
             return $absence;
@@ -106,7 +106,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
             $absence->employee->cur_title = $cur_title->name;
         }
 
-        $absence["absenceStatus"] =$absence->absenceStatus->name;
+        $absence["absenceStatus"] =$absence->absenceStatus->absence_status_id;
 
 
         foreach ($absence->employee->vacations as $vacation) {
@@ -145,7 +145,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
         }
 
         $absence->load('absenceStatus');
-        $absence["absenceStatus"] =$absence->absenceStatus->name;
+        $absence["absenceStatus"] =$absence->absenceStatus->absence_status_id;
 
         return $absence;
     }
@@ -177,7 +177,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
                 return $absence;
             })
             ->map(function ($absence){
-                $absence["absenceStatus"] =$absence->absenceStatus->name;
+                $absence["absenceStatus"] =$absence->absenceStatus->absence_status_id;
                 return $absence;
             });
     }
