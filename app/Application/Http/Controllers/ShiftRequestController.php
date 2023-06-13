@@ -8,6 +8,7 @@ use App\Exceptions\EntryNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 use Illuminate\Validation\ValidationException;
 
 class ShiftRequestController extends Controller
@@ -32,10 +33,11 @@ class ShiftRequestController extends Controller
         return new ShiftRequestResource($shiftRequest);
     }
 
-    public function store(): JsonResponse
+    public function store(): MessageBag|ShiftRequestResource
     {
         $validator = Validator::make(request()->all(), [
-            'emp_id' => ['required', 'integer', 'exists:employees,emp_id'],
+//            'emp_id' => ['required', 'integer', 'exists:employees,emp_id'],
+            'user_id' => ['required', 'integer', 'exists:users,user_id'],
             'description' => ['required', 'string'],
             'new_time_in' => ['required', 'date_format:H:i:s'],
             'new_time_out' => ['required', 'date_format:H:i:s'],
@@ -44,21 +46,16 @@ class ShiftRequestController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $errors = $validator->errors();
-            return response()->json([
-                'data' => new ShiftRequestResource($errors)
-            ], 422);
+            return $validator->errors();
         }
         $shiftRequest = $this->ShiftRequestService->createShiftRequest(request()->all());
-        return response()->json([
-            'data' => new ShiftRequestResource($shiftRequest)
-        ], 201);
+        return new ShiftRequestResource($shiftRequest);
     }
 
     /**
      * @throws ValidationException
      */
-    public function update(int $id): ShiftRequestResource
+    public function update(int $id): MessageBag|ShiftRequestResource
     {
         $validator = Validator::make(request()->all(), [
             'description' => ['string'],
@@ -69,8 +66,7 @@ class ShiftRequestController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $errors = $validator->errors();
-            return new ShiftRequestResource($errors);
+            return $validator->errors();
         }
 
         $shiftRequest = $this->ShiftRequestService->updateShiftRequest($id, $validator->validated());

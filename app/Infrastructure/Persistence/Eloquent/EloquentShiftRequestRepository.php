@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\Models\Employee;
 use App\Domain\Repositories\ShiftRequestRepositoryInterface;
 use App\Domain\Models\ShiftRequest;
 use App\Exceptions\EntryNotFoundException;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
 
 
 class EloquentShiftRequestRepository implements ShiftRequestRepositoryInterface
@@ -71,25 +71,22 @@ class EloquentShiftRequestRepository implements ShiftRequestRepositoryInterface
      */
     public function createShiftRequest(array $data): ShiftRequest|Builder|null
     {
-        try {
-            DB::beginTransaction();
 
-            $shiftRequest = ShiftRequest::query()->create([
-                "emp_id" => $data["emp_id"],
-                "req_stat" => '1',
-                "description" => $data["description"],
-                "new_time_in" => $data["new_time_in"],
-                "new_time_out" => $data["new_time_out"],
-                "start_date" => $data["start_date"],
-                "end_date" => $data["end_date"],
-            ]);
+        // get the user id from data
+        $user_id = $data['user_id'];
 
-            DB::commit();
-            return $shiftRequest;
-        } catch (Exception $exception) {
-            DB::rollBack();
-            throw $exception;
-        }
+        // get the employee id from the user id
+        $emp_id = Employee::query()->where('user_id', '=', $user_id)->firstOrFail()->emp_id;
+
+        return ShiftRequest::query()->create([
+            "emp_id" => $data["emp_id"],
+            "req_stat" => '1',
+            "description" => $data["description"],
+            "new_time_in" => $data["new_time_in"],
+            "new_time_out" => $data["new_time_out"],
+            "start_date" => $data["start_date"],
+            "end_date" => $data["end_date"],
+        ]);
     }
 
     /**
@@ -100,13 +97,13 @@ class EloquentShiftRequestRepository implements ShiftRequestRepositoryInterface
     {
         try {
             $shiftRequest = ShiftRequest::query()->findOrFail($id);
-            $shiftRequest['description'] = $data['description'] ?? $shiftRequest['description'];
-            $shiftRequest['new_time_in'] = $data['new_time_in'] ?? $shiftRequest['new_time_in'];
-            $shiftRequest['new_time_out'] = $data['new_time_out'] ?? $shiftRequest['new_time_out'];
-            $shiftRequest['start_date'] = $data['start_date'] ?? $shiftRequest['start_date'];
-            $shiftRequest['end_date'] = $data['end_date'] ?? $shiftRequest['end_date'];
+            $shiftRequest->description = $data['description'] ?? $shiftRequest->description;
+            $shiftRequest->new_time_in = $data['new_time_in'] ?? $shiftRequest->new_time_in;
+            $shiftRequest->new_time_out = $data['new_time_out'] ?? $shiftRequest->new_time_out;
+            $shiftRequest->start_date = $data['start_date'] ?? $shiftRequest->start_date;
+            $shiftRequest->end_date = $data['end_date'] ?? $shiftRequest->end_date;
 
-            $shiftRequest->update();
+            $shiftRequest->save();
             return $shiftRequest;
         } catch (Exception $exception) {
             throw new EntryNotFoundException("Entry with ID $id not found.");
@@ -120,7 +117,8 @@ class EloquentShiftRequestRepository implements ShiftRequestRepositoryInterface
     public function deleteShiftRequest($id): ShiftRequest|Builder|null
     {
         try {
-            $shiftRequest = ShiftRequest::query()->findOrFail($id);
+            $shiftRequest = ShiftRequest::query()
+                ->where('shift_req_id', '=', $id)->findOrFail();
             $shiftRequest->delete();
             return $shiftRequest;
         } catch (Exception $exception) {
