@@ -22,6 +22,9 @@ class AttendanceResource extends JsonResource
                 'latetime.duration' => $this["latetime_duration"] ?? null,
                 'latetime.latetime_date' => $this["latetime_date"] ?? null ,
 
+                'shift.new_time_in' => $this["shift.new_time_in"] ?? null,
+                'shift.new_time_out' => $this["shift.new_time_out"] ?? null ,
+
                 'deleted_at' => $this["deleted_at"] ?? null,
 
                 'employee' => [
@@ -65,6 +68,13 @@ class AttendanceResource extends JsonResource
             if($element["latetime.duration"]) {
                 $data[$i]["latetime.duration"] = $element["latetime.duration"];
                 $data[$i]["latetime.latetime_date"] = $element["latetime.latetime_date"];
+            }
+
+            // Shift requests
+            if($element["shift.new_time_in"]) {
+                echo 4;
+                $data[$i]["shift.new_time_in"] = $element["shift.new_time_in"];
+                $data[$i]["shift.new_time_out"] = $element["shift.new_time_out"];
             }
 
 

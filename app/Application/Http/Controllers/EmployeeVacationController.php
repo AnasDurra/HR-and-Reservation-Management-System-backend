@@ -109,6 +109,13 @@ class EmployeeVacationController extends Controller
                 , 404);
         }
 
+        if($employeeVacation["message"] !== null){
+            return response()->json([
+                'message' => $employeeVacation["message"],
+                'data'=> new EmployeeVacationResource($employeeVacation)
+            ], 400);
+        }
+
         return response()->json([
             'data'=> new EmployeeVacationResource($employeeVacation)
             ], 200);
