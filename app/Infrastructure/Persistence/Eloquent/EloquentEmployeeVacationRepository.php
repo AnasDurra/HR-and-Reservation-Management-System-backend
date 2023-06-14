@@ -130,6 +130,11 @@ class EloquentEmployeeVacationRepository implements EmployeeVacationRepositoryIn
 
         if(!$employee_vacation) return null;
 
+        if($employee_vacation["remaining_days"] != $employee_vacation["total_days"]){
+            $employee_vacation["message"] = "vacation can't be deleted , its already started !!";
+            return $employee_vacation;
+        }
+
         $cur_dep = $employee_vacation->employee->getCurrentDepartmentAttribute();
         if ($cur_dep !== null) {
             $employee_vacation->employee->cur_dep = $cur_dep->name;
