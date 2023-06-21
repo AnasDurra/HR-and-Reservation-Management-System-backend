@@ -72,7 +72,6 @@ class AttendanceResource extends JsonResource
 
             // Shift requests
             if($element["shift.new_time_in"]) {
-                echo 4;
                 $data[$i]["shift.new_time_in"] = $element["shift.new_time_in"];
                 $data[$i]["shift.new_time_out"] = $element["shift.new_time_out"];
             }

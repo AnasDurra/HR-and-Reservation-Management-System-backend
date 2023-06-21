@@ -103,6 +103,42 @@ class Employee extends Model
     {
         return $this->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first();
     }
+
+
+    // KEEP THIS
+    /**
+     * Get Current Department Mutator.
+     * this function is used to get the current department of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentDepartmentAttribute(): Model|BelongsTo|null
+    {
+        // if there is no staffing record with null end_date
+        // then the employee is not working in any department
+        if (!$this->staffings()->whereNull('end_date')->exists()) {
+            return null;
+        }
+
+        return $this->staffings()->whereNull('end_date')->first()->department;
+    }
+
+
+    // KEEP THIS
+    /**
+     * Get Current Job Title Mutator.
+     * this function is used to get the current job title of the employee
+     * by checking the end_date of the staffing record
+     */
+    public function getCurrentJobTitleAttribute(): Model|BelongsTo|null
+    {
+        // if there is no staffing record with null end_date
+        // then the employee does not have a job title
+        if (!$this->staffings()->whereNull('end_date')->exists()) {
+            return null;
+        }
+        return $this->staffings()->whereNull('end_date')->first()->jobTitle;
+    }
+
     /**
      * Get Start Working date Mutator.
      *
@@ -123,40 +159,6 @@ class Employee extends Model
     {
         return $this->hasMany(EmployeeVacation::class, 'emp_id', 'emp_id');
     }
-
-//    /**
-//     * Get Current Department Mutator.
-//     * this function is used to get the current department of the employee
-//     * by checking the end_date of the staffing record
-//     */
-//    public function getCurrentDepartmentAttribute(): Model|BelongsTo|null
-//    {
-//        // if there is no staffing record with null end_date
-//        // then the employee is not working in any department
-//        if (!$this->staffings()->whereNull('end_date')->exists()) {
-//            return null;
-//        }
-//
-//        return $this->staffings()->whereNull('end_date')->first()->department;
-//    }
-
-
-
-    /**
-     * Get Current Job Title Mutator.
-     * this function is used to get the current job title of the employee
-     * by checking the end_date of the staffing record
-     */
-    public function getCurrentJobTitleAttribute(): Model|BelongsTo|null
-    {
-        // if there is no staffing record with null end_date
-        // then the employee does not have a job title
-        if (!$this->staffings()->whereNull('end_date')->exists()) {
-            return null;
-        }
-        return $this->staffings()->whereNull('end_date')->first()->jobTitle;
-    }
-
 
 
     /**
