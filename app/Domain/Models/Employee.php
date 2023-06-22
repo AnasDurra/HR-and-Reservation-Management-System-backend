@@ -25,6 +25,7 @@ class Employee extends Model
         'cur_dep'
     ];
 
+
     public function leaves(): HasMany
     {
         return $this->hasMany(Leave::class, 'emp_id', 'emp_id');
@@ -106,6 +107,7 @@ class Employee extends Model
 
 
     // KEEP THIS
+
     /**
      * Get Current Department Mutator.
      * this function is used to get the current department of the employee
@@ -124,6 +126,7 @@ class Employee extends Model
 
 
     // KEEP THIS
+
     /**
      * Get Current Job Title Mutator.
      * this function is used to get the current job title of the employee
@@ -201,7 +204,7 @@ class Employee extends Model
 
 
     // Keep this
-    public function empData() : Model|BelongsTo|null
+    public function empData(): Model|BelongsTo|null
     {
         return $this->jobApplication()->first()->empData();
     }

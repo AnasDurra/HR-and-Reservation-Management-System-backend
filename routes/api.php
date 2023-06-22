@@ -52,8 +52,8 @@ Route::apiResource('departments', DepartmentController::class);
 Route::apiResource('job-vacancies', JobVacancyController::class);
 
 //Register the routes for the ShiftRequestController
-Route::apiResource('shift-request', ShiftRequestController::class);
-Route::post('/shift-request/update/{id}', [ShiftRequestController::class, 'update']);
+Route::apiResource('shift-request', ShiftRequestController::class)->except(['update']);
+Route::post('/shift-request/{id}', [ShiftRequestController::class, 'update']);
 Route::post('/shift-request/accept/{id}', [ShiftRequestController::class, 'acceptShiftRequest']);
 Route::post('/shift-request/reject/{id}', [ShiftRequestController::class, 'rejectShiftRequest']);
 
