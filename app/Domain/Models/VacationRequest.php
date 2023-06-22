@@ -15,7 +15,8 @@ class VacationRequest extends Model
 
 
     protected $casts = [
-        'duration' => 'integer'
+        'duration' => 'integer',
+        'start_date' => 'datetime:Y-m-d',
     ];
 
     public function employee(): BelongsTo
