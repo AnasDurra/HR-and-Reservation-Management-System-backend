@@ -31,7 +31,6 @@ class EmployeeDetailsResource extends JsonResource
     {
         return [
 
-
             // employee data
             'emp_id' => $this->emp_id,
 

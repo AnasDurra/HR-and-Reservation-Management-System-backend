@@ -42,7 +42,8 @@ class ShiftRequestController extends Controller
             'new_time_in' => ['required', 'date_format:H:i:s'],
             'new_time_out' => ['required', 'date_format:H:i:s'],
             'start_date' => ['required', 'date_format:Y-m-d'],
-            'end_date' => ['required', 'date_format:Y-m-d'],
+            'duration' => ['required', 'integer', 'min:1'],
+            'remaining_days' => ['sometimes', 'integer', 'min:1'],
         ]);
 
         if ($validator->fails()) {
@@ -58,11 +59,12 @@ class ShiftRequestController extends Controller
     public function update(int $id): MessageBag|ShiftRequestResource
     {
         $validator = Validator::make(request()->all(), [
-            'description' => ['string'],
-            'new_time_in' => ['date_format:H:i:s'],
-            'new_time_out' => ['date_format:H:i:s'],
-            'start_date' => ['date_format:Y-m-d'],
-            'end_date' => ['date_format:Y-m-d'],
+            'description' => ['sometimes', 'string'],
+            'new_time_in' => ['sometimes', 'date_format:H:i:s'],
+            'new_time_out' => ['sometimes', 'date_format:H:i:s'],
+            'start_date' => ['sometimes', 'date_format:Y-m-d'],
+            'duration' => ['sometimes', 'integer', 'min:1'],
+            'remaining_days' => ['sometimes', 'integer', 'min:1'],
         ]);
 
         if ($validator->fails()) {

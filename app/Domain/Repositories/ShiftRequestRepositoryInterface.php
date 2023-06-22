@@ -11,7 +11,7 @@ interface ShiftRequestRepositoryInterface
 {
     public function getShiftRequestList(): LengthAwarePaginator;
 
-    public function getShiftRequestById(int $id): ShiftRequest|Builder|array|Collection|Model|null;
+    public function getShiftRequestById(int $id): Builder|Model|null;
 
     public function createShiftRequest(array $data): ShiftRequest|Builder|null;
 

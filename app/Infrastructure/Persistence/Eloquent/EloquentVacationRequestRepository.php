@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EloquentVacationRequestRepository implements VacationRequestRepositoryInterface
 {
@@ -47,7 +48,7 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
     {
         try {
             return VacationRequest::query()->findOrFail($id);
-        } catch (Exception $exception) {
+        } catch (Exception) {
             throw new EntryNotFoundException("Entry with ID $id not found.");
         }
     }
@@ -78,9 +79,9 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
                 "req_stat" => 1,
                 "description" => $data["description"],
                 "start_date" => $data["start_date"],
-                "duration" => $data["duration"]
+                "duration" => $data["duration"],
             ]);
-        } catch (Exception $exception) {
+        } catch (Exception) {
             throw new EntryNotFoundException("User with ID $user_id not found.");
         }
     }
@@ -113,7 +114,7 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
             $vacationRequest = VacationRequest::query()
                 ->findOrFail($id);
 
-        } catch (Exception $exception) {
+        } catch (Exception) {
             throw new EntryNotFoundException("Entry with ID $id not found.");
         }
         // delete the vacation request
@@ -125,21 +126,39 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
 
     /**
      * @throws EntryNotFoundException
+     * @throws Exception
      */
     public function acceptVacationRequest($id): VacationRequest|Builder
     {
         try {
             $vacationRequest = VacationRequest::query()
+                ->where('req_stat', '=', 1)
                 ->findOrFail($id);
 
-        } catch (Exception $exception) {
-            throw new EntryNotFoundException("Entry with ID $id not found.");
+        } catch (Exception) {
+            throw new EntryNotFoundException("Vacation Request with ID $id not found.");
         }
 
-        // set the request status to accepted
-        $vacationRequest->update([
-            "req_stat" => 2
-        ]);
+        try {
+            DB::beginTransaction();
+
+            // set the request status to accepted
+            $vacationRequest->update([
+                "req_stat" => 2
+            ]);
+
+            // add a new vacation to the employee
+            $vacationRequest->employee->vacations()->create([
+                'start_date' => $vacationRequest->start_date,
+                'total_days' => $vacationRequest->duration,
+                'remaining_days' => $vacationRequest->duration,
+            ]);
+
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+            throw $exception;
+        }
 
         // return the updated vacation request
         return $vacationRequest;
@@ -154,6 +173,7 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
 
             // get the vacation request with the given id
             $vacationRequest = VacationRequest::query()
+                ->where('req_stat', '=', 1)
                 ->findOrFail($id);
 
         } catch (Exception $exception) {
