@@ -10,9 +10,13 @@ class VacationRequest extends Model
 {
     use HasFactory;
 
-    protected $casts = ['duration'];
     protected $primaryKey = 'vacation_req_id';
     protected $fillable = ['emp_id', 'req_stat', 'description', 'start_date', 'duration'];
+
+
+    protected $casts = [
+        'duration' => 'integer'
+    ];
 
     public function employee(): BelongsTo
     {
