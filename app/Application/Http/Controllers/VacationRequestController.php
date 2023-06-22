@@ -4,7 +4,6 @@ namespace App\Application\Http\Controllers;
 
 use App\Application\Http\Resources\VacationRequestResource;
 use App\Domain\Services\VacationRequestService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
