@@ -2,12 +2,12 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Requests\StoreVacationRequest;
+use App\Application\Http\Requests\UpdateVacationRequest;
 use App\Application\Http\Resources\VacationRequestResource;
 use App\Domain\Services\VacationRequestService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
-use Illuminate\Validation\ValidationException;
 
 class VacationRequestController extends Controller
 {
@@ -30,43 +30,16 @@ class VacationRequestController extends Controller
         return new VacationRequestResource($vacationRequest);
     }
 
-    /**
-     * @throws ValidationException
-     */
-    public function store(): VacationRequestResource|MessageBag
+    public function store(StoreVacationRequest $request): VacationRequestResource|MessageBag
     {
-        $validator = Validator::make(request()->all(), [
-            'user_id' => ['required', 'integer', 'exists:users,user_id'],
-            'description' => ['required', 'string'],
-            'start_date' => ['required', 'date', 'after:yesterday'],
-            'duration' => ['required', 'integer', 'min:1'],
-        ]);
-        if ($validator->fails()) {
-            return $validator->errors();
-        }
-
-        $vacationRequest = $this->VacationRequestService->createVacationRequest($validator->validated());
-
+        $vacationRequest = $this->VacationRequestService->createVacationRequest($request->validated());
         return new VacationRequestResource($vacationRequest);
 
     }
 
-    /**
-     * @throws ValidationException
-     */
-    public function update(int $id): MessageBag|VacationRequestResource
+    public function update(UpdateVacationRequest $request, int $id): MessageBag|VacationRequestResource
     {
-        $validator = Validator::make(request()->all(), [
-            'description' => ['sometimes', 'string'],
-            'start_date' => ['sometimes', 'date', 'after:yesterday'],
-            'duration' => ['sometimes', 'integer', 'min:1'],
-        ]);
-
-        if ($validator->fails()) {
-            return $validator->errors();
-        }
-
-        $vacationRequest = $this->VacationRequestService->updateVacationRequest($id, $validator->validated());
+        $vacationRequest = $this->VacationRequestService->updateVacationRequest($id, $request->validated());
         return new VacationRequestResource($vacationRequest);
     }
 

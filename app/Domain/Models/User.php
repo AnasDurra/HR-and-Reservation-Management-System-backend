@@ -68,5 +68,9 @@ class User extends Authenticatable
         return $this->belongsTo(AffectedUser::class, 'user_id', 'user_id');
     }
 
+    public function isEmployee(): bool
+    {
+        return $this->usertype->user_type_id === 1;
+    }
 
 }
