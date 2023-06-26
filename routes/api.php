@@ -17,6 +17,7 @@ use App\Application\Http\Controllers\EmployeeVacationController;
 use App\Application\Http\Controllers\ShiftRequestController;
 use App\Application\Http\Controllers\VacationRequestController;
 use App\Application\Http\Controllers\AbsenceController;
+use App\Application\Http\Controllers\PDFgenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -106,4 +107,8 @@ Route::get('log/all-user', [LogController::class,'getAllUser']);
 // Register the routes for the AbsenceController
 Route::apiResource('absences', AbsenceController::class);
 Route::get('employee-absences/{emp_id}', [AbsenceController::class, 'showEmployeeAbsences']);
+
+// TEMP  ROUT FOR PDF
+Route::post('pdf', [PDFgenerator::class,'createPDF']);
+
 
