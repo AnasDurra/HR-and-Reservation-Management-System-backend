@@ -13,8 +13,77 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
     {
         $results = Absence::query()->
         with(['employee','absenceStatus'])
-            ->latest('absence_date')
-            ->paginate(10);
+            ->latest('absence_date');
+
+        // search by name (full name)
+        if (request()->has('name')) {
+
+            // get the name
+            $name = request()->get('name');
+
+            // trim & convert to lowercase
+            $name = strtolower(trim($name));
+
+            // search after ignoring the case
+            $results->whereHas('employee.jobApplication', function ($query) use ($name) {
+                $query->whereHas('empData', function ($query) use ($name) {
+                    $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+                });
+            });
+        }
+
+        // filter by departmentId
+        if (request()->has('dep')) {
+
+            // get the departments
+            $departments = request()->get('dep');
+
+            // extract the comma separated values
+            $departments = explode(',', $departments);
+
+            // convert it to array of integers
+            $departments = array_map('intval', $departments);
+
+            // filter the result based on department IDs
+            $results->whereHas('employee', function ($query) use ($departments) {
+                $query->whereIn('cur_dep', $departments);
+            })->get();
+        }
+
+        // filter by emp_id
+        if (request()->has('emp_id')) {
+
+            // get the emp_ids
+            $emp_ids = request()->get('emp_id');
+
+            // extract the comma separated values
+            $emp_ids = explode(',', $emp_ids);
+
+            // convert it to array of integers
+            $emp_ids = array_map('intval', $emp_ids);
+
+            // filter the result based on $emp_ids
+            $results->whereHas('employee', function ($query) use ($emp_ids) {
+                $query->whereIn('emp_id', $emp_ids);
+            })->get();
+        }
+
+        // Search by date
+        if (request()->has('date')) {
+            // Get the date
+            $date = request()->get('date');
+
+            // Trim and format the date if necessary
+            $date = trim($date);
+
+            // Search by the formatted date
+            $results->whereDate('absence_date', '=', $date)->get();
+        }
+
+
+        $results= $results->paginate(10);
 
         $modifiedResults = $results->getCollection()->map(function ($employee_absence) {
             $employee_absence->employee->full_name = $employee_absence->employee->getFullNameAttribute();

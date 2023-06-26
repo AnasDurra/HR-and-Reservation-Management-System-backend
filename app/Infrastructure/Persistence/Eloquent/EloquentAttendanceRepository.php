@@ -11,7 +11,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 {
     public function getAttendanceList(): array
     {
-        return Attendance::query()
+        $attendance =  Attendance::query()
             ->with([
                 'employee:emp_id,schedule_id,cur_dep,job_app_id',
                 'employee.schedule:schedule_id,name,time_in,time_out',
@@ -50,8 +50,64 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                     ->whereNull('shift_requests.deleted_at')
                     ->where('shift_requests.req_stat',2); // TODO check if id is correct
             })
-            ->latest('attendances.attendance_date')
-            ->paginate(10)->toArray();
+            ->latest('attendances.attendance_date');
+
+        // search by name (full name)
+        if (request()->has('name')) {
+
+            // get the name
+            $name = request()->get('name');
+
+            // trim & convert to lowercase
+            $name = strtolower(trim($name));
+
+            // search after ignoring the case
+            $attendance->whereHas('employee.jobApplication', function ($query) use ($name) {
+                $query->whereHas('empData', function ($query) use ($name) {
+                    $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                        ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+                });
+            });
+        }
+
+        // filter by scheduleId
+        if (request()->has('schedule')) {
+
+            // get the schedules
+            $schedules = request()->get('schedule');
+
+            // extract the comma separated values
+            $schedules = explode(',', $schedules);
+
+            // convert it to array of integers
+            $schedules = array_map('intval', $schedules);
+
+            // filter the result based on schedule IDs
+            $attendance->whereHas('employee.schedule', function ($query) use ($schedules) {
+                $query->whereIn('schedule_id', $schedules);
+            })->get();
+        }
+
+        // filter by emp_id
+        if (request()->has('emp_id')) {
+
+            // get the emp_ids
+            $emp_ids = request()->get('emp_id');
+
+            // extract the comma separated values
+            $emp_ids = explode(',', $emp_ids);
+
+            // convert it to array of integers
+            $emp_ids = array_map('intval', $emp_ids);
+
+            // filter the result based on $emp_ids
+            $attendance->whereHas('employee', function ($query) use ($emp_ids) {
+                $query->whereIn('emp_id', $emp_ids);
+            })->get();
+        }
+
+        return $attendance->paginate(10)->toArray();
     }
 
     public function getAttendanceById(int $id): Attendance|Builder|null
