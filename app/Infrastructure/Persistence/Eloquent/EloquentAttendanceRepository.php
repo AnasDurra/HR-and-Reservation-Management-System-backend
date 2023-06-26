@@ -166,35 +166,43 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             ->where('req_stat',2) // TODO check if id is correct
             ->first();
 
+
+        $shift_new_time_in = null;
+        $shift_new_time_out = null;
         if($shift_request){
             if($shift_request['remaining_days'] != 0) {
-                $shift_request['remaining_days'] --;
+                $shift_request->remaining_days -=1;
                 $shift_request->save();
-                $attendance["shift.new_time_in"] = $shift_request["new_time_in"];
-                $attendance["shift.new_time_out"] = $shift_request["new_time_out"];
+                $shift_new_time_in = $shift_request["new_time_in"];
+                $shift_new_time_out = $shift_request["new_time_out"];
             }
         }
 
         // Calculate Late time if exists
         $eloquentLatetimeRepository = new EloquentLatetimeRepository();
-        if($attendance["shift.new_time_in"] !== null){
-            $employee_time_in = $attendance["shift.new_time_in"];
+        if( $shift_new_time_in !== null){
+            $schedule_time_in = $shift_new_time_in;
         }
         else{
-            $employee_time_in = $attendance["attendance_time"];
+            $schedule_time_in = $attendance->employee->schedule->time_in;
         }
-        if (!($attendance->employee->schedule->time_in >= $employee_time_in)) {
+        if (!($schedule_time_in >= $attendance["attendance_time"])) {
             $attendance["status"] = 0;
             $attendance->save();
             $late_time = $eloquentLatetimeRepository->createLatetime([
                 "emp_id" => $attendance["employee"]["emp_id"],
-                "attendance_time" => $employee_time_in,
-                "schedule_time_in" => $attendance->employee->schedule->time_in,
+                "attendance_time" => $attendance["attendance_time"],
+                "schedule_time_in" => $schedule_time_in,
                 "latetime_date" => $attendance["attendance_date"]
             ]);
 
             $attendance["latetime_duration"]=$late_time["duration"];
             $attendance["latetime_date"]=$late_time["latetime_date"];
+        }
+
+        if($shift_new_time_in !== null){
+            $attendance["shift.new_time_in"] = $shift_new_time_in;
+            $attendance["shift.new_time_out"] = $shift_new_time_out;
         }
 
         return $attendance;
@@ -221,26 +229,29 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             ->where('req_stat',2) // TODO check if id is correct
             ->first();
 
+        $shift_new_time_in = null;
+        $shift_new_time_out = null;
         if($shift_request){
             if($shift_request['remaining_days'] != 0) {
-                $shift_request['remaining_days'] --;
+                $shift_request->remaining_days -=1;
                 $shift_request->save();
-                $attendance["shift.new_time_in"] = $shift_request["new_time_in"];
-                $attendance["shift.new_time_out"] = $shift_request["new_time_out"];
+                $shift_new_time_in = $shift_request["new_time_in"];
+                $shift_new_time_out = $shift_request["new_time_out"];
             }
         }
 
+        // Calculate Late time if exists
         $eloquentLatetimeRepository = new EloquentLatetimeRepository();
-        if($attendance["shift.new_time_in"] !== null){
-            $employee_time_in = $attendance["shift.new_time_in"];
+        if( $shift_new_time_in !== null){
+            $schedule_time_in = $shift_new_time_in;
         }
         else{
-            $employee_time_in = $attendance["attendance_time"];
+            $schedule_time_in = $attendance->employee->schedule->time_in;
         }
         if(isset($data['attendance_time'])) {
-            if (!($attendance->employee->schedule->time_in >= $employee_time_in))
+            $late_time = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
+            if (!($schedule_time_in >= $data['attendance_time']))
             {
-                $late_time = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
                 if($late_time){
                     $eloquentLatetimeRepository->deleteLatetime($late_time->latetime_id);
                 }
@@ -249,8 +260,8 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 $attendance->save();
                 $late_time = $eloquentLatetimeRepository->createLatetime([
                     "emp_id" => $attendance["employee"]["emp_id"],
-                    "attendance_time" => $employee_time_in,
-                    "schedule_time_in" => $attendance->employee->schedule->time_in,
+                    "attendance_time" => $data['attendance_time'],
+                    "schedule_time_in" => $schedule_time_in,
                     "latetime_date" => $attendance["attendance_date"]
                 ]);
 
@@ -259,7 +270,6 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             }
             else
             {
-                $late_time = $eloquentLatetimeRepository->getEmployeeLateByDate($attendance["emp_id"],$attendance["attendance_date"]);
                 if($late_time) {
                     $attendance["status"]=1;
                     $eloquentLatetimeRepository->deleteLatetime($late_time->latetime_id);
@@ -267,6 +277,11 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 }
             }
 
+        }
+
+        if($shift_new_time_in !== null){
+            $attendance["shift.new_time_in"] = $shift_new_time_in;
+            $attendance["shift.new_time_out"] = $shift_new_time_out;
         }
 
         return $attendance;
