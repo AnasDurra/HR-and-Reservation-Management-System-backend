@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 
 use setasign\Fpdi\Tcpdf\Fpdi;
 
+
+// initial controller
 class PDFgenerator
 {
     function employeeAbsenceReport(\TCPDF $pdf,$data): \TCPDF
