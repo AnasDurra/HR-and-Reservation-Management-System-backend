@@ -56,10 +56,10 @@ class PDFgenerator
         $pdf->Text(88,57,"تقرير غياب الموظف");
 
         $now = now()->format('Y-m-d');
-        if(isset($data['attendance_start_date']) && isset($data['attendance_end_date'])) $pdf->Text(56,70,"إبتداءاً من تاريخ {$data['start_date']} حتى تاريخ {$data['end_date']}");
-        if(isset($data['attendance_start_date']) && !isset($data['attendance_end_date'])) $pdf->Text(56,70,"إبتداءاً من تاريخ {$data['start_date']} حتى تاريخ {$now}");
-        if(!isset($data['attendance_start_date']) && isset($data['attendance_end_date'])) $pdf->Text(63,70,"إبتداءاً من تاريخ بداية عمل الموظف حتى تاريخ {$data['end_date']}");
-        if(!isset($data['attendance_start_date']) && !isset($data['attendance_end_date'])) $pdf->Text(63,70,"إبتداءاً من تاريخ عمل الموظف حتى تاريخ {$now}");
+        if(isset($data['absence_start_date']) && isset($data['absence_end_date'])) $pdf->Text(56,67,"إبتداءاً من تاريخ {$data['absence_start_date']} حتى تاريخ {$data['absence_end_date']}");
+        if(isset($data['absence_start_date']) && !isset($data['absence_end_date'])) $pdf->Text(56,67,"إبتداءاً من تاريخ {$data['absence_start_date']} حتى تاريخ {$now}");
+        if(!isset($data['absence_start_date']) && isset($data['absence_end_date'])) $pdf->Text(60,67,"إبتداءاً من تاريخ بداية عمل الموظف حتى تاريخ {$data['absence_end_date']}");
+        if(!isset($data['absence_start_date']) && !isset($data['absence_end_date'])) $pdf->Text(60,67,"إبتداءاً من تاريخ عمل الموظف حتى تاريخ {$now}");
 
         $pdf->setRTL(false);
 
@@ -204,10 +204,10 @@ class PDFgenerator
         $pdf->Text(80,60,"تقرير حضور وإنصراف الموظف");
 
         $now = now()->format('Y-m-d');
-        if(isset($data['attendance_start_date']) && isset($data['attendance_end_date'])) $pdf->Text(56,70,"إبتداءاً من تاريخ {$data['start_date']} حتى تاريخ {$data['end_date']}");
-        if(isset($data['attendance_start_date']) && !isset($data['attendance_end_date'])) $pdf->Text(56,70,"إبتداءاً من تاريخ {$data['start_date']} حتى تاريخ {$now}");
-        if(!isset($data['attendance_start_date']) && isset($data['attendance_end_date'])) $pdf->Text(63,70,"إبتداءاً من تاريخ بداية عمل الموظف حتى تاريخ {$data['end_date']}");
-        if(!isset($data['attendance_start_date']) && !isset($data['attendance_end_date'])) $pdf->Text(63,70,"إبتداءاً من تاريخ عمل الموظف حتى تاريخ {$now}");
+        if(isset($data['attendance_start_date']) && isset($data['attendance_end_date'])) $pdf->Text(56,70,"إبتداءاً من تاريخ {$data['attendance_start_date']} حتى تاريخ {$data['attendance_end_date']}");
+        if(isset($data['attendance_start_date']) && !isset($data['attendance_end_date'])) $pdf->Text(56,70,"إبتداءاً من تاريخ {$data['attendance_start_date']} حتى تاريخ {$now}");
+        if(!isset($data['attendance_start_date']) && isset($data['attendance_end_date'])) $pdf->Text(55,70,"إبتداءاً من تاريخ بداية عمل الموظف حتى تاريخ {$data['attendance_end_date']}");
+        if(!isset($data['attendance_start_date']) && !isset($data['attendance_end_date'])) $pdf->Text(55,70,"إبتداءاً من تاريخ عمل الموظف حتى تاريخ {$now}");
 
         $pdf->setRTL(false);
 
