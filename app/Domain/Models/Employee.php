@@ -106,6 +106,7 @@ class Employee extends Model
 
 
     // KEEP THIS
+
     /**
      * Get Current Department Mutator.
      * this function is used to get the current department of the employee
@@ -115,7 +116,7 @@ class Employee extends Model
     {
         // if there is no staffing record with null end_date
         // then the employee is not working in any department
-        if (!$this->staffings()->whereNull('end_date')->exists()) {
+        if ($this->staffings()->whereNull('end_date')->doesntExist()) {
             return null;
         }
 
@@ -124,6 +125,7 @@ class Employee extends Model
 
 
     // KEEP THIS
+
     /**
      * Get Current Job Title Mutator.
      * this function is used to get the current job title of the employee
@@ -133,7 +135,7 @@ class Employee extends Model
     {
         // if there is no staffing record with null end_date
         // then the employee does not have a job title
-        if (!$this->staffings()->whereNull('end_date')->exists()) {
+        if ($this->staffings()->whereNull('end_date')->doesntExist()) {
             return null;
         }
         return $this->staffings()->whereNull('end_date')->first()->jobTitle;
@@ -166,7 +168,22 @@ class Employee extends Model
      */
     public function getFullNameAttribute(): string
     {
-        return $this->jobApplication->empData->first_name . ' ' . $this->jobApplication->empData->last_name;
+        $jobApp = $this->jobApplication;
+        if (isset($jobApp)) {
+            $empData = $jobApp->empData;
+
+            if (isset($empData)) {
+                // extract the first name
+                $firstName = $empData->first_name;
+                // extract the last name
+                $lastName = $empData->last_name;
+
+                // return the full name
+                return $firstName . ' ' . $lastName;
+            }
+        }
+
+        return '';
     }
 
     public function getFirstNameAttribute(): string
@@ -201,7 +218,7 @@ class Employee extends Model
 
 
     // Keep this
-    public function empData() : Model|BelongsTo|null
+    public function empData(): Model|BelongsTo|null
     {
         return $this->jobApplication()->first()->empData();
     }

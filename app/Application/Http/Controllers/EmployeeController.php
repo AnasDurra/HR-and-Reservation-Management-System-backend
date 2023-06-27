@@ -3,14 +3,18 @@
 namespace App\Application\Http\Controllers;
 
 use App\Application\Http\Requests\EditEmployeeCredentialsRequest;
+use App\Application\Http\Requests\EditEmployeeDepartmentRequest;
 use App\Application\Http\Requests\StoreEmployeeRequest;
+use App\Application\Http\Resources\DepartmentResource;
 use App\Application\Http\Resources\EmployeeBriefResource;
 use App\Application\Http\Resources\EmployeeDetailsResource;
 use App\Application\Http\Resources\EmployeeJobTitleResource;
 use App\Application\Http\Resources\EmployeeResource;
+use App\Application\Http\Resources\RelativeEmployeesResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -29,6 +33,12 @@ class EmployeeController extends Controller
         return EmployeeBriefResource::collection($employees);
     }
 
+    public function indexList(): AnonymousResourceCollection
+    {
+        $employees = $this->employeeService->getAllEmployees();
+        return RelativeEmployeesResource::collection($employees);
+    }
+
     public function show(int $id): EmployeeDetailsResource
     {
         $employee = $this->employeeService->getEmployeeById($id);
@@ -42,12 +52,10 @@ class EmployeeController extends Controller
         return new EmployeeBriefResource($employee);
     }
 
-    public function update(int $id): JsonResponse
+    public function update(int $id): EmployeeDetailsResource
     {
         $employee = $this->employeeService->updateEmployee($id, request()->all());
-        return response()->json([
-            'data' => new EmployeeDetailsResource($employee) //Modify it as needed
-        ], 200);
+        return new EmployeeDetailsResource($employee);
     }
 
     public function destroy(int $id): JsonResponse
@@ -55,7 +63,7 @@ class EmployeeController extends Controller
         $employee = $this->employeeService->deleteEmployee($id);
         return response()->json([
             'data' => new EmployeeDetailsResource($employee) //Modify it as needed
-        ], 200);
+        ]);
     }
 
     public function editCredentials(EditEmployeeCredentialsRequest $request, int $id): EmployeeResource
@@ -63,6 +71,13 @@ class EmployeeController extends Controller
         $validated = $request->validated();
         $employee = $this->employeeService->editEmployeeCredentials($id, $validated);
         return new EmployeeResource($employee);
+    }
+
+    public function editDepartment(EditEmployeeDepartmentRequest $request, int $id): DepartmentResource
+    {
+        $validated = $request->validated();
+        $employee = $this->employeeService->editEmployeeDepartment($id, $validated);
+        return new DepartmentResource($employee->current_department);
     }
 
     public function editPermissions(int $id): JsonResponse

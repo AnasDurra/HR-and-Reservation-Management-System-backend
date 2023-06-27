@@ -43,12 +43,14 @@ Route::post('/job-applications/accept/{id}', [JobApplicationController::class, '
 Route::post('/job-applications/reject/{id}', [JobApplicationController::class, 'rejectJobApplication']);
 
 // Register the routes for the EmployeeController
-Route::apiResource('employees', EmployeeController::class);
 Route::prefix('employees')->group(function () {
 //    Route::post('/{id}', [EmployeeController::class, 'update']);
+    Route::get('/list', [EmployeeController::class, 'indexList']);
     Route::post('/edit-credentials/{id}', [EmployeeController::class, 'editCredentials']);
+    Route::post('/edit-department/{id}', [EmployeeController::class, 'editDepartment']);
     Route::post('/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
 });
+Route::apiResource('employees', EmployeeController::class);
 
 // Register the routes for the DepartmentController
 Route::apiResource('departments', DepartmentController::class);
