@@ -84,6 +84,11 @@ class EmployeeService
         return $this->employeeRepository->editEmployeeDepartment($id, $data);
     }
 
+    public function editEmployeeEmploymentStatus(int $id, array $data): Employee|Builder|null
+    {
+        return $this->employeeRepository->editEmployeeEmploymentStatus($id, $data);
+    }
+
     public function editEmployeeSchedule(int $id, array $data): Employee|Builder|null
     {
         return $this->employeeRepository->editEmployeeSchedule($id, $data);

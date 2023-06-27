@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Employee extends Model
 {
@@ -102,7 +103,10 @@ class Employee extends Model
      */
     public function getCurrentEmploymentStatusAttribute(): Model|BelongsTo|null
     {
-        return $this->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first();
+        return $this->employmentStatuses()
+            ->whereNull('end_date')
+            ->orderByDesc('start_date')
+            ->first();
     }
 
 
@@ -222,6 +226,62 @@ class Employee extends Model
     public function empData(): Model|BelongsTo|null
     {
         return $this->jobApplication()->first()->empData();
+    }
+
+
+    /**
+     * Mutator to fetch all the permissions of the employee
+     * either the permissions given because of his job title
+     * or the permissions given to him directly (stored in staffingPermissions)
+     * with status = 1, and excluded the permissions with status = 0
+     */
+    public function getPermissionsAttribute(): Collection
+    {
+        // get the permissions given to the employee because of his job title
+        $jobTitlePermissions = $this->staffings()
+            ->whereNull('end_date')
+            ->latest()
+            ->first()
+            ->jobTitle
+            ->permissions;
+
+        // get the permissions given to the employee directly
+        $staffingPermissions = $this->staffings()
+            ->whereNull('end_date')
+            ->latest()
+            ->first()
+            ->permissions;
+
+        // merge the two collections
+        // add attribute called type = "default" to the job title permissions
+        // add attribute called type = "granted" to the staffing permissions
+        // with status = 1 & type = "excluded" with status = 0
+        $permissions = array();
+
+        foreach ($staffingPermissions as $permission) {
+            if ($permission->pivot->status == 0) {
+                $permission->type = "excluded";
+            } else {
+                $permission->type = "granted";
+            }
+            $permissions[] = $permission;
+        }
+
+        foreach ($jobTitlePermissions as $permission) {
+
+            // check if any of the permissions array objects contains
+            // a permission with the same permission_id
+            // if so, then the permission is already added
+            // so we don't need to add it again
+            if (in_array($permission, $permissions)) {
+                continue;
+            }
+
+            $permission->type = "default";
+            $permissions[] = $permission;
+        }
+
+        return collect($permissions);
     }
 
 }

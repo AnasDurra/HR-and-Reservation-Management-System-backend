@@ -5,6 +5,7 @@ namespace App\Application\Http\Controllers;
 use App\Application\Http\Requests\EditEmployeeCredentialsRequest;
 use App\Application\Http\Requests\EditEmployeeDepartmentRequest;
 use App\Application\Http\Requests\EditEmployeeScheduleRequest;
+use App\Application\Http\Requests\EditEmploymentStatusRequest;
 use App\Application\Http\Requests\StoreEmployeeRequest;
 use App\Application\Http\Resources\DepartmentResource;
 use App\Application\Http\Resources\EmployeeBriefResource;
@@ -80,6 +81,13 @@ class EmployeeController extends Controller
         $validated = $request->validated();
         $employee = $this->employeeService->editEmployeeDepartment($id, $validated);
         return new DepartmentResource($employee->current_department);
+    }
+
+    public function editEmploymentStatus(EditEmploymentStatusRequest $request, int $id): EmployeeResource
+    {
+        $validated = $request->validated();
+        $employee = $this->employeeService->editEmployeeEmploymentStatus($id, $validated);
+        return new EmployeeResource($employee);
     }
 
     public function editSchedule(EditEmployeeScheduleRequest $request, int $id): ScheduleResource

@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Models\Employee;
 use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
+use App\Domain\Models\StaffPermission;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
@@ -274,7 +275,9 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             // if the new dep_id is different from the current one,
             // add an end_date to the current staffing record,
             // and create a new staffing record with the new dep_id and the existing job_title_id
-            $previousStaffingRecord = $employee->staffings()->whereNull('end_date')->first();
+            $previousStaffingRecord = $employee->staffings()
+                ->whereNull('end_date')
+                ->first();
 
             $employee->staffings()->create([
                 'job_title_id' => $employee->current_job_title->job_title_id,
@@ -285,6 +288,20 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             $previousStaffingRecord->update([
                 'end_date' => Carbon::now(),
             ]);
+
+            $new_staffing_id = $employee->staffings()
+                ->whereNull('end_date')
+                ->latest()
+                ->first()
+                ->staff_id;
+
+            // update staff permissions related to the previous staffing record
+            // to have the new staffing record id
+            StaffPermission::query()
+                ->where('staff_id', '=', $previousStaffingRecord->staff_id)
+                ->update([
+                    'staff_id' => $new_staffing_id,
+                ]);
 
             DB::commit();
         } catch (Exception $e) {
@@ -320,6 +337,54 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         ]);
 
 
+        return $employee;
+    }
+
+
+    /**
+     * @throws EntryNotFoundException
+     * @throws Exception
+     */
+    public function editEmployeeEmploymentStatus(int $id, array $data): Employee|Builder|null
+    {
+        // add an end_date to the current employment status record
+        // and create a new employment status record with the new status
+        // and and start_date of today
+        // only if the new status is different from the current one
+        try {
+            $employee = Employee::query()
+                ->findOrFail($id);
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+//        dd($employee->current_employment_status->emp_status_id, $data['emp_status_id']);
+
+        // if the new status is the same as the current one, do nothing
+        if ($employee->current_employment_status->emp_status_id == $data['emp_status_id']) {
+            return $employee;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // if the new status is different from the current one,
+            // add an end_date to the current employment status record,
+            // and create a new employment status record with the new status
+            // and and start_date of today
+            $previousEmploymentStatusRecord = $employee->current_employment_status;
+            $employee->employmentStatuses()->attach($data['emp_status_id'], [
+                'start_date' => Carbon::now(),
+            ]);
+            $previousEmploymentStatusRecord->pivot->update([
+                'end_date' => Carbon::now(),
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
         return $employee;
     }
 
