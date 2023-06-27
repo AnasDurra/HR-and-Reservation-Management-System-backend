@@ -102,7 +102,10 @@ class Employee extends Model
      */
     public function getCurrentEmploymentStatusAttribute(): Model|BelongsTo|null
     {
-        return $this->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first();
+        return $this->employmentStatuses()
+            ->whereNull('end_date')
+            ->orderByDesc('start_date')
+            ->first();
     }
 
 

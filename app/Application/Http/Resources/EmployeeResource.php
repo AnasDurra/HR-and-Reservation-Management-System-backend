@@ -13,6 +13,7 @@ class EmployeeResource extends JsonResource
             'emp_id' => $this->emp_id,
             'username' => $this->user->username,
             'email' => $this->user->email,
+            'employment_status' => new EmploymentStatusResource($this->current_employment_status),
         ];
     }
 }

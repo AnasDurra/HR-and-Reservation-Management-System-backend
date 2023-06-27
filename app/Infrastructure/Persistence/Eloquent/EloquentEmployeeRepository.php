@@ -340,6 +340,54 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return $employee;
     }
 
+
+    /**
+     * @throws EntryNotFoundException
+     * @throws Exception
+     */
+    public function editEmployeeEmploymentStatus(int $id, array $data): Employee|Builder|null
+    {
+        // add an end_date to the current employment status record
+        // and create a new employment status record with the new status
+        // and and start_date of today
+        // only if the new status is different from the current one
+        try {
+            $employee = Employee::query()
+                ->findOrFail($id);
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+//        dd($employee->current_employment_status->emp_status_id, $data['emp_status_id']);
+
+        // if the new status is the same as the current one, do nothing
+        if ($employee->current_employment_status->emp_status_id == $data['emp_status_id']) {
+            return $employee;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // if the new status is different from the current one,
+            // add an end_date to the current employment status record,
+            // and create a new employment status record with the new status
+            // and and start_date of today
+            $previousEmploymentStatusRecord = $employee->current_employment_status;
+            $employee->employmentStatuses()->attach($data['emp_status_id'], [
+                'start_date' => Carbon::now(),
+            ]);
+            $previousEmploymentStatusRecord->pivot->update([
+                'end_date' => Carbon::now(),
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return $employee;
+    }
+
     // Never delete this
 //    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null
 //    {
