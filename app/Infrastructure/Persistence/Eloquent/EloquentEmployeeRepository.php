@@ -295,6 +295,34 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return $employee;
     }
 
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function editEmployeeSchedule(int $id, array $data): Employee|Builder|null
+    {
+        try {
+
+            $employee = Employee::query()
+                ->findOrFail($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        // if the new schedule_id is the same as the current one, do nothing
+        if ($employee->schedule_id == $data['schedule_id']) {
+            return $employee;
+        }
+
+        // if the new schedule_id is different from the current one, update it
+        $employee->update([
+            'schedule_id' => $data['schedule_id'],
+        ]);
+
+
+        return $employee;
+    }
+
     // Never delete this
 //    public function editEmployeePermissions(int $id , array $data): Employee|Builder|null
 //    {

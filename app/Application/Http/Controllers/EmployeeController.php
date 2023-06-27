@@ -4,6 +4,7 @@ namespace App\Application\Http\Controllers;
 
 use App\Application\Http\Requests\EditEmployeeCredentialsRequest;
 use App\Application\Http\Requests\EditEmployeeDepartmentRequest;
+use App\Application\Http\Requests\EditEmployeeScheduleRequest;
 use App\Application\Http\Requests\StoreEmployeeRequest;
 use App\Application\Http\Resources\DepartmentResource;
 use App\Application\Http\Resources\EmployeeBriefResource;
@@ -11,6 +12,7 @@ use App\Application\Http\Resources\EmployeeDetailsResource;
 use App\Application\Http\Resources\EmployeeJobTitleResource;
 use App\Application\Http\Resources\EmployeeResource;
 use App\Application\Http\Resources\RelativeEmployeesResource;
+use App\Application\Http\Resources\ScheduleResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -78,6 +80,13 @@ class EmployeeController extends Controller
         $validated = $request->validated();
         $employee = $this->employeeService->editEmployeeDepartment($id, $validated);
         return new DepartmentResource($employee->current_department);
+    }
+
+    public function editSchedule(EditEmployeeScheduleRequest $request, int $id): ScheduleResource
+    {
+        $validated = $request->validated();
+        $employee = $this->employeeService->editEmployeeSchedule($id, $validated);
+        return new ScheduleResource($employee->schedule);
     }
 
     public function editPermissions(int $id): JsonResponse

@@ -30,6 +30,8 @@ interface EmployeeRepositoryInterface
 
     public function editEmployeeDepartment(int $id, array $data): Employee|Builder|null;
 
+    public function editEmployeeSchedule(int $id, array $data): Employee|Builder|null;
+
     public function editEmployeePermissions(int $id, array $data): Employee|Builder|null;
 
 }

@@ -48,6 +48,7 @@ Route::prefix('employees')->group(function () {
     Route::get('/list', [EmployeeController::class, 'indexList']);
     Route::post('/edit-credentials/{id}', [EmployeeController::class, 'editCredentials']);
     Route::post('/edit-department/{id}', [EmployeeController::class, 'editDepartment']);
+    Route::post('/edit-schedule/{id}', [EmployeeController::class, 'editSchedule']);
     Route::post('/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
 });
 Route::apiResource('employees', EmployeeController::class);
