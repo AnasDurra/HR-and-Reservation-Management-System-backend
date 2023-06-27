@@ -9,13 +9,16 @@ use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
+use App\Exceptions\EntryNotFoundException;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
@@ -124,6 +127,11 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 
     }
 
+    public function getAllEmployees(): LengthAwarePaginator
+    {
+        return Employee::query()->paginate(100);
+    }
+
     public function getEmployeeListByDepId(int $dep_id): array
     {
         return Employee::query()->where('cur_dep', '=', $dep_id)->get()->toArray();
@@ -209,6 +217,110 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
     public function deleteEmployee($id): Builder|Model|null
     {
         // TODO: Implement deleteEmployee() method.
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function editEmployeeCredentials(int $id, array $data): Employee|Builder|null
+    {
+
+        try {
+
+            $employee = Employee::query()
+                ->with(['user'])
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        $employee->user->update([
+            'email' => optional($data)['email'] ?? $employee->user->email,
+            'username' => optional($data)['username'] ?? $employee->user->username,
+            'password' => optional($data)['password']
+                ? Hash::make($data['password'])
+                : $employee->user->password,
+        ]);
+        return $employee;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     * @throws Exception
+     */
+    public function editEmployeeDepartment(int $id, array $data): Employee|Builder|null
+    {
+        try {
+
+            $employee = Employee::query()
+                ->with(['staffings' => function ($query) {
+                    $query->with('jobTitle')->whereNull('end_date')->latest();
+                }])->findOrFail($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        // if the new dep_id is the same as the current one, do nothing
+        try {
+
+            DB::beginTransaction();
+            if ($employee->current_department->dep_id == $data['dep_id']) {
+                return $employee;
+            }
+
+            // if the new dep_id is different from the current one,
+            // add an end_date to the current staffing record,
+            // and create a new staffing record with the new dep_id and the existing job_title_id
+            $previousStaffingRecord = $employee->staffings()->whereNull('end_date')->first();
+
+            $employee->staffings()->create([
+                'job_title_id' => $employee->current_job_title->job_title_id,
+                'dep_id' => $data['dep_id'],
+                'start_date' => Carbon::now(),
+            ]);
+
+            $previousStaffingRecord->update([
+                'end_date' => Carbon::now(),
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return $employee;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function editEmployeeSchedule(int $id, array $data): Employee|Builder|null
+    {
+        try {
+
+            $employee = Employee::query()
+                ->findOrFail($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        // if the new schedule_id is the same as the current one, do nothing
+        if ($employee->schedule_id == $data['schedule_id']) {
+            return $employee;
+        }
+
+        // if the new schedule_id is different from the current one, update it
+        $employee->update([
+            'schedule_id' => $data['schedule_id'],
+        ]);
+
+
+        return $employee;
     }
 
     // Never delete this

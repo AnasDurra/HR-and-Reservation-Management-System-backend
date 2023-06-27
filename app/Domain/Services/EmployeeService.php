@@ -7,6 +7,7 @@ use App\Domain\Models\Employee;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class EmployeeService
@@ -21,6 +22,11 @@ class EmployeeService
     public function getEmployeeList(): LengthAwarePaginator
     {
         return $this->employeeRepository->getEmployeeList();
+    }
+
+    public function getAllEmployees(): LengthAwarePaginator
+    {
+        return $this->employeeRepository->getAllEmployees();
     }
 
     public function getEmployeeListByDepId($dep_id): array
@@ -66,6 +72,21 @@ class EmployeeService
         }
 
         return $employee;
+    }
+
+    public function editEmployeeCredentials(int $id, array $data): Employee|Builder|null
+    {
+        return $this->employeeRepository->editEmployeeCredentials($id, $data);
+    }
+
+    public function editEmployeeDepartment(int $id, array $data): Employee|Builder|null
+    {
+        return $this->employeeRepository->editEmployeeDepartment($id, $data);
+    }
+
+    public function editEmployeeSchedule(int $id, array $data): Employee|Builder|null
+    {
+        return $this->employeeRepository->editEmployeeSchedule($id, $data);
     }
 
     public function editEmployeePermissions(int $id, array $data): Employee|Builder|null
