@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Models\Employee;
 use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
+use App\Domain\Models\StaffPermission;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
@@ -274,7 +275,9 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             // if the new dep_id is different from the current one,
             // add an end_date to the current staffing record,
             // and create a new staffing record with the new dep_id and the existing job_title_id
-            $previousStaffingRecord = $employee->staffings()->whereNull('end_date')->first();
+            $previousStaffingRecord = $employee->staffings()
+                ->whereNull('end_date')
+                ->first();
 
             $employee->staffings()->create([
                 'job_title_id' => $employee->current_job_title->job_title_id,
@@ -285,6 +288,20 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             $previousStaffingRecord->update([
                 'end_date' => Carbon::now(),
             ]);
+
+            $new_staffing_id = $employee->staffings()
+                ->whereNull('end_date')
+                ->latest()
+                ->first()
+                ->staff_id;
+
+            // update staff permissions related to the previous staffing record
+            // to have the new staffing record id
+            StaffPermission::query()
+                ->where('staff_id', '=', $previousStaffingRecord->staff_id)
+                ->update([
+                    'staff_id' => $new_staffing_id,
+                ]);
 
             DB::commit();
         } catch (Exception $e) {
