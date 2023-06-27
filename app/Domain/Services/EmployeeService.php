@@ -68,6 +68,11 @@ class EmployeeService
         return $employee;
     }
 
+    public function editEmployeeCredentials(int $id, array $data): Employee|Builder|null
+    {
+        return $this->employeeRepository->editEmployeeCredentials($id, $data);
+    }
+
     public function editEmployeePermissions(int $id, array $data): Employee|Builder|null
     {
         return $this->employeeRepository->editEmployeePermissions($id, $data);

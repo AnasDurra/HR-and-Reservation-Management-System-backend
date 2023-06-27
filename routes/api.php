@@ -44,6 +44,11 @@ Route::post('/job-applications/reject/{id}', [JobApplicationController::class, '
 
 // Register the routes for the EmployeeController
 Route::apiResource('employees', EmployeeController::class);
+Route::prefix('employees')->group(function () {
+//    Route::post('/{id}', [EmployeeController::class, 'update']);
+    Route::post('/edit-credentials/{id}', [EmployeeController::class, 'editCredentials']);
+    Route::post('/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
+});
 
 // Register the routes for the DepartmentController
 Route::apiResource('departments', DepartmentController::class);
@@ -62,7 +67,7 @@ Route::apiResource('vacation-request', VacationRequestController::class);
 Route::post('/vacation-request/update/{id}', [VacationRequestController::class, 'update']);
 Route::post('/vacation-request/accept/{id}', [VacationRequestController::class, 'acceptVacationRequest']);
 Route::post('/vacation-request/reject/{id}', [VacationRequestController::class, 'rejectVacationRequest']);
-Route::apiResource('vacation-request' , VacationRequestController::class)->except(['update']);
+Route::apiResource('vacation-request', VacationRequestController::class)->except(['update']);
 
 // Register the routes for the JobTitleController
 Route::apiResource('job-titles', JobTitleController::class);
@@ -71,8 +76,8 @@ Route::apiResource('job-titles', JobTitleController::class);
 Route::get('permissions', [PermissionController::class, 'index']);
 Route::get('permissions/{id}', [PermissionController::class, 'show']);
 
-// Register the routes for the EmployeeController
-Route::post('employees/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
+//// Register the routes for the EmployeeController
+//Route::post('employees/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
 
 // Register the routes for the ScheduleController
 Route::apiResource('schedules', ScheduleController::class);
@@ -99,9 +104,9 @@ Route::apiResource('employees-vacations', EmployeeVacationController::class);
 Route::get('employee-vacations/{emp_id}', [EmployeeVacationController::class, 'showEmployeeVacations']);
 
 //Register the routes for the LogController
-Route::get('log/all-action', [LogController::class,'getAllAction']);
-Route::get('log/all-affected-user', [LogController::class,'getAllAffectedUser']);
-Route::get('log/all-user', [LogController::class,'getAllUser']);
+Route::get('log/all-action', [LogController::class, 'getAllAction']);
+Route::get('log/all-affected-user', [LogController::class, 'getAllAffectedUser']);
+Route::get('log/all-user', [LogController::class, 'getAllUser']);
 
 // Register the routes for the AbsenceController
 Route::apiResource('absences', AbsenceController::class);

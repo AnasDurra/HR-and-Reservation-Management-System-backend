@@ -9,14 +9,14 @@ use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
+use App\Exceptions\EntryNotFoundException;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
     private UserRepositoryInterface $userRepository;
@@ -209,6 +209,33 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
     public function deleteEmployee($id): Builder|Model|null
     {
         // TODO: Implement deleteEmployee() method.
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function editEmployeeCredentials(int $id, array $data): Employee|Builder|null
+    {
+
+        try {
+
+            $employee = Employee::query()
+                ->with(['user'])
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        $employee->user->update([
+            'email' => optional($data)['email'] ?? $employee->user->email,
+            'username' => optional($data)['username'] ?? $employee->user->username,
+            'password' => optional($data)['password']
+                ? Hash::make($data['password'])
+                : $employee->user->password,
+        ]);
+        return $employee;
     }
 
     // Never delete this

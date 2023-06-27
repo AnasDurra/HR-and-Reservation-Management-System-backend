@@ -23,6 +23,8 @@ interface EmployeeRepositoryInterface
 
     public function deleteEmployee($id): Builder|Model|null;
 
+    public function editEmployeeCredentials(int $id , array $data): Employee|Builder|null;
+
     public function editEmployeePermissions(int $id , array $data): Employee|Builder|null;
 
 }

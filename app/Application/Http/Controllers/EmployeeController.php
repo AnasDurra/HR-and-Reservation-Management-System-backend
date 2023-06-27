@@ -2,10 +2,12 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Requests\EditEmployeeCredentialsRequest;
 use App\Application\Http\Requests\StoreEmployeeRequest;
 use App\Application\Http\Resources\EmployeeBriefResource;
 use App\Application\Http\Resources\EmployeeDetailsResource;
 use App\Application\Http\Resources\EmployeeJobTitleResource;
+use App\Application\Http\Resources\EmployeeResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -54,6 +56,13 @@ class EmployeeController extends Controller
         return response()->json([
             'data' => new EmployeeDetailsResource($employee) //Modify it as needed
         ], 200);
+    }
+
+    public function editCredentials(EditEmployeeCredentialsRequest $request, int $id): EmployeeResource
+    {
+        $validated = $request->validated();
+        $employee = $this->employeeService->editEmployeeCredentials($id, $validated);
+        return new EmployeeResource($employee);
     }
 
     public function editPermissions(int $id): JsonResponse
