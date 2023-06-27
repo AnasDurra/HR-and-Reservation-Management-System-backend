@@ -52,6 +52,7 @@ class EmployeeDetailsResource extends JsonResource
                 ? new JobTitleResource($this->current_job_title)
                 : null,
 
+            'permissions' => EmployeePermissionResource::collection($this->permissions),
             //  attendance (full information) (for later)
             // TODO: add attendance information
         ];
