@@ -42,7 +42,7 @@ class EmployeeDetailsResource extends JsonResource
             'leaves_balance' => $this->leaves_balance,
 
             // job application data
-            'job_app_id' => $this->jobApplication->job_app_id,
+            'job_application' => new JobApplicationDetailsResource($this->jobApplication),
 
             // schedule data
             'schedule' => new ScheduleResource($this->schedule),
