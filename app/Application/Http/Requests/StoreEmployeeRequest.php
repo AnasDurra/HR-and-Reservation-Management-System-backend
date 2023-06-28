@@ -35,7 +35,32 @@ class StoreEmployeeRequest extends FormRequest
             'leaves_balance' => ['required', 'integer', 'min:0'],
 
             // staffing entity fields third.
-            'job_title_id' => ['required', 'integer', 'exists:job_titles,job_title_id'],
+            'job_title_id' => [
+                'required',
+                'integer',
+                'exists:job_titles,job_title_id'
+            ],
+
+            // additional permissions ids list.
+            'additional_permissions' => ['nullable', 'array'],
+            'additional_permissions.*' => [
+                'required',
+                'integer',
+                'exists:permissions,perm_id'
+            ],
+
+            // excluded permissions ids list. (should not be found in additional permissions list)
+            'excluded_permissions' => ['nullable', 'array'],
+            'excluded_permissions.*' => [
+                'required',
+                'integer',
+                Rule::notIn($this->additional_permissions),
+
+                // check that excluded permissions are in job_title permissions.
+                Rule::exists('job_title_permissions', 'perm_id')
+                    ->where('job_title_id', $this->job_title_id)
+            ],
+
             'start_date' => ['required', 'date'],
         ];
     }
@@ -70,6 +95,17 @@ class StoreEmployeeRequest extends FormRequest
             'job_title_id.required' => 'معرف المسمّى الوظيفي مطلوب.',
             'job_title_id.integer' => 'معرف المسمّى الوظيفي يجب أن يكون رقماً صحيحاً.',
             'job_title_id.exists' => 'معرف المسمّى الوظيفي غير موجود.',
+
+            'additional_permissions.array' => 'قائمة الصلاحيات الإضافية يجب أن تكون مصفوفة.',
+            'additional_permissions.*.required' => 'معرف الصلاحية الإضافية مطلوب.',
+            'additional_permissions.*.integer' => 'معرف الصلاحية الإضافية يجب أن يكون رقماً صحيحاً.',
+            'additional_permissions.*.exists' => 'معرف الصلاحية الإضافية غير موجود.',
+
+            'excluded_permissions.array' => 'قائمة الصلاحيات المستثناة يجب أن تكون مصفوفة.',
+            'excluded_permissions.*.required' => 'معرف الصلاحية المستثناة مطلوب.',
+            'excluded_permissions.*.integer' => 'معرف الصلاحية المستثناة يجب أن يكون رقماً صحيحاً.',
+            'excluded_permissions.*.not_in' => 'لا يمكن أن تكون الصلاحية المستثناة موجودة في قائمة الصلاحيات الإضافية.',
+            'excluded_permissions.*.exists' => 'الصلاحية المستثناة غير موجودة في صلاحيات المسمّى الوظيفي.',
 
             'start_date.required' => 'تاريخ بدء العمل مطلوب.',
             'start_date.date' => 'تاريخ بدء العمل غير صالح.',

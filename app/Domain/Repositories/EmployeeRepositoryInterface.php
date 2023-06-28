@@ -20,6 +20,10 @@ interface EmployeeRepositoryInterface
 
     public function getAllEmployees(): LengthAwarePaginator;
 
+    public function getJobTitlesHistory(int $id);
+
+    public function getDepartmentsHistory(int $id);
+
     public function createEmployee(array $data): Builder|Model;
 
     public function updateEmployee(int $id, array $data): Builder|Model;

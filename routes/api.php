@@ -47,6 +47,8 @@ Route::post('/job-applications/reject/{id}', [JobApplicationController::class, '
 Route::prefix('employees')->group(function () {
 //    Route::post('/{id}', [EmployeeController::class, 'update']);
     Route::get('/list', [EmployeeController::class, 'indexList']);
+    Route::get('/job-title-history/{id}', [EmployeeController::class, 'indexJobTitles']);
+    Route::get('/department-history/{id}', [EmployeeController::class, 'indexDepartments']);
     Route::post('/edit-credentials/{id}', [EmployeeController::class, 'editCredentials']);
     Route::post('/edit-department/{id}', [EmployeeController::class, 'editDepartment']);
     Route::post('/edit-employment-status/{id}', [EmployeeController::class, 'editEmploymentStatus']);
