@@ -118,7 +118,7 @@ class EloquentShiftRequestRepository implements ShiftRequestRepositoryInterface
     {
         try {
             $shiftRequest = ShiftRequest::query()
-                ->where('shift_req_id', '=', $id)->findOrFail();
+                ->where('shift_req_id', '=', $id)->findOrFail($id);
             $shiftRequest->delete();
             return $shiftRequest;
         } catch (Exception $exception) {

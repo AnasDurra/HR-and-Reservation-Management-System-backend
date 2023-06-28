@@ -81,7 +81,8 @@ class EloquentVacationRequestRepository implements VacationRequestRepositoryInte
                 "duration" => $data["duration"]
             ]);
         } catch (Exception $exception) {
-            throw new EntryNotFoundException("User with ID $user_id not found.");
+            throw $exception ;
+//            throw new EntryNotFoundException("User with ID $user_id not found shami.");
         }
     }
 

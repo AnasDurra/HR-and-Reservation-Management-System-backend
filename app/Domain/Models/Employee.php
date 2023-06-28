@@ -166,7 +166,22 @@ class Employee extends Model
      */
     public function getFullNameAttribute(): string
     {
-        return $this->jobApplication->empData->first_name . ' ' . $this->jobApplication->empData->last_name;
+        $jobApp = $this->jobApplication;
+        if (isset($jobApp)) {
+            $empData = $jobApp->empData;
+
+            if (isset($empData)) {
+                // extract the first name
+                $firstName = $empData->first_name;
+                // extract the last name
+                $lastName = $empData->last_name;
+
+                // return the full name
+                return $firstName . ' ' . $lastName;
+            }
+        }
+
+        return '';
     }
 
     public function getFirstNameAttribute(): string

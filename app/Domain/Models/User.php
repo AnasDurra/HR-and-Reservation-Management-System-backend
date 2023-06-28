@@ -68,5 +68,29 @@ class User extends Authenticatable
         return $this->belongsTo(AffectedUser::class, 'user_id', 'user_id');
     }
 
+    /**
+     * Get User Full Name Mutator.
+     */
+    public function getFullNameAttribute(): string
+    {
+        $employee = $this->employee;
+        if (isset($employee)) {
+            $jobApp = $employee->jobApplication;
+            if (isset($jobApp)) {
+                $empData = $jobApp->empData;
+
+                if (isset($empData)) {
+                    // extract the first name
+                    $firstName = $empData->first_name;
+                    // extract the last name
+                    $lastName = $empData->last_name;
+
+                    // return the full name
+                    return $firstName . ' ' . $lastName;
+                }
+            }
+        }
+        return '';
+    }
 
 }
