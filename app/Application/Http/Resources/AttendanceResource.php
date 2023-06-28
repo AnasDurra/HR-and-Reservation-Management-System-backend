@@ -50,31 +50,28 @@ class AttendanceResource extends JsonResource
             $data[$i]["check_in.status"] = $element["check_in.state"];
             $data[$i]["check_in_time"] = $element["check_in_time"];
 
-            if($element["check_out_time"]) {
-                $data[$i]["check_out.state"] = $element["check_out.state"];
-                $data[$i]["check_out.status"] = $element["check_out.status"];
-                $data[$i]["check_out_time"] = $element["check_out_time"];
+            $data[$i]["check_out.state"] = $element["check_out.state"] ?? null;
+            $data[$i]["check_out.status"] = $element["check_out.status"] ?? null;
+            $data[$i]["check_out_time"] = $element["check_out_time"] ?? null;
 
-                // Leave before calculation
+            // Leave before calculation
+            if($element["check_out_time"]) {
                 if (!($element["employee"]["schedule"]["time_out"] <= $element["check_out_time"])) {
                     $leaveTime = \DateTime::createFromFormat('H:i:s', $element["check_out_time"]);
                     $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $element["employee"]["schedule"]["time_out"]);
                     $duration = $scheduleTimeOut->diff($leaveTime);
                     $data[$i]["leaveBefore"] = $duration->format('%H:%I:%S');
                 }
+                else $data[$i]["leaveBefore"] = null;
             }
+            else $data[$i]["leaveBefore"] = null;
 
             // Late Time
-            if($element["latetime.duration"]) {
-                $data[$i]["latetime.duration"] = $element["latetime.duration"];
-                $data[$i]["latetime.latetime_date"] = $element["latetime.latetime_date"];
-            }
+            $data[$i]["latetime.duration"] = $element["latetime.duration"] ?? null;
+            $data[$i]["latetime.latetime_date"] = $element["latetime.latetime_date"] ?? null;
 
-            // Shift requests
-            if($element["shift.new_time_in"]) {
-                $data[$i]["shift.new_time_in"] = $element["shift.new_time_in"];
-                $data[$i]["shift.new_time_out"] = $element["shift.new_time_out"];
-            }
+            $data[$i]["shift.new_time_in"] = $element["shift.new_time_in"] ?? null;
+            $data[$i]["shift.new_time_out"] = $element["shift.new_time_out"] ?? null;
 
 
             $data[$i]["employee"]["full_name"] = $element['employee']["job_application"]['emp_data']['first_name'] . ' ' . $element['employee']["job_application"]['emp_data']['last_name'];
