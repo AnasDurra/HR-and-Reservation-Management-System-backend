@@ -16,7 +16,7 @@ class EloquentWorkingDayRepository implements WorkingDayRepositoryInterface
 
     public function updateWorkingDay(int $id, array $data): WorkingDay|Builder|null
     {
-        $working_day = workingDay::query()->find($id);
+        $working_day = WorkingDay::query()->find($id);
 
         if(!$working_day)
             return null;

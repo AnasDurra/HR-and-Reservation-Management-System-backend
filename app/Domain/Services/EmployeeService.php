@@ -7,8 +7,8 @@ use App\Domain\Models\Employee;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class EmployeeService
 {
@@ -27,6 +27,16 @@ class EmployeeService
     public function getAllEmployees(): LengthAwarePaginator
     {
         return $this->employeeRepository->getAllEmployees();
+    }
+
+    public function getJobTitlesHistory(int $id): Collection
+    {
+        return $this->employeeRepository->getJobTitlesHistory($id);
+    }
+
+    public function getDepartmentsHistory(int $id): Collection
+    {
+        return $this->employeeRepository->getDepartmentsHistory($id);
     }
 
     public function getEmployeeListByDepId($dep_id): array

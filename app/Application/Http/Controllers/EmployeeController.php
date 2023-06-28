@@ -42,17 +42,29 @@ class EmployeeController extends Controller
         return RelativeEmployeesResource::collection($employees);
     }
 
+    public function indexJobTitles(int $id): JsonResponse
+    {
+        $jobTitleHistory = $this->employeeService->getJobTitlesHistory($id);
+        return response()->json($jobTitleHistory);
+    }
+
+    public function indexDepartments(int $id): JsonResponse
+    {
+        $departmentHistory = $this->employeeService->getDepartmentsHistory($id);
+        return response()->json($departmentHistory);
+    }
+
     public function show(int $id): EmployeeDetailsResource
     {
         $employee = $this->employeeService->getEmployeeById($id);
         return new EmployeeDetailsResource($employee);
     }
 
-    public function store(StoreEmployeeRequest $request): EmployeeBriefResource
+    public function store(StoreEmployeeRequest $request): EmployeeDetailsResource
     {
         $validated = $request->validated();
         $employee = $this->employeeService->createEmployee($validated);
-        return new EmployeeBriefResource($employee);
+        return new EmployeeDetailsResource($employee);
     }
 
     public function update(int $id): EmployeeDetailsResource
@@ -61,12 +73,10 @@ class EmployeeController extends Controller
         return new EmployeeDetailsResource($employee);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id): EmployeeDetailsResource
     {
         $employee = $this->employeeService->deleteEmployee($id);
-        return response()->json([
-            'data' => new EmployeeDetailsResource($employee) //Modify it as needed
-        ]);
+        return new EmployeeDetailsResource($employee);
     }
 
     public function editCredentials(EditEmployeeCredentialsRequest $request, int $id): EmployeeResource

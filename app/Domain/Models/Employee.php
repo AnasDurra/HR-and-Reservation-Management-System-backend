@@ -280,7 +280,97 @@ class Employee extends Model
             $permissions[] = $permission;
         }
 
+
         return collect($permissions);
     }
 
+    /**
+     * Mutator to fetch the job title history of the employee
+     * each consists of job title name, start date, end date
+     * and append the current job title to the end of the collection
+     */
+    public function getJobTitleHistoryAttribute(): Collection
+    {
+
+        // get the job title history of the employee
+        // and check if the same job title is repeated
+        // one after the other, that means that the job title
+        // of the employee didn't change, so we don't need to
+        // add it to the history
+        $jobTitleHistory = $this->staffings()
+            ->whereNotNull('end_date')
+            ->orderByDesc('start_date')
+            ->get()
+            ->map(function ($staffing) {
+                return [
+                    'job_title' => $staffing->jobTitle->name,
+                    'start_date' => $staffing->start_date,
+                    'end_date' => $staffing->end_date,
+                ];
+            })
+            ->filter(function ($staffing, $index) {
+                if ($index == 0) {
+                    return true;
+                }
+                return $staffing['job_title'] != $this->staffings[$index - 1]->jobTitle->name;
+            });
+
+        // append the current job title to the end of the collection
+        $jobTitleHistory[] = [
+            'job_title' => $this->currentJobTitle->name,
+            'start_date' => $this->currentJobTitle
+                ->staffings()
+                ->whereNull('end_date')
+                ->first()
+                ->start_date,
+            'end_date' => null,
+        ];
+
+        return collect($jobTitleHistory);
+    }
+
+    /**
+     * Mutator to fetch the department history of the employee
+     * each consists of department name, start date, end date
+     * and append the current department to the end of the collection
+     */
+    public function getDepartmentHistoryAttribute(): Collection
+    {
+
+        // get the department history of the employee
+        // and check if the same department is repeated
+        // one after the other, that means that the department
+        // of the employee didn't change, so we don't need to
+        // add it to the history
+        $departmentHistory = $this->staffings()
+            ->whereNotNull('end_date')
+            ->orderByDesc('start_date')
+            ->get()
+            ->map(function ($staffing) {
+                return [
+                    'department' => $staffing->department->name,
+                    'start_date' => $staffing->start_date,
+                    'end_date' => $staffing->end_date,
+                ];
+            })
+            ->filter(function ($staffing, $index) {
+                if ($index == 0) {
+                    return true;
+                }
+                return $staffing['department'] != $this->staffings[$index - 1]->department->name;
+            });
+
+        // append the current department to the end of the collection
+        $departmentHistory[] = [
+            'department' => $this->currentDepartment->name,
+            'start_date' => $this->currentDepartment
+                ->staffings()
+                ->whereNull('end_date')
+                ->first()
+                ->start_date,
+            'end_date' => null,
+        ];
+
+        return collect($departmentHistory);
+    }
 }

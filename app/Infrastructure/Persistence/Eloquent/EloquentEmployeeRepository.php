@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Models\Employee;
 use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
+use App\Domain\Models\JobTitle;
 use App\Domain\Models\StaffPermission;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
@@ -14,7 +15,6 @@ use App\Exceptions\EntryNotFoundException;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -130,7 +130,64 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 
     public function getAllEmployees(): LengthAwarePaginator
     {
-        return Employee::query()->paginate(100);
+        $employees = Employee::query();
+
+        // implement search by name (first, or last or full name)
+        if (request()->has('name')) {
+
+            // get the name
+            $name = request()->get('name');
+
+            // trim & convert to lowercase
+            $name = strtolower(trim($name));
+
+            // search after ignoring the case
+            $employees
+                ->whereHas('jobApplication', function ($query) use ($name) {
+                    $query->whereHas('empData', function ($query) use ($name) {
+                        $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                            ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                            ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+                    });
+                })
+                ->with('user');
+        }
+
+        return $employees->paginate(100);
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getJobTitlesHistory(int $id)
+    {
+        try {
+            // get the employee
+            $employee = $this->getEmployeeById($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("Employee with ID $id not found");
+        }
+
+        // get the job titles history
+        return $employee->job_title_history;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getDepartmentsHistory(int $id)
+    {
+        try {
+            // get the employee
+            $employee = $this->getEmployeeById($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("Employee with ID $id not found");
+        }
+
+        // get the departments history
+        return $employee->department_history;
     }
 
     public function getEmployeeListByDepId(int $dep_id): array
@@ -143,11 +200,20 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return Employee::query()->where('cur_title', '=', $title_id)->get()->toArray();
     }
 
+    /**
+     * @throws EntryNotFoundException
+     */
     public function getEmployeeById(int $id): Builder|Model
     {
-        return Employee::query()
-            ->where('emp_id', '=', $id)
-            ->firstOrFail();
+        try {
+            $employee = Employee::query()
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+        } catch (Exception) {
+            throw new EntryNotFoundException("Employee with ID $id not found");
+        }
+
+        return $employee;
     }
 
     /**
@@ -199,6 +265,42 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
                 'start_date' => $data['start_date'],
             ]);
 
+            // get the list of permissions associated with the job title
+            $jobTitlePermissions = JobTitle::query()
+                ->where('job_title_id', '=', $data['job_title_id'])
+                ->firstOrFail()
+                ->permissions;
+
+            // additional permissions
+            $additional_permissions = array();
+
+            // go through each additional permission, and make sure
+            // each permission (check it's perm_id) is not found
+            // in the list of job title permissions
+            foreach ($data['additional_permissions'] as $permission) {
+                if (!in_array($permission, $jobTitlePermissions->pluck('perm_id')->toArray())) {
+
+                    // if the permission is not found, then add it to the list
+                    $additional_permissions[] = $permission;
+
+                }
+            }
+
+            $excluded_permissions = $data['excluded_permissions'];
+
+            // attach the additional permissions to the employee (with status = 1)
+            // and attach the excluded permissions to the employee (with status = 0)
+            // in the staffing record
+            $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
+                ->attach($additional_permissions, [
+                    'status' => 1,
+                ]);
+
+            $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
+                ->attach($excluded_permissions, [
+                    'status' => 0,
+                ]);
+
             // commit transaction
             DB::commit();
 
@@ -215,9 +317,23 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         // TODO: Implement updateEmployee() method.
     }
 
+    /**
+     * @throws EntryNotFoundException
+     */
     public function deleteEmployee($id): Builder|Model|null
     {
-        // TODO: Implement deleteEmployee() method.
+        try {
+            $employee = Employee::query()
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        // delete the employee
+        $employee->delete();
+
+        return $employee;
     }
 
     /**
