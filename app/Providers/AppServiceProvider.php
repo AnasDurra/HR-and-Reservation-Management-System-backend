@@ -1,8 +1,17 @@
 <?php
 
 namespace App\Providers;
-use App\Application\Http\Resources\LogResource;
+
+use App\Domain\Models\Attendance;
+use App\Domain\Models\Employee;
+use App\Domain\Models\JobApplication;
+use App\Domain\Models\JobTitle;
 use App\Domain\Models\JobTitlePermission;
+use App\Domain\Models\Leave;
+use App\Domain\Models\ShiftRequest;
+use App\Domain\Models\Staffing;
+use App\Domain\Models\StaffPermission;
+use App\Domain\Models\VacationRequest;
 use App\Domain\Repositories\AbsenceRepositoryInterface;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 
@@ -40,6 +49,16 @@ use App\Infrastructure\Persistence\Eloquent\EloquentUserRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentWorkingDayRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentShiftRequestRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentVacationRequestRepository;
+use App\Observers\AttendanceObserver;
+use App\Observers\EmployeeObserver;
+use App\Observers\JobApplicationObserver;
+use App\Observers\JobTitleObserver;
+use App\Observers\JobTitlePermissionObserver;
+use App\Observers\LeaveObserver;
+use App\Observers\ShiftRequestObserver;
+use App\Observers\StaffingObserver;
+use App\Observers\StaffPermissionObserver;
+use App\Observers\VacationRequestObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -74,6 +93,15 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Attendance::observe(AttendanceObserver::class);
+        Employee::observe(EmployeeObserver::class);
+        JobApplication::observe(JobApplicationObserver::class);
+        JobTitle::observe(JobTitleObserver::class);
+        JobTitlePermission::observe(JobTitlePermissionObserver::class);
+        Leave::observe(LeaveObserver::class);
+        ShiftRequest::observe(ShiftRequestObserver::class);
+        Staffing::observe(StaffingObserver::class);
+        StaffPermission::observe(StaffPermissionObserver::class);
+        VacationRequest::observe(VacationRequestObserver::class);
     }
 }

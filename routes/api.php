@@ -111,9 +111,10 @@ Route::apiResource('employees-vacations', EmployeeVacationController::class);
 Route::get('employee-vacations/{emp_id}', [EmployeeVacationController::class, 'showEmployeeVacations']);
 
 //Register the routes for the LogController
-Route::get('log/all-action', [LogController::class, 'getAllAction']);
-Route::get('log/all-affected-user', [LogController::class, 'getAllAffectedUser']);
-Route::get('log/all-user', [LogController::class, 'getAllUser']);
+Route::get('log/all-action', [LogController::class,'getAllAction']);
+Route::get('log/all-affected-user', [LogController::class,'getAllAffectedUser']);
+Route::get('log/all-user', [LogController::class,'getAllUser']);
+Route::get('log/all-log', [LogController::class,'getLog']);
 
 // Register the routes for the AbsenceController
 Route::apiResource('absences', AbsenceController::class);

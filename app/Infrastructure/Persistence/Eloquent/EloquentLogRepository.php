@@ -4,8 +4,10 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Models\Action;
 use App\Domain\Models\AffectedUser;
+use App\Domain\Models\Log;
 use App\Domain\Models\User;
 use App\Domain\Repositories\LogRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -17,235 +19,218 @@ class EloquentLogRepository implements LogRepositoryInterface
         return Action::all();
     }
 
-    //get id and full name for affected user
+    // get id and full name for affected users
     public function getAllAffectedUser(): LengthAwarePaginator
     {
-        $users = User::query()
-            ->WhereHas('logs', function ($query) {
-                return $query
-                    ->where('affected_user_id', '!=', null);
-            })->get();
+        $affected_user = AffectedUser::query()->select('user_id')->distinct();
 
-        $affectedUsers = array();
-        foreach ($users as $user) {
-            if ($user->user_type_id == 1 /*type for the employee*/) {
+        //search by affected user's name
+        if (request()->has('name')) {
+            $name = request()->query('name');
 
-                // get the user id
-                $user_id = $user->user_id;
+            // trim the name
+            $name = trim($name);
 
-                if (isset($user->employee)) {
-                    $jobApplication = $user->employee->jobApplication;
-                    if (isset($jobApplication)) {
-                        $empData = $jobApplication->empData;
-                        if (isset($empData)) {
-                            $first_name = $empData->first_name;
-                            $last_name = $empData->last_name;
+            // make the name lower case
+            $name = strtolower($name);
 
-                            $affectedUsers[] = [
-                                "user_id" => $user_id,
-                                "first_name" => $first_name,
-                                "last_name" => $last_name
-                            ];
-                        }
-                    }
-                }
-            }
+            // access the empData table that is related to the job application table
+            // and compare the first name and last name with the given name
+            // and return the result
+            $affected_user->whereHas('user', function ($query) use ($name) {
+                $query->whereHas('employee', function ($query) use ($name) {
+                    $query->whereHas('jobApplication', function ($query) use ($name) {
+                        $query->whereHas('empData', function ($query) use ($name) {
+
+                            // search after ignoring the case
+                            $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                                ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                                ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+
+                        });
+                    });
+                });
+            });
+
         }
 
-        $finalUsers = array();
-        $user_id = request('user_id');
-        $name = request('name');
-
-        if ($user_id) {
-            foreach ($affectedUsers as $user) {
-                if ($user['user_id'] === $user_id) {
-                    // Value found
-                    $finalUsers[] = [
-                        "user_id" => $user['user_id'],
-                        "first_name" => $user['first_name'],
-                        "last_name" => $user['last_name']
-                    ];
-                    break;
-                }
-            }
-        }
-        if ($name) {
-            foreach ($affectedUsers as $user) {
-                if (stristr($user['first_name'], $name) !== false || stristr($user['last_name'], $name) !== false) {
-                    // Value found
-                    $finalUsers[] = [
-                        "user_id" => $user['user_id'],
-                        "first_name" => $user['first_name'],
-                        "last_name" => $user['last_name']
-                    ];
-                }
-            }
-        }
-
-        if (!$user_id && !$name) {
-            $finalUsers = $affectedUsers;
-        }
-
-
-        $collection = new Collection($finalUsers);
-
-        // Current page number (from request or any other source)
-        $page = request()->input('page', 1);
-
-        // Number of items to display per page
-        $perPage = 10;
-
-        // Calculate the offset
-        $offset = ($page - 1) * $perPage;
-
-        // Get the items for the current page using array_slice()
-        $paginatedItems = array_slice($finalUsers, $offset, $perPage);
-
-        // Create a new collection with the paginated items
-        $paginatedCollection = collect($paginatedItems);
-
-        // Total number of items in the array
-        $totalItems = count($finalUsers);
-
-        // Create a paginator manually
-        $paginator = new LengthAwarePaginator(
-            $paginatedCollection,
-            $totalItems,
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-
-//        // Access the paginated data
-//        foreach ($paginator as $item) {
-//            // Process each item
-//        }
-//
-//        return response()->json([
-//            'data' => $processedData,
-//            'pagination' => [
-//                'current_page' => $paginator->currentPage(),
-//                'per_page' => $paginator->perPage(),
-//                'total' => $paginator->total(),
-//            ],
-//        ]);
-
-
-        return $paginator;
+        return $affected_user->paginate(10);
     }
 
-    // get id and full name from User
+
+//get id and full name for users
     public function getAllUser(): LengthAwarePaginator
     {
+        //NOTE : pluck is used to retrieve an array of unique user_id values
+        $actioned_users = Log::query()->select('user_id')->distinct()->pluck('user_id');
 
-        $users = User::query()->get();
+        $user = User::query()->whereIn('user_id', $actioned_users);
 
-        $usersArray = array();
-        foreach ($users as $user) {
-            if ($user->user_type_id == 1 /*type for the employee*/) {
 
-                // get the user id
-                $user_id = $user->user_id;
+        if (request()->has('name')) {
 
-                if (isset($user->employee)) {
-                    $jobApplication = $user->employee->jobApplication;
-                    if (isset($jobApplication)) {
-                        $empData = $jobApplication->empData;
-                        if (isset($empData)) {
-                            $first_name = $empData->first_name;
-                            $last_name = $empData->last_name;
+            $name = request()->query('name');
 
-                            $usersArray[] = [
-                                "user_id" => $user_id,
-                                "first_name" => $first_name,
-                                "last_name" => $last_name
-                            ];
-                        }
-                    }
-                }
-            }
+            // trim the name
+            $name = trim($name);
+
+            // make the name lower case
+            $name = strtolower($name);
+
+            $user->whereHas('employee', function ($query) use ($name) {
+                $query->whereHas('jobApplication', function ($query) use ($name) {
+                    $query->whereHas('empData', function ($query) use ($name) {
+
+                        // search after ignoring the case
+                        $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                            ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                            ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+
+                    });
+                });
+            });
+
+        }
+        return $user->paginate(10);
+    }
+
+    public function getLog(): LengthAwarePaginator
+    {
+        $log = Log::query();
+
+        // check if the request has filter by affected user
+        if (request()->has('affected_user')) {
+            $affectedUsersIds = request()->query('affected_user');
+
+            // extract the comma separated values
+            $affectedUsersIds = explode(',', $affectedUsersIds);
+
+            // convert it to array of integers
+            $affectedUsersIds = array_map('intval', $affectedUsersIds);
+
+            // filter the query by the extracted ids
+            $log->whereHas('affectedUser', function (Builder $query) use ($affectedUsersIds) {
+                $query->whereIn('user_id', $affectedUsersIds);
+            });
         }
 
-        $finalUsers = array();
-        $user_id = request('user_id');
-        $name = request('name');
 
-        if ($user_id) {
-            foreach ($usersArray as $user) {
-                if ($user['user_id'] === $user_id) {
-                    // Value found
-                    $finalUsers[] = [
-                        "user_id" => $user['user_id'],
-                        "first_name" => $user['first_name'],
-                        "last_name" => $user['last_name']
-                    ];
-                    break;
-                }
-            }
-        }
-        if ($name) {
-            foreach ($usersArray as $user) {
-                if (stristr($user['first_name'], $name) !== false || stristr($user['last_name'], $name) !== false) {
-                    // Value found
-                    $finalUsers[] = [
-                        "user_id" => $user['user_id'],
-                        "first_name" => $user['first_name'],
-                        "last_name" => $user['last_name']
-                    ];
-                }
-            }
+        // check if the request has filter by actioned user
+        if (request()->has('actioned_user')) {
+            $actionedUsersIds = request()->query('actioned_user');
+
+            // extract the comma separated values
+            $actionedUsersIds = explode(',', $actionedUsersIds);
+
+            // convert it to array of integers
+            $actionedUsersIds = array_map('intval', $actionedUsersIds);
+
+            // filter the query by the extracted ids
+            $log->whereIn('user_id', $actionedUsersIds);
+
         }
 
-        if (!$user_id && !$name) {
-            $finalUsers = $usersArray;
+        // check if the request has filter by action ids
+        if (request()->has('action')) {
+            $actionIds = request()->query('action');
+
+            // extract the comma separated values
+            $actionIds = explode(',', $actionIds);
+
+            // convert it to array of integers
+            $actionIds = array_map('intval', $actionIds);
+
+            // filter the query by the extracted ids
+            $log->whereIn('action_id', $actionIds);
         }
 
-        // Current page number (from request or any other source)
-        $page = request()->input('page', 1);
+        // check if the request has filter by action severities
+        if (request()->has('action_severity')) {
+            $actionSeverity = request()->query('action_severity');
 
-        // Number of items to display per page
-        $perPage = 10;
+            // extract the comma separated values
+            $actionSeverity = explode(',', $actionSeverity);
 
-        // Calculate the offset
-        $offset = ($page - 1) * $perPage;
+            // convert it to array of integers
+            $actionSeverity = array_map('intval', $actionSeverity);
 
-        // Get the items for the current page using array_slice()
-        $paginatedItems = array_slice($finalUsers, $offset, $perPage);
+            // filter the query by the extracted ids
+            $log->whereHas('action', function (Builder $query) use ($actionSeverity) {
+                $query->whereIn('severity', $actionSeverity);
+            });
+        }
 
-        // Create a new collection with the paginated items
-        $paginatedCollection = collect($paginatedItems);
+        // check if the request has filter by date range
+        if (request()->has('start_date') & request()->has('end_date')) {
+            $startDate = request()->query('start_date');
+            $endDate = request()->query('end_date');
 
-        // Total number of items in the array
-        $totalItems = count($finalUsers);
+            $log->whereBetween('date', [$startDate, $endDate]);
+        } else if (request()->has('start_date')) {
+            $startDate = request()->query('start_date');
 
-        // Create a paginator manually
-        $paginator = new LengthAwarePaginator(
-            $paginatedCollection,
-            $totalItems,
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+            $log->whereDate('date', '>=', $startDate);
+        } else if (request()->has('end_date')) {
+            $endDate = request()->query('end_date');
 
-        return $paginator;
+            $log->whereDate('date', '<=', $endDate);
+        }
 
-//        $user = User::query()->select('user_id', 'first_name', 'last_name');
-//
-//
-//        $user_id = request('user_id');
-//        $first_name = request('first_name');
-//        $last_name = request('last_name');
-//
-//        if ($user_id) {
-//            $user->where('user_id', '=', $user_id);
-//        }
-//        if ($first_name) {
-//            $user->where('first_name', 'like', '%' . $first_name . '%');
-//        }
-//        if ($last_name) {
-//            $user->where('last_name', 'like', '%' . $last_name . '%');
-//        }
-//
-//        return $user->paginate(10);
+        //search by affected user's name
+        if (request()->has('affected_user_name')) {
+            $name = request()->query('affected_user_name');
+
+            // trim the name
+            $name = trim($name);
+
+            // make the name lower case
+            $name = strtolower($name);
+
+            $log->whereHas('affectedUser', function ($query) use ($name) {
+                $query->whereHas('user', function ($query) use ($name) {
+                    $query->whereHas('employee', function ($query) use ($name) {
+                        $query->whereHas('jobApplication', function ($query) use ($name) {
+                            $query->whereHas('empData', function ($query) use ($name) {
+
+                                // search after ignoring the case
+                                $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                                    ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                                    ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+
+                            });
+                        });
+                    });
+                });
+            });
+
+        }
+
+        //search by actioned user's name
+        if (request()->has('actioned_user_name')) {
+            $name = request()->query('actioned_user_name');
+
+            // trim the name
+            $name = trim($name);
+
+            // make the name lower case
+            $name = strtolower($name);
+
+            $log->whereHas('user', function ($query) use ($name) {
+                $query->whereHas('employee', function ($query) use ($name) {
+                    $query->whereHas('jobApplication', function ($query) use ($name) {
+                        $query->whereHas('empData', function ($query) use ($name) {
+
+                            // search after ignoring the case
+                            $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                                ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                                ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+
+                        });
+                    });
+                });
+            });
+
+        }
+        return $log->paginate(10);
     }
 }

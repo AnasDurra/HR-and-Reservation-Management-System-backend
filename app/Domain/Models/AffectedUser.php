@@ -20,4 +20,22 @@ class AffectedUser extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
+
+    public function log(): BelongsTo
+    {
+        return $this->belongsTo(Log::class, 'log_id', 'log_id');
+    }
+
+    /**
+     * mutator that returns the full name of the user
+     */
+    public function getFullNameAttribute(): string
+    {
+        $user = $this->user;
+        $employee = $user->employee;
+        if ($employee) {
+            return $employee->full_name;
+        }
+        return '';
+    }
 }

@@ -14,4 +14,6 @@ interface LogRepositoryInterface
     public function getAllAffectedUser(): LengthAwarePaginator;
 
     public function getAllUser(): LengthAwarePaginator;
+
+    public function getLog(): LengthAwarePaginator;
 }

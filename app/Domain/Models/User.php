@@ -6,6 +6,7 @@ namespace App\Domain\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -63,9 +64,9 @@ class User extends Authenticatable
             ->withPivot('affected_user_id');
     }
 
-    public function affectedUser(): BelongsTo
+    public function affectedUser(): HasMany
     {
-        return $this->belongsTo(AffectedUser::class, 'user_id', 'user_id');
+        return $this->hasMany(AffectedUser::class, 'user_id', 'user_id');
     }
 
     public function isEmployee(): bool
