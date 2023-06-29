@@ -5,6 +5,7 @@ namespace App\Domain\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Action extends Model
 {
@@ -20,5 +21,9 @@ class Action extends Model
             ->withPivot('description', 'date');
     }
 
+    public function log(): HasMany
+    {
+        return $this->hasMany(Log::class, 'action_id', 'action_id');
+    }
 
 }

@@ -32,4 +32,9 @@ class LogService
         return $this->LogRepository->getAllUser();
     }
 
+    public function getLog(): LengthAwarePaginator
+    {
+        return $this->LogRepository->getLog();
+    }
+
 }
