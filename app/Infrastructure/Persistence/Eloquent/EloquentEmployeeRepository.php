@@ -7,15 +7,19 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Models\Employee;
 use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
+use App\Domain\Models\JobTitle;
+use App\Domain\Models\StaffPermission;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
+use App\Exceptions\EntryNotFoundException;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
@@ -124,6 +128,68 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 
     }
 
+    public function getAllEmployees(): LengthAwarePaginator
+    {
+        $employees = Employee::query();
+
+        // implement search by name (first, or last or full name)
+        if (request()->has('name')) {
+
+            // get the name
+            $name = request()->get('name');
+
+            // trim & convert to lowercase
+            $name = strtolower(trim($name));
+
+            // search after ignoring the case
+            $employees
+                ->whereHas('jobApplication', function ($query) use ($name) {
+                    $query->whereHas('empData', function ($query) use ($name) {
+                        $query->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                            ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                            ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+                    });
+                })
+                ->with('user');
+        }
+
+        return $employees->paginate(100);
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getJobTitlesHistory(int $id)
+    {
+        try {
+            // get the employee
+            $employee = $this->getEmployeeById($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("Employee with ID $id not found");
+        }
+
+        // get the job titles history
+        return $employee->job_title_history;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getDepartmentsHistory(int $id)
+    {
+        try {
+            // get the employee
+            $employee = $this->getEmployeeById($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("Employee with ID $id not found");
+        }
+
+        // get the departments history
+        return $employee->department_history;
+    }
+
     public function getEmployeeListByDepId(int $dep_id): array
     {
         return Employee::query()->where('cur_dep', '=', $dep_id)->get()->toArray();
@@ -134,11 +200,20 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         return Employee::query()->where('cur_title', '=', $title_id)->get()->toArray();
     }
 
+    /**
+     * @throws EntryNotFoundException
+     */
     public function getEmployeeById(int $id): Builder|Model
     {
-        return Employee::query()
-            ->where('emp_id', '=', $id)
-            ->firstOrFail();
+        try {
+            $employee = Employee::query()
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+        } catch (Exception) {
+            throw new EntryNotFoundException("Employee with ID $id not found");
+        }
+
+        return $employee;
     }
 
     /**
@@ -190,6 +265,42 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
                 'start_date' => $data['start_date'],
             ]);
 
+            // get the list of permissions associated with the job title
+            $jobTitlePermissions = JobTitle::query()
+                ->where('job_title_id', '=', $data['job_title_id'])
+                ->firstOrFail()
+                ->permissions;
+
+            // additional permissions
+            $additional_permissions = array();
+
+            // go through each additional permission, and make sure
+            // each permission (check it's perm_id) is not found
+            // in the list of job title permissions
+            foreach ($data['additional_permissions'] as $permission) {
+                if (!in_array($permission, $jobTitlePermissions->pluck('perm_id')->toArray())) {
+
+                    // if the permission is not found, then add it to the list
+                    $additional_permissions[] = $permission;
+
+                }
+            }
+
+            $excluded_permissions = $data['excluded_permissions'];
+
+            // attach the additional permissions to the employee (with status = 1)
+            // and attach the excluded permissions to the employee (with status = 0)
+            // in the staffing record
+            $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
+                ->attach($additional_permissions, [
+                    'status' => 1,
+                ]);
+
+            $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
+                ->attach($excluded_permissions, [
+                    'status' => 0,
+                ]);
+
             // commit transaction
             DB::commit();
 
@@ -206,9 +317,191 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         // TODO: Implement updateEmployee() method.
     }
 
+    /**
+     * @throws EntryNotFoundException
+     */
     public function deleteEmployee($id): Builder|Model|null
     {
-        // TODO: Implement deleteEmployee() method.
+        try {
+            $employee = Employee::query()
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        // delete the employee
+        $employee->delete();
+
+        return $employee;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function editEmployeeCredentials(int $id, array $data): Employee|Builder|null
+    {
+
+        try {
+
+            $employee = Employee::query()
+                ->with(['user'])
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        $employee->user->update([
+            'email' => optional($data)['email'] ?? $employee->user->email,
+            'username' => optional($data)['username'] ?? $employee->user->username,
+            'password' => optional($data)['password']
+                ? Hash::make($data['password'])
+                : $employee->user->password,
+        ]);
+        return $employee;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     * @throws Exception
+     */
+    public function editEmployeeDepartment(int $id, array $data): Employee|Builder|null
+    {
+        try {
+
+            $employee = Employee::query()
+                ->with(['staffings' => function ($query) {
+                    $query->with('jobTitle')->whereNull('end_date')->latest();
+                }])->findOrFail($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        // if the new dep_id is the same as the current one, do nothing
+        try {
+
+            DB::beginTransaction();
+            if ($employee->current_department->dep_id == $data['dep_id']) {
+                return $employee;
+            }
+
+            // if the new dep_id is different from the current one,
+            // add an end_date to the current staffing record,
+            // and create a new staffing record with the new dep_id and the existing job_title_id
+            $previousStaffingRecord = $employee->staffings()
+                ->whereNull('end_date')
+                ->first();
+
+            $employee->staffings()->create([
+                'job_title_id' => $employee->current_job_title->job_title_id,
+                'dep_id' => $data['dep_id'],
+                'start_date' => Carbon::now(),
+            ]);
+
+            $previousStaffingRecord->update([
+                'end_date' => Carbon::now(),
+            ]);
+
+            $new_staffing_id = $employee->staffings()
+                ->whereNull('end_date')
+                ->latest()
+                ->first()
+                ->staff_id;
+
+            // update staff permissions related to the previous staffing record
+            // to have the new staffing record id
+            StaffPermission::query()
+                ->where('staff_id', '=', $previousStaffingRecord->staff_id)
+                ->update([
+                    'staff_id' => $new_staffing_id,
+                ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return $employee;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function editEmployeeSchedule(int $id, array $data): Employee|Builder|null
+    {
+        try {
+
+            $employee = Employee::query()
+                ->findOrFail($id);
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+        // if the new schedule_id is the same as the current one, do nothing
+        if ($employee->schedule_id == $data['schedule_id']) {
+            return $employee;
+        }
+
+        // if the new schedule_id is different from the current one, update it
+        $employee->update([
+            'schedule_id' => $data['schedule_id'],
+        ]);
+
+
+        return $employee;
+    }
+
+
+    /**
+     * @throws EntryNotFoundException
+     * @throws Exception
+     */
+    public function editEmployeeEmploymentStatus(int $id, array $data): Employee|Builder|null
+    {
+        // add an end_date to the current employment status record
+        // and create a new employment status record with the new status
+        // and and start_date of today
+        // only if the new status is different from the current one
+        try {
+            $employee = Employee::query()
+                ->findOrFail($id);
+        } catch (Exception) {
+            throw new EntryNotFoundException("employee with id $id not found");
+        }
+
+//        dd($employee->current_employment_status->emp_status_id, $data['emp_status_id']);
+
+        // if the new status is the same as the current one, do nothing
+        if ($employee->current_employment_status->emp_status_id == $data['emp_status_id']) {
+            return $employee;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // if the new status is different from the current one,
+            // add an end_date to the current employment status record,
+            // and create a new employment status record with the new status
+            // and and start_date of today
+            $previousEmploymentStatusRecord = $employee->current_employment_status;
+            $employee->employmentStatuses()->attach($data['emp_status_id'], [
+                'start_date' => Carbon::now(),
+            ]);
+            $previousEmploymentStatusRecord->pivot->update([
+                'end_date' => Carbon::now(),
+            ]);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return $employee;
     }
 
     // Never delete this

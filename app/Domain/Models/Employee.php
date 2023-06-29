@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Employee extends Model
 {
@@ -24,6 +25,7 @@ class Employee extends Model
         'cur_title',
         'cur_dep'
     ];
+
 
     public function leaves(): HasMany
     {
@@ -101,11 +103,15 @@ class Employee extends Model
      */
     public function getCurrentEmploymentStatusAttribute(): Model|BelongsTo|null
     {
-        return $this->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first();
+        return $this->employmentStatuses()
+            ->whereNull('end_date')
+            ->orderByDesc('start_date')
+            ->first();
     }
 
 
     // KEEP THIS
+
     /**
      * Get Current Department Mutator.
      * this function is used to get the current department of the employee
@@ -115,7 +121,7 @@ class Employee extends Model
     {
         // if there is no staffing record with null end_date
         // then the employee is not working in any department
-        if (!$this->staffings()->whereNull('end_date')->exists()) {
+        if ($this->staffings()->whereNull('end_date')->doesntExist()) {
             return null;
         }
 
@@ -124,6 +130,7 @@ class Employee extends Model
 
 
     // KEEP THIS
+
     /**
      * Get Current Job Title Mutator.
      * this function is used to get the current job title of the employee
@@ -133,7 +140,7 @@ class Employee extends Model
     {
         // if there is no staffing record with null end_date
         // then the employee does not have a job title
-        if (!$this->staffings()->whereNull('end_date')->exists()) {
+        if ($this->staffings()->whereNull('end_date')->doesntExist()) {
             return null;
         }
         return $this->staffings()->whereNull('end_date')->first()->jobTitle;
@@ -216,9 +223,155 @@ class Employee extends Model
 
 
     // Keep this
-    public function empData() : Model|BelongsTo|null
+    public function empData(): Model|BelongsTo|null
     {
         return $this->jobApplication()->first()->empData();
     }
 
+
+    /**
+     * Mutator to fetch all the permissions of the employee
+     * either the permissions given because of his job title
+     * or the permissions given to him directly (stored in staffingPermissions)
+     * with status = 1, and excluded the permissions with status = 0
+     */
+    public function getPermissionsAttribute(): Collection
+    {
+        // get the permissions given to the employee because of his job title
+        $jobTitlePermissions = $this->staffings()
+            ->whereNull('end_date')
+            ->latest()
+            ->first()
+            ->jobTitle
+            ->permissions;
+
+        // get the permissions given to the employee directly
+        $staffingPermissions = $this->staffings()
+            ->whereNull('end_date')
+            ->latest()
+            ->first()
+            ->permissions;
+
+        // merge the two collections
+        // add attribute called type = "default" to the job title permissions
+        // add attribute called type = "granted" to the staffing permissions
+        // with status = 1 & type = "excluded" with status = 0
+        $permissions = array();
+
+        foreach ($staffingPermissions as $permission) {
+            if ($permission->pivot->status == 0) {
+                $permission->type = "excluded";
+            } else {
+                $permission->type = "granted";
+            }
+            $permissions[] = $permission;
+        }
+
+        foreach ($jobTitlePermissions as $permission) {
+
+            // check if any of the permissions array objects contains
+            // a permission with the same permission_id
+            // if so, then the permission is already added
+            // so we don't need to add it again
+            if (in_array($permission, $permissions)) {
+                continue;
+            }
+
+            $permission->type = "default";
+            $permissions[] = $permission;
+        }
+
+
+        return collect($permissions);
+    }
+
+    /**
+     * Mutator to fetch the job title history of the employee
+     * each consists of job title name, start date, end date
+     * and append the current job title to the end of the collection
+     */
+    public function getJobTitleHistoryAttribute(): Collection
+    {
+
+        // get the job title history of the employee
+        // and check if the same job title is repeated
+        // one after the other, that means that the job title
+        // of the employee didn't change, so we don't need to
+        // add it to the history
+        $jobTitleHistory = $this->staffings()
+            ->whereNotNull('end_date')
+            ->orderByDesc('start_date')
+            ->get()
+            ->map(function ($staffing) {
+                return [
+                    'job_title' => $staffing->jobTitle->name,
+                    'start_date' => $staffing->start_date,
+                    'end_date' => $staffing->end_date,
+                ];
+            })
+            ->filter(function ($staffing, $index) {
+                if ($index == 0) {
+                    return true;
+                }
+                return $staffing['job_title'] != $this->staffings[$index - 1]->jobTitle->name;
+            });
+
+        // append the current job title to the end of the collection
+        $jobTitleHistory[] = [
+            'job_title' => $this->currentJobTitle->name,
+            'start_date' => $this->currentJobTitle
+                ->staffings()
+                ->whereNull('end_date')
+                ->first()
+                ->start_date,
+            'end_date' => null,
+        ];
+
+        return collect($jobTitleHistory);
+    }
+
+    /**
+     * Mutator to fetch the department history of the employee
+     * each consists of department name, start date, end date
+     * and append the current department to the end of the collection
+     */
+    public function getDepartmentHistoryAttribute(): Collection
+    {
+
+        // get the department history of the employee
+        // and check if the same department is repeated
+        // one after the other, that means that the department
+        // of the employee didn't change, so we don't need to
+        // add it to the history
+        $departmentHistory = $this->staffings()
+            ->whereNotNull('end_date')
+            ->orderByDesc('start_date')
+            ->get()
+            ->map(function ($staffing) {
+                return [
+                    'department' => $staffing->department->name,
+                    'start_date' => $staffing->start_date,
+                    'end_date' => $staffing->end_date,
+                ];
+            })
+            ->filter(function ($staffing, $index) {
+                if ($index == 0) {
+                    return true;
+                }
+                return $staffing['department'] != $this->staffings[$index - 1]->department->name;
+            });
+
+        // append the current department to the end of the collection
+        $departmentHistory[] = [
+            'department' => $this->currentDepartment->name,
+            'start_date' => $this->currentDepartment
+                ->staffings()
+                ->whereNull('end_date')
+                ->first()
+                ->start_date,
+            'end_date' => null,
+        ];
+
+        return collect($departmentHistory);
+    }
 }

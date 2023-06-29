@@ -17,6 +17,7 @@ use App\Application\Http\Controllers\EmployeeVacationController;
 use App\Application\Http\Controllers\ShiftRequestController;
 use App\Application\Http\Controllers\VacationRequestController;
 use App\Application\Http\Controllers\AbsenceController;
+use App\Application\Http\Controllers\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,17 @@ Route::post('/job-applications/accept/{id}', [JobApplicationController::class, '
 Route::post('/job-applications/reject/{id}', [JobApplicationController::class, 'rejectJobApplication']);
 
 // Register the routes for the EmployeeController
+Route::prefix('employees')->group(function () {
+//    Route::post('/{id}', [EmployeeController::class, 'update']);
+    Route::get('/list', [EmployeeController::class, 'indexList']);
+    Route::get('/job-title-history/{id}', [EmployeeController::class, 'indexJobTitles']);
+    Route::get('/department-history/{id}', [EmployeeController::class, 'indexDepartments']);
+    Route::post('/edit-credentials/{id}', [EmployeeController::class, 'editCredentials']);
+    Route::post('/edit-department/{id}', [EmployeeController::class, 'editDepartment']);
+    Route::post('/edit-employment-status/{id}', [EmployeeController::class, 'editEmploymentStatus']);
+    Route::post('/edit-schedule/{id}', [EmployeeController::class, 'editSchedule']);
+    Route::post('/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
+});
 Route::apiResource('employees', EmployeeController::class);
 
 // Register the routes for the DepartmentController
@@ -52,8 +64,8 @@ Route::apiResource('departments', DepartmentController::class);
 Route::apiResource('job-vacancies', JobVacancyController::class);
 
 //Register the routes for the ShiftRequestController
-Route::apiResource('shift-request', ShiftRequestController::class);
-Route::post('/shift-request/update/{id}', [ShiftRequestController::class, 'update']);
+Route::apiResource('shift-request', ShiftRequestController::class)->except(['update']);
+Route::post('/shift-request/{id}', [ShiftRequestController::class, 'update']);
 Route::post('/shift-request/accept/{id}', [ShiftRequestController::class, 'acceptShiftRequest']);
 Route::post('/shift-request/reject/{id}', [ShiftRequestController::class, 'rejectShiftRequest']);
 
@@ -62,7 +74,7 @@ Route::apiResource('vacation-request', VacationRequestController::class);
 Route::post('/vacation-request/update/{id}', [VacationRequestController::class, 'update']);
 Route::post('/vacation-request/accept/{id}', [VacationRequestController::class, 'acceptVacationRequest']);
 Route::post('/vacation-request/reject/{id}', [VacationRequestController::class, 'rejectVacationRequest']);
-Route::apiResource('vacation-request' , VacationRequestController::class)->except(['update']);
+Route::apiResource('vacation-request', VacationRequestController::class)->except(['update']);
 
 // Register the routes for the JobTitleController
 Route::apiResource('job-titles', JobTitleController::class);
@@ -71,8 +83,8 @@ Route::apiResource('job-titles', JobTitleController::class);
 Route::get('permissions', [PermissionController::class, 'index']);
 Route::get('permissions/{id}', [PermissionController::class, 'show']);
 
-// Register the routes for the EmployeeController
-Route::post('employees/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
+//// Register the routes for the EmployeeController
+//Route::post('employees/edit-permissions/{id}', [EmployeeController::class, 'editPermissions']);
 
 // Register the routes for the ScheduleController
 Route::apiResource('schedules', ScheduleController::class);
@@ -107,4 +119,8 @@ Route::get('log/all-log', [LogController::class,'getLog']);
 // Register the routes for the AbsenceController
 Route::apiResource('absences', AbsenceController::class);
 Route::get('employee-absences/{emp_id}', [AbsenceController::class, 'showEmployeeAbsences']);
+
+// TEMP  ROUT FOR PDF
+Route::get('pdf', [Report::class,'create']);
+
 

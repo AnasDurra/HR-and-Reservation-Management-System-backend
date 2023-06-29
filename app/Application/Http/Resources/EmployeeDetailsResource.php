@@ -31,7 +31,6 @@ class EmployeeDetailsResource extends JsonResource
     {
         return [
 
-
             // employee data
             'emp_id' => $this->emp_id,
 
@@ -42,16 +41,19 @@ class EmployeeDetailsResource extends JsonResource
             'leaves_balance' => $this->leaves_balance,
 
             // job application data
-            'job_app_id' => $this->jobApplication->job_app_id,
+            'job_application' => new JobApplicationDetailsResource($this->jobApplication),
 
             // schedule data
             'schedule' => new ScheduleResource($this->schedule),
+
+            'current_employment_status' => new EmploymentStatusResource($this->current_employment_status),
 
             // job title data
             'current_job_title' => $this->current_job_title
                 ? new JobTitleResource($this->current_job_title)
                 : null,
 
+            'permissions' => EmployeePermissionResource::collection($this->permissions),
             //  attendance (full information) (for later)
             // TODO: add attendance information
         ];
