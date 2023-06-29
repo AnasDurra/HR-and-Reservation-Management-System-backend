@@ -1,22 +1,96 @@
 <?php
 
-namespace App\Application\Http\Controllers;
+namespace App\Domain\Services;
 
-
-use App\Domain\Services\AbsenceService;
-use App\Domain\Services\AttendanceService;
-use App\Domain\Services\EmployeeService;
 use App\Infrastructure\Persistence\Eloquent\EloquentAbsenceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
-use Illuminate\Support\Facades\Validator;
-
+use JetBrains\PhpStorm\NoReturn;
 use setasign\Fpdi\Tcpdf\Fpdi;
 
-
-// initial controller
-class PDFgenerator
+class ReportService
 {
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
+     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
+     */
+    function create(): void
+    {
+        $attendance_report = null;
+        $absence_report = null;
+
+        $info_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        $info_report = $this->employeeInformationReport($info_report,request()->all());
+
+        if(request()->has('attendance_report')) {
+            $attendance_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+            $attendance_report = $this->employeeAttendanceReport($attendance_report,request()->all());
+        }
+
+        if(request()->has('absence_report')) {
+            $absence_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+            $absence_report = $this->employeeAbsenceReport($absence_report,request()->all());
+        }
+
+        $info_report->Output(storage_path('app/Reports/info.pdf'), 'F');
+
+        $attendance_report?->Output(storage_path('app/Reports/att.pdf'), 'F');
+
+        $absence_report?->Output(storage_path('app/Reports/absence.pdf'), 'F');
+
+        $mergedPdf = new Fpdi();
+
+        $pageCount = $mergedPdf->setSourceFile(storage_path('app/Reports/info.pdf'));
+        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+            $template = $mergedPdf->importPage($pageNo);
+            $size = $mergedPdf->getTemplateSize($template);
+            $mergedPdf->AddPage($size['orientation'], $size);
+            $mergedPdf->useTemplate($template);
+        }
+
+        if($attendance_report) {
+            $pageCount = $mergedPdf->setSourceFile(storage_path('app/Reports/att.pdf'));
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $template = $mergedPdf->importPage($pageNo);
+                $size = $mergedPdf->getTemplateSize($template);
+                $mergedPdf->AddPage($size['orientation'], $size);
+                $mergedPdf->useTemplate($template);
+            }
+        }
+
+        if($absence_report) {
+            $pageCount = $mergedPdf->setSourceFile(storage_path('app/Reports/absence.pdf'));
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $template = $mergedPdf->importPage($pageNo);
+                $size = $mergedPdf->getTemplateSize($template);
+                $mergedPdf->AddPage($size['orientation'], $size);
+                $mergedPdf->useTemplate($template);
+            }
+        }
+
+
+        $emp_id = request()->get('emp_id');
+        $timestamp = date('Y-m-d_H-i-s');
+        $fileName = "Employee_Report_{$emp_id}_{$timestamp}.pdf";
+        $filePath = storage_path("app/Reports/{$fileName}");
+        $mergedPdf->Output($filePath, "F");
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
+
+        exit;
+    }
     function employeeAbsenceReport(\TCPDF $pdf,$data): \TCPDF
     {
         $absenceService = new AbsenceService(new EloquentAbsenceRepository());
@@ -162,6 +236,139 @@ class PDFgenerator
 
     }
 
+    function employeeInformationReport(\TCPDF $pdf,$data): \TCPDF
+    {
+        $employeeService = new EmployeeService(new EloquentEmployeeRepository());
+        $employee = $employeeService->getEmployeeById($data["emp_id"]);
+
+
+        $employee["curr_job_title"] = $employee->getCurrentJobTitleAttribute()->name;
+        $employee["StartWorkingDateAttribute"] = $employee->getStartWorkingDateAttribute();
+        $employee["CurrentDepartmentAttribute"] = $employee->getCurrentDepartmentAttribute()->name;
+        $employee["CurrentEmploymentStatusAttribute"] = $employee->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first()->name;
+
+        $pdf->AddPage();
+
+        $pdf->Image(public_path('qiam.jpg'), 83, 13, 45, 45);
+
+        $pdf->setRTL(true);
+
+        $pdf->SetFont('aealarabiya', '', 30);
+        $pdf->Text(5,20," مركز قيم");
+
+        $pdf->SetFont('aealarabiya', '', 23);
+        $pdf->Text(15,35," قسم الموارد البشرية");
+
+        $pdf->SetFont('aealarabiya', '', 15);
+
+        $pdf->Text(150,25,"التاريخ: ");
+        $pdf->Text(162,25,now()->format('Y/m/d'));
+
+        $pdf->Text(150,35,"الموظف المختص: ");
+        $pdf->Text(180,35,"أنس ريش");
+
+        $pdf->Line(10, 60, 200, 60);
+
+
+        $pdf->SetFont('aealarabiya', '', 18);
+        $pdf->Text(83,62,"* تقرير عن موظف *");
+
+
+
+        $pdf->Line(20, 80+3, 60, 80+3);
+        $pdf->Line(20, 80+3, 20, 120+6);
+        $pdf->Line(60, 80+3, 60, 120+6);
+        $pdf->Line(20, 120+6, 60, 120+6);
+        $photo = null; // TODO Add photo
+        if($photo){
+
+        }
+        else{
+            $pdf->SetFont('aealarabiya', '', 15);
+            $pdf->Text(149,100," لايوجد صورة شخصية");
+        }
+
+        $pdf->SetFont('aealarabiya', '', 13);
+
+
+        $employee = array(
+            'الرقم:' => $employee['emp_id'],
+            'اسم الموظف الثلاثي:' => $employee['empData']['first_name'] ." ". $employee['empData']['father_name'] ." ". $employee['empData']['last_name'],
+            'الايميل:' => $employee['user']['email'],
+            'اسم المستخدم:' => $employee['user']['username'],
+            'العنوان:' => $employee['empData']['address']['city'] ." ". $employee['empData']['address']['street'],
+            'تاريخ الميلاد:' => $employee['empData']['birth_date'],
+            'مكان الميلاد:' => $employee['empData']['birth_place'],
+            'المسمى الوظيفي الحالي:' => $employee['curr_job_title'],
+            'القسم الحالي:' => $employee['CurrentDepartmentAttribute'],
+            'رقم طلب التوظيف:' => $employee['job_app_id'],
+            'تاريخ بداية العمل:' => $employee['StartWorkingDateAttribute'],
+            'الوضع الوظيفي:' => $employee['CurrentEmploymentStatusAttribute'],
+            'برنامج الدوام:' => $employee['schedule']['name'],
+            'معلومات جواز السفر'=>"",
+            ' - رقم جواز السفر:'=> $employee['empData']['passport']['passport_number'],
+            ' - مكان إصدار الجواز:'=> $employee['empData']['passport']['place_of_issue'],
+            ' - تاريخ إصدار الجواز:'=> $employee['empData']['passport']['date_of_issue'],
+            'معلومات عن الأقارب'=>"",
+            ' - عدد الأقارب:'=> count($employee['empData']['relatives'])>0 ? count($employee['empData']['relatives']) : 'لايوجد',
+            'معلومات رخصة القيادة'=>"",
+            ' - فئة رخصة القيادة:'=> $employee['empData']['drivingLicence']['category'],
+            ' - تاريخ إصدار الرخصة:'=> $employee['empData']['drivingLicence']['date_of_issue'],
+            ' - مكان إصدار الرخصة:'=> $employee['empData']['drivingLicence']['place_of_issue'],
+            ' - تاريخ انتهاء الرخصة:'=> $employee['empData']['drivingLicence']['expiry_date'],
+            ' - زمرة الدم:'=> $employee['empData']['drivingLicence']['blood_group'],
+        );
+        $x = 10;
+        $y = 73;
+
+        $pdf->Line(10, 160, 200, 160);
+        $pdf->Line(10, 205, 200, 205);
+
+        $pdf->SetLineStyle(array('dash' => '4,2,1,2'));
+        $pdf->Line(105, 210, 105, 277);
+
+        $space = 40;
+        foreach ($employee as $key => $column) {
+            if ($key === "تاريخ بداية العمل:") {
+                $x += 115;
+                $y = 166;
+                $space =35 ;
+            }
+            if ($key === 'معلومات جواز السفر') {
+                $x = 10;
+                $y = 210;
+                $space =35 ;
+            }
+
+            if ($key === 'معلومات رخصة القيادة') {
+                $x += 115;
+                $y = 210;
+                $space =40 ;
+            }
+
+            if ($key === 'المسمى الوظيفي الحالي:') {
+                $y += 9;
+            }
+
+
+
+            $pdf->SetFont('aealarabiya', '', 14);
+            $pdf->Text($x, $y, $key);
+            $pdf->SetFont('aealarabiya', '', 12);
+            $pdf->Text($x + $space, $y, $column); // Retrieve the corresponding employee information
+            $y += 12;
+        }
+
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetFillColor(255, 255, 255);
+
+
+        $pdf->setRTL(false);
+
+
+        return $pdf;
+
+    }
 
     function employeeAttendanceReport(\TCPDF $pdf,$data): \TCPDF
     {
@@ -401,230 +608,5 @@ class PDFgenerator
 
         return $pdf;
 
-    }
-
-
-    function employeeInformationReport(\TCPDF $pdf,$data): \TCPDF
-    {
-
-        $employeeService = new EmployeeService(new EloquentEmployeeRepository());
-        $employee = $employeeService->getEmployeeById($data["emp_id"]);
-
-
-        $employee["curr_job_title"] = $employee->getCurrentJobTitleAttribute()->name;
-        $employee["StartWorkingDateAttribute"] = $employee->getStartWorkingDateAttribute();
-        $employee["CurrentDepartmentAttribute"] = $employee->getCurrentDepartmentAttribute()->name;
-        $employee["CurrentEmploymentStatusAttribute"] = $employee->employmentStatuses()->whereNull('end_date')->orderByDesc('start_date')->first()->name;
-
-        $pdf->AddPage();
-
-        $pdf->Image(public_path('qiam.jpg'), 83, 13, 45, 45);
-
-        $pdf->setRTL(true);
-
-        $pdf->SetFont('aealarabiya', '', 30);
-        $pdf->Text(5,20," مركز قيم");
-
-        $pdf->SetFont('aealarabiya', '', 23);
-        $pdf->Text(15,35," قسم الموارد البشرية");
-
-        $pdf->SetFont('aealarabiya', '', 15);
-
-        $pdf->Text(150,25,"التاريخ: ");
-        $pdf->Text(162,25,now()->format('Y/m/d'));
-
-        $pdf->Text(150,35,"الموظف المختص: ");
-        $pdf->Text(180,35,"أنس ريش");
-
-        $pdf->Line(10, 60, 200, 60);
-
-
-        $pdf->SetFont('aealarabiya', '', 18);
-        $pdf->Text(83,62,"* تقرير عن موظف *");
-
-
-
-        $pdf->Line(20, 80+3, 60, 80+3);
-        $pdf->Line(20, 80+3, 20, 120+6);
-        $pdf->Line(60, 80+3, 60, 120+6);
-        $pdf->Line(20, 120+6, 60, 120+6);
-        $photo = null; // TODO Add photo
-        if($photo){
-
-        }
-        else{
-            $pdf->SetFont('aealarabiya', '', 15);
-            $pdf->Text(149,100," لايوجد صورة شخصية");
-        }
-
-        $pdf->SetFont('aealarabiya', '', 13);
-
-
-        $employee = array(
-            'الرقم:' => $employee['emp_id'],
-            'اسم الموظف الثلاثي:' => $employee['empData']['first_name'] ." ". $employee['empData']['father_name'] ." ". $employee['empData']['last_name'],
-            'الايميل:' => $employee['user']['email'],
-            'اسم المستخدم:' => $employee['user']['username'],
-            'العنوان:' => $employee['empData']['address']['city'] ." ". $employee['empData']['address']['street'],
-            'تاريخ الميلاد:' => $employee['empData']['birth_date'],
-            'مكان الميلاد:' => $employee['empData']['birth_place'],
-            'المسمى الوظيفي الحالي:' => $employee['curr_job_title'],
-            'القسم الحالي:' => $employee['CurrentDepartmentAttribute'],
-            'رقم طلب التوظيف:' => $employee['job_app_id'],
-            'تاريخ بداية العمل:' => $employee['StartWorkingDateAttribute'],
-            'الوضع الوظيفي:' => $employee['CurrentEmploymentStatusAttribute'],
-            'برنامج الدوام:' => $employee['schedule']['name'],
-            'معلومات جواز السفر'=>"",
-            ' - رقم جواز السفر:'=> $employee['empData']['passport']['passport_number'],
-            ' - مكان إصدار الجواز:'=> $employee['empData']['passport']['place_of_issue'],
-            ' - تاريخ إصدار الجواز:'=> $employee['empData']['passport']['date_of_issue'],
-            'معلومات عن الأقارب'=>"",
-            ' - عدد الأقارب:'=> count($employee['empData']['relatives'])>0 ? count($employee['empData']['relatives']) : 'لايوجد',
-            'معلومات رخصة القيادة'=>"",
-            ' - فئة رخصة القيادة:'=> $employee['empData']['drivingLicence']['category'],
-            ' - تاريخ إصدار الرخصة:'=> $employee['empData']['drivingLicence']['date_of_issue'],
-            ' - مكان إصدار الرخصة:'=> $employee['empData']['drivingLicence']['place_of_issue'],
-            ' - تاريخ انتهاء الرخصة:'=> $employee['empData']['drivingLicence']['expiry_date'],
-            ' - زمرة الدم:'=> $employee['empData']['drivingLicence']['blood_group'],
-        );
-        $x = 10;
-        $y = 73;
-
-        $pdf->Line(10, 160, 200, 160);
-        $pdf->Line(10, 205, 200, 205);
-
-        $pdf->SetLineStyle(array('dash' => '4,2,1,2'));
-        $pdf->Line(105, 210, 105, 277);
-
-        $space = 40;
-        foreach ($employee as $key => $column) {
-            if ($key === "تاريخ بداية العمل:") {
-                $x += 115;
-                $y = 166;
-                $space =35 ;
-            }
-            if ($key === 'معلومات جواز السفر') {
-                $x = 10;
-                $y = 210;
-                $space =35 ;
-            }
-
-            if ($key === 'معلومات رخصة القيادة') {
-                $x += 115;
-                $y = 210;
-                $space =40 ;
-            }
-
-            if ($key === 'المسمى الوظيفي الحالي:') {
-                $y += 9;
-            }
-
-
-
-            $pdf->SetFont('aealarabiya', '', 14);
-            $pdf->Text($x, $y, $key);
-            $pdf->SetFont('aealarabiya', '', 12);
-            $pdf->Text($x + $space, $y, $column); // Retrieve the corresponding employee information
-            $y += 12;
-        }
-
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFillColor(255, 255, 255);
-
-
-        $pdf->setRTL(false);
-
-
-        return $pdf;
-
-    }
-
-    /**
-     * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
-     * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
-     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
-     * @throws \setasign\Fpdi\PdfParser\PdfParserException
-     * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
-     */
-    function createPDF(){
-
-        $validator = Validator::make(request()->query(), [
-            'emp_id' => 'required|exists:employees,emp_id',
-            'attendance_report' => ['sometimes', function ($attribute, $value, $fail) {
-                if (!is_bool($value) && !in_array($value, ['true', 'false', '1', '0'], true)) {
-                    $fail('The '.$attribute.' field must be true or false.');
-                }
-            }],
-            'attendance_start_date' => 'sometimes|date',
-            'attendance_end_date' => 'sometimes|date',
-            'absence_report' => ['nullable', function ($attribute, $value, $fail) {
-                if (!is_bool($value) && !in_array($value, ['true', 'false', '1', '0'], true)) {
-                    $fail('The '.$attribute.' field must be true or false.');
-                }
-            }],
-            'absence_start_date' => 'nullable|date',
-            'absence_end_date' => 'nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors();
-            return response()->json([
-                'errors'=> $errors
-            ], 400);
-        }
-        $attendance_report = null;
-        $absence_report = null;
-
-        $info_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-        $info_report = $this->employeeInformationReport($info_report,request()->all());
-
-        if(request()->has('attendance_report')) {
-            $attendance_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-            $attendance_report = $this->employeeAttendanceReport($attendance_report,request()->all());
-        }
-
-        if(request()->has('absence_report')) {
-            $absence_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-            $absence_report = $this->employeeAbsenceReport($absence_report,request()->all());
-        }
-
-        $info_report->Output(storage_path('app/Utils/info.pdf'), 'F');
-
-        $attendance_report?->Output(storage_path('app/Utils/att.pdf'), 'F');
-
-        $absence_report?->Output(storage_path('app/Utils/absence.pdf'), 'F');
-
-        $mergedPdf = new Fpdi();
-
-        $pageCount = $mergedPdf->setSourceFile(storage_path('app/Utils/info.pdf'));
-        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-            $template = $mergedPdf->importPage($pageNo);
-            $size = $mergedPdf->getTemplateSize($template);
-            $mergedPdf->AddPage($size['orientation'], $size);
-            $mergedPdf->useTemplate($template);
-        }
-
-        if($attendance_report) {
-            $pageCount = $mergedPdf->setSourceFile(storage_path('app/Utils/att.pdf'));
-            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-                $template = $mergedPdf->importPage($pageNo);
-                $size = $mergedPdf->getTemplateSize($template);
-                $mergedPdf->AddPage($size['orientation'], $size);
-                $mergedPdf->useTemplate($template);
-            }
-        }
-
-        if($absence_report) {
-            $pageCount = $mergedPdf->setSourceFile(storage_path('app/Utils/absence.pdf'));
-            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-                $template = $mergedPdf->importPage($pageNo);
-                $size = $mergedPdf->getTemplateSize($template);
-                $mergedPdf->AddPage($size['orientation'], $size);
-                $mergedPdf->useTemplate($template);
-            }
-        }
-
-        $mergedPdf->Output('merged.pdf');
-        exit;
     }
 }

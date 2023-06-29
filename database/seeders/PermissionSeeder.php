@@ -22,7 +22,7 @@ class PermissionSeeder extends Seeder
          * Manage Job Applications
          * Manage Employees
          * Manage Logs
-         * Generate Reports
+         * Generate Report
          **/
 
         $permissions = [
