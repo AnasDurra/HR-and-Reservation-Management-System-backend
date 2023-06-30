@@ -376,6 +376,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
                     $query->with('jobTitle')->whereNull('end_date')->latest();
                 }])->findOrFail($id);
 
+
         } catch (Exception) {
             throw new EntryNotFoundException("employee with id $id not found");
         }
@@ -403,6 +404,11 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 
             $previousStaffingRecord->update([
                 'end_date' => Carbon::now(),
+            ]);
+
+            // update cur_dep in employee table
+            $employee->update([
+                'cur_dep' => $data['dep_id'],
             ]);
 
             $new_staffing_id = $employee->staffings()
