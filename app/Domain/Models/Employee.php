@@ -303,6 +303,7 @@ class Employee extends Model
             ->get()
             ->map(function ($staffing) {
                 return [
+                    'job_title_id' => $staffing->jobTitle->job_title_id,
                     'job_title' => $staffing->jobTitle->name,
                     'start_date' => $staffing->start_date,
                     'end_date' => $staffing->end_date,
@@ -315,8 +316,15 @@ class Employee extends Model
                 return $staffing['job_title'] != $this->staffings[$index - 1]->jobTitle->name;
             });
 
+        // check if the employee current job title is already in the history
+        // if so, then we don't need to add it again
+        if ($jobTitleHistory->last()['job_title_id'] == $this->currentJobTitle->job_title_id) {
+            return collect($jobTitleHistory);
+        }
+
         // append the current job title to the end of the collection
         $jobTitleHistory[] = [
+            'job_title_id' => $this->currentJobTitle->job_title_id,
             'job_title' => $this->currentJobTitle->name,
             'start_date' => $this->currentJobTitle
                 ->staffings()
@@ -348,7 +356,12 @@ class Employee extends Model
             ->get()
             ->map(function ($staffing) {
                 return [
+                    'dep_id' => $staffing->department->dep_id,
                     'department' => $staffing->department->name,
+                    'job_title' => [
+                        'job_title_id' => $staffing->jobTitle->job_title_id,
+                        'job_title' => $staffing->jobTitle->name,
+                    ],
                     'start_date' => $staffing->start_date,
                     'end_date' => $staffing->end_date,
                 ];
@@ -360,9 +373,20 @@ class Employee extends Model
                 return $staffing['department'] != $this->staffings[$index - 1]->department->name;
             });
 
+        // check if the employee current department is already in the history
+        // if so, then we don't need to add it again
+        if ($departmentHistory->last()['dep_id'] == $this->currentDepartment->dep_id) {
+            return collect($departmentHistory);
+        }
+
         // append the current department to the end of the collection
         $departmentHistory[] = [
+            'dep_id' => $this->currentDepartment->dep_id,
             'department' => $this->currentDepartment->name,
+            'job_title' => [
+                'job_title_id' => $this->currentJobTitle->job_title_id,
+                'name' => $this->currentJobTitle->name,
+            ],
             'start_date' => $this->currentDepartment
                 ->staffings()
                 ->whereNull('end_date')
