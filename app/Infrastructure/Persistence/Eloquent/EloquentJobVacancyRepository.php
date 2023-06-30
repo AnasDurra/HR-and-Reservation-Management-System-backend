@@ -16,9 +16,8 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 
     public function getJobVacancyById(int $id): JobVacancy|Builder|null
     {
-        return JobVacancy::query()->whereHas('vacancyStatus', function ($query) {
-            $query->where('vacancy_status_id', '!=', 3);
-        })->with('department', 'vacancyStatus')->find($id);
+        return JobVacancy::query()
+            ->with('department', 'vacancyStatus')->find($id);
     }
 
     public function createJobVacancy(array $data): JobVacancy|Builder

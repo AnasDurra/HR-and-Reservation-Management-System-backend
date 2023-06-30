@@ -100,6 +100,11 @@ class JobVacancyController extends Controller
                 404
             );
         }
+        if ($jobVacancy->vacancyStatus->vacancy_status_id == 3) {
+            return response()->json([
+                'message' => 'Job Vacancy is Archived',
+            ], 400);
+        }
         if ($jobVacancy->vacancyStatus->vacancy_status_id == 2) {
             return response()->json([
                 'message' => 'Job Vacancy is closed',
