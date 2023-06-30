@@ -17,7 +17,6 @@ use App\Application\Http\Resources\ScheduleResource;
 use App\Domain\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -52,6 +51,12 @@ class EmployeeController extends Controller
     {
         $departmentHistory = $this->employeeService->getDepartmentsHistory($id);
         return response()->json($departmentHistory);
+    }
+
+    public function indexLog(int $id): JsonResponse
+    {
+        $employee = $this->employeeService->getEmployeeById($id);
+        return response()->json($employee->log);
     }
 
     public function show(int $id): EmployeeDetailsResource

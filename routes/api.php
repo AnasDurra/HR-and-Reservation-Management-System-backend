@@ -8,15 +8,16 @@ use App\Application\Http\Controllers\JobTitleController;
 use App\Application\Http\Controllers\LogController;
 use App\Application\Http\Controllers\PermissionController;
 use App\Application\Http\Controllers\EmployeeController;
+use App\Application\Http\Controllers\Report;
 use App\Application\Http\Controllers\ScheduleController;
 use App\Application\Http\Controllers\BiometricDeviceController;
 use App\Application\Http\Controllers\AttendanceController;
 use App\Application\Http\Controllers\LeaveController;
+use App\Application\Http\Controllers\VacationRequestController;
 use App\Application\Http\Controllers\WorkingDayController;
 use App\Application\Http\Controllers\HolidayController;
 use App\Application\Http\Controllers\EmployeeVacationController;
 use App\Application\Http\Controllers\ShiftRequestController;
-use App\Application\Http\Controllers\VacationRequestController;
 use App\Application\Http\Controllers\AbsenceController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 // login route
 Route::post('employees/login', [AuthenticationController::class, 'employeeLogin']);
 
-Route::middleware('auth:sanctum')->group(function () {
+//Route::middleware('auth:sanctum')->group(function () {
 
     // get employee by token route
     Route::get('/employee', [AuthenticationController::class, 'getEmployeeActivePermissionsByToken']);
@@ -52,7 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
         // login route
         Route::post('/logout', [AuthenticationController::class, 'employeeLogout']);
 
+        // get all employees
         Route::get('/list', [EmployeeController::class, 'indexList']);
+
+        // get employee log
+        Route::get('/log/{id}', [EmployeeController::class, 'indexLog']);
+
         Route::get('/job-title-history/{id}', [EmployeeController::class, 'indexJobTitles']);
         Route::get('/department-history/{id}', [EmployeeController::class, 'indexDepartments']);
         Route::post('/edit-credentials/{id}', [EmployeeController::class, 'editCredentials']);
@@ -126,4 +132,4 @@ Route::middleware('auth:sanctum')->group(function () {
     // TEMP  ROUT FOR PDF
     Route::get('pdf', [Report::class, 'create']);
 
-});
+//});

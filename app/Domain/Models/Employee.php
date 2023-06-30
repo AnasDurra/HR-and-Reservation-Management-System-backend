@@ -2,6 +2,8 @@
 
 namespace App\Domain\Models;
 
+use App\Http\Resources\ActionResource;
+use App\Http\Resources\AffectedUserResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
+/**
+ * @property mixed current_job_title
+ */
 class Employee extends Model
 {
     use HasFactory, SoftDeletes;
@@ -319,15 +324,15 @@ class Employee extends Model
 
         // check if the employee current job title is already in the history
         // if so, then we don't need to add it again
-        if ($jobTitleHistory->last()['job_title_id'] == $this->currentJobTitle->job_title_id) {
+        if ($jobTitleHistory->last()['job_title_id'] == $this->current_job_title->job_title_id) {
             return collect($jobTitleHistory);
         }
 
         // append the current job title to the end of the collection
         $jobTitleHistory[] = [
-            'job_title_id' => $this->currentJobTitle->job_title_id,
-            'job_title' => $this->currentJobTitle->name,
-            'start_date' => $this->currentJobTitle
+            'job_title_id' => $this->current_job_title->job_title_id,
+            'job_title' => $this->current_job_title->name,
+            'start_date' => $this->current_job_title
                 ->staffings()
                 ->whereNull('end_date')
                 ->first()
@@ -397,5 +402,28 @@ class Employee extends Model
         ];
 
         return collect($departmentHistory);
+    }
+
+    /**
+     * Mutator to fetch the log of the employee
+     * each consists of :
+     * 1. action object
+     * 2. list of affected users
+     * 3. date
+     */
+    public function getLogAttribute(): Collection
+    {
+        $log = $this->user
+            ->logs
+            ->map(function ($log) {
+                return [
+                    'action' => new ActionResource($log->action),
+                    'affected_users' => AffectedUserResource::collection($log->affectedUser),
+//                    'description' => $log->description,
+                    'date' => $log->date,
+                ];
+            });
+
+        return collect($log);
     }
 }
