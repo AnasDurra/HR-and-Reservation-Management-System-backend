@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-
+use App\Domain\Models\Absence;
 use App\Domain\Models\Attendance;
 use App\Domain\Models\Employee;
 use App\Domain\Models\JobApplication;
@@ -52,6 +52,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentUserRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentWorkingDayRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentShiftRequestRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentVacationRequestRepository;
+use App\Observers\AbsenceObserver;
 use App\Observers\AttendanceObserver;
 use App\Observers\EmployeeObserver;
 use App\Observers\JobApplicationObserver;
@@ -97,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Absence::observe(AbsenceObserver::class);
         Attendance::observe(AttendanceObserver::class);
         Employee::observe(EmployeeObserver::class);
         JobApplication::observe(JobApplicationObserver::class);
