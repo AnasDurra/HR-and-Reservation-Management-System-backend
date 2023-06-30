@@ -18,7 +18,7 @@ class ActionResource extends JsonResource
             'action_id' => $this->action_id,
             'name' => $this->name,
             'severity' => $this->severity,
-//            'description' => $this->description,
+            'description' => $this->description,
         ];
     }
 }

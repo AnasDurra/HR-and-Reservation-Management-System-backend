@@ -19,10 +19,10 @@ class LogController extends Controller
         $this->LogService = $LogService;
     }
 
-    public function getAllAction(): ActionResource
+    public function getAllAction(): AnonymousResourceCollection
     {
         $logs = $this->LogService->getAllAction();
-        return new ActionResource($logs);
+        return ActionResource::collection($logs);
     }
 
     public function getAllAffectedUser(): AnonymousResourceCollection
