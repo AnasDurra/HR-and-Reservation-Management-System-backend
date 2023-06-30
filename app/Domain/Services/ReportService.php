@@ -19,10 +19,11 @@ class ReportService
      * @throws \setasign\Fpdi\PdfParser\PdfParserException
      * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
      */
-    function create(): void
+    #[NoReturn] function create(): void
     {
         $attendance_report = null;
         $absence_report = null;
+        $staffing_report = null;
 
         $info_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $info_report = $this->employeeInformationReport($info_report,request()->all());
@@ -37,11 +38,18 @@ class ReportService
             $absence_report = $this->employeeAbsenceReport($absence_report,request()->all());
         }
 
-        $info_report->Output(storage_path('app/Reports/info.pdf'), 'F');
+        if(request()->has('staffing_report')) {
+            $staffing_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+            $staffing_report = $this->employeeStaffingReport($staffing_report,request()->all());
+        }
+
+        $info_report->Output(storage_path('app/Reports/info.pdf'),'F');
 
         $attendance_report?->Output(storage_path('app/Reports/att.pdf'), 'F');
 
         $absence_report?->Output(storage_path('app/Reports/absence.pdf'), 'F');
+
+        $staffing_report?->Output(storage_path('app/Reports/staffing.pdf'), 'F');
 
         $mergedPdf = new Fpdi();
 
@@ -51,6 +59,16 @@ class ReportService
             $size = $mergedPdf->getTemplateSize($template);
             $mergedPdf->AddPage($size['orientation'], $size);
             $mergedPdf->useTemplate($template);
+        }
+
+        if($staffing_report) {
+            $pageCount = $mergedPdf->setSourceFile(storage_path('app/Reports/staffing.pdf'));
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $template = $mergedPdf->importPage($pageNo);
+                $size = $mergedPdf->getTemplateSize($template);
+                $mergedPdf->AddPage($size['orientation'], $size);
+                $mergedPdf->useTemplate($template);
+            }
         }
 
         if($attendance_report) {
@@ -608,5 +626,98 @@ class ReportService
 
         return $pdf;
 
+    }
+
+    function employeeStaffingReport(\TCPDF $staffing_report,$data): \TCPDF {
+        $employeeService = new EmployeeService(new EloquentEmployeeRepository());
+        $employee = $employeeService->getEmployeeById($data['emp_id']);
+        $staffings = $employee->staffings()
+            ->orderByDesc('start_date')
+            ->get()
+            ->map(function ($staffing) {
+                return [
+                    'job_title' => $staffing->jobTitle()->first()->name,
+                    'department' => $staffing->department->name,
+                    'start_date' => $staffing->start_date,
+                    'end_date' => $staffing->end_date,
+                ];
+            });
+        // Create a new TCPDF object
+        $staffing_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+
+        $staffing_report->AddPage();
+        $staffing_report->Image(public_path('qiam.jpg'), 83, 13, 45, 45);
+
+        $staffing_report->setRTL(true);
+
+        $staffing_report->SetFont('aealarabiya', '', 30);
+        $staffing_report->Text(5,20," مركز قيم");
+
+        $staffing_report->SetFont('aealarabiya', '', 23);
+        $staffing_report->Text(15,35," قسم الموارد البشرية");
+
+        $staffing_report->SetFont('aealarabiya', '', 15);
+
+        $staffing_report->Text(150,25-6,"التاريخ: ");
+        $staffing_report->Text(162,25-6,now()->format('Y/m/d'));
+
+        $staffing_report->Text(150,33-6,"رقم الموظف:");
+        $staffing_report->Text(173,33-6,$data['emp_id']);
+
+        $staffing_report->Text(150,41-6,"اسم الموظف:");
+        $staffing_report->Text(174,41-6,$employee->getFullNameAttribute());
+
+        $staffing_report->Text(150,49-6,"الموظف المختص: ");
+        $staffing_report->Text(180,49-6,"أنس ريش");
+
+
+        $staffing_report->SetFont('aealarabiya', '', 16);
+        $staffing_report->Text(51,65,"* تقرير عن تنقلات الموظف في الأقسام خلال عمله بالمركز *");
+
+        // Set document information
+        $staffing_report->SetCreator('Your Name');
+        $staffing_report->SetAuthor('Your Name');
+        $staffing_report->SetTitle('Employee Staffing Report');
+        $staffing_report->SetSubject('Employee Staffing Report');
+
+        $staffing_report->Line(10, 60, 200, 60);
+        // Set font for table headers and data
+        $staffing_report->SetFont('aealarabiya', '', 12);
+
+        $y = 80; // Initial y-position of the table
+
+        $staffing_report->SetFillColor(242, 242, 242); // Background color for table header
+        $staffing_report->SetXY(7, $y);
+        // Add table headers
+        $staffing_report->Cell(50, 10, 'القسم', 1, 0, 'C', 1);
+        $staffing_report->Cell(45, 10, 'تاريخ بدء العمل', 1, 0, 'C', 1);
+        $staffing_report->Cell(45, 10, 'تاريخ انتهاء العمل', 1, 0, 'C', 1);
+        $staffing_report->Cell(55, 10, 'المسمى الوظيفي في تلك الفترة', 1, 1, 'C', 1);
+
+        // Reset the fill color, text color, and border color for table data
+        $staffing_report->SetFillColor(255); // Reset the fill color to white
+        $staffing_report->SetTextColor(0); // Reset the text color to black
+        $staffing_report->SetDrawColor(0); // Reset the border color to black
+        $staffing_report->SetFont('aealarabiya', '', 10);
+
+        $y = 90;
+        foreach ($staffings as $staffing) {
+            if ($y > 250) {
+                $staffing_report->AddPage();
+                $y = 40;
+            }
+
+            $staffing_report->SetXY(7,$y);
+            $staffing_report->Cell(50, 10, $staffing['department'], 1, 0, 'C');
+            $staffing_report->Cell(45, 10, $staffing['start_date'], 1, 0, 'C');
+            $staffing_report->Cell(45, 10, ($staffing['end_date'] !== null ? $staffing['end_date'] : 'N/A'), 1, 0, 'C');
+
+            $staffing_report->Cell(55, 10, $staffing['job_title'], 1, 0, 'C');
+
+
+            $y += 10; // Increment the y-position
+        }
+
+        return $staffing_report;
     }
 }

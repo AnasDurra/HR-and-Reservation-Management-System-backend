@@ -121,6 +121,6 @@ Route::apiResource('absences', AbsenceController::class);
 Route::get('employee-absences/{emp_id}', [AbsenceController::class, 'showEmployeeAbsences']);
 
 // TEMP  ROUT FOR PDF
-Route::get('pdf', [Report::class,'create']);
+Route::get('pdf', [\App\Application\Http\Controllers\ReportController::class,'create']);
 
 
