@@ -36,4 +36,15 @@ class JobTitle extends Model
             'perm_id'
         );
     }
+
+    /**
+     * employees count mutator.
+     * this function is used to get the number of employees that have this job title
+     * as their active job title
+     * @return int
+     */
+    public function getEmployeesCountAttribute(): int
+    {
+        return $this->staffings()->whereNull('end_date')->count();
+    }
 }

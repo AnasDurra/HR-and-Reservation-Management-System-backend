@@ -12,7 +12,13 @@ class VacationRequest extends Model
     use HasFactory;
 
     protected $primaryKey = 'vacation_req_id';
-    protected $fillable = ['emp_id', 'req_stat', 'description', 'start_date', 'duration'];
+    protected $fillable = [
+        'emp_id',
+        'req_stat',
+        'description',
+        'start_date',
+        'duration'
+    ];
 
     protected $dispatchesEvents = [
         'created' => VacationRequestObserver::class,
@@ -25,7 +31,8 @@ class VacationRequest extends Model
     ];
 
     protected $casts = [
-        'duration' => 'integer'
+        'duration' => 'integer',
+        'start_date' => 'datetime:Y-m-d',
     ];
 
     public function employee(): BelongsTo

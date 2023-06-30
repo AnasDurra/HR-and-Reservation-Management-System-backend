@@ -27,16 +27,12 @@ class EmployeeBriefResource extends JsonResource
     {
         return [
             'emp_id' => $this->emp_id,
-            'email' => $this->user->email,
-            'username' => $this->user->username,
-            'job_app_id' => $this->job_app_id,
-            'schedule_id' => $this->schedule_id,
-            'leaves_balance' => $this->leaves_balance,
-            'job_title_id' => $this->current_job_title
-                ? $this->current_job_title->job_title_id
-                : null,
-            'start_working_date' => $this->start_working_date,
+            'full_name' => $this->full_name,
+            'department_name' => $this->current_department?->name,
+            'job_title_name' => $this->current_job_title?->name,
             'current_employment_status' => new EmploymentStatusResource($this->current_employment_status),
+            'schedule' => new ScheduleResource($this->schedule),
+//            'leaves_balance' => $this->leaves_balance,
         ];
     }
 

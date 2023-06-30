@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UserTypeSeeder::class,
             DepartmentSeeder::class,
             JobVacancySeeder::class,
+            PermissionSeeder::class,
         ]);
     }
 }

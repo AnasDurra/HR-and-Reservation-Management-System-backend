@@ -9,10 +9,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmployeeVacation extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'employee_vacation_id';
-    protected $fillable = ['emp_id', 'start_date', 'total_days', 'remaining_days'];
+    protected $fillable = [
+        'emp_id',
+        'start_date',
+        'total_days',
+        'remaining_days'
+    ];
 
     public function employee(): BelongsTo
     {

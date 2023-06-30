@@ -5,7 +5,6 @@ namespace App\Application\Http\Resources;
 
 use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
-use App\Domain\Models\Schedule;
 use App\Domain\Models\Staffing;
 use App\Domain\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,7 +30,6 @@ class EmployeeDetailsResource extends JsonResource
     {
         return [
 
-
             // employee data
             'emp_id' => $this->emp_id,
 
@@ -42,16 +40,28 @@ class EmployeeDetailsResource extends JsonResource
             'leaves_balance' => $this->leaves_balance,
 
             // job application data
-            'job_app_id' => $this->jobApplication->job_app_id,
+            'job_application' => new JobApplicationDetailsResource($this->jobApplication),
 
             // schedule data
             'schedule' => new ScheduleResource($this->schedule),
 
+            'current_employment_status' => new EmploymentStatusResource($this->current_employment_status),
+
             // job title data
             'current_job_title' => $this->current_job_title
-                ? new JobTitleResource($this->current_job_title)
+                ? [
+                    'job_title_id' => $this->current_job_title->job_title_id,
+                    'name' => $this->current_job_title->name,
+                    'description' => $this->current_job_title->description,
+                    'employees_count' => $this->current_job_title->employees_count,
+                ]
                 : null,
 
+            'current_department' => $this->current_department
+                ? new DepartmentResource($this->current_department)
+                : null,
+
+            'permissions' => EmployeePermissionResource::collection($this->permissions),
             //  attendance (full information) (for later)
             // TODO: add attendance information
         ];
