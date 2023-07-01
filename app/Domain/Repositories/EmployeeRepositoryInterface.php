@@ -24,9 +24,9 @@ interface EmployeeRepositoryInterface
 
     public function getDepartmentsHistory(int $id);
 
-    public function createEmployee(array $data): Builder|Model;
+    public function getEmployeeAbsenceHistory(int $id): array;
 
-    public function updateEmployee(int $id, array $data): Builder|Model;
+    public function createEmployee(array $data): Builder|Model;
 
     public function deleteEmployee($id): Builder|Model|null;
 

@@ -9,6 +9,7 @@ use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
 use App\Domain\Models\JobTitle;
 use App\Domain\Models\StaffPermission;
+use App\Domain\Repositories\AbsenceRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
@@ -20,6 +21,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Psr\Container\ContainerExceptionInterface;
+use Throwable;
 
 class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 {
@@ -218,6 +220,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
 
     /**
      * @throws Exception
+     * @throws Throwable
      */
     public function createEmployee(array $data): Builder|Model
     {
@@ -312,9 +315,37 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
         }
     }
 
-    public function updateEmployee(int $id, array $data): Builder|Model
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getEmployeeAbsenceHistory(int $id): array
     {
-        // TODO: Implement updateEmployee() method.
+        try {
+
+            // get the employee absences from eloquent absence repository
+            $employee = Employee::with(['absences', 'absences.absenceStatus'])
+                ->where('emp_id', '=', $id)
+                ->firstOrFail();
+        } catch (Exception) {
+            throw new EntryNotFoundException("Employee with ID $id not found");
+        }
+
+        $absences = $employee
+            ->absences
+            ->sortByDesc('absence_date')
+            ->values();
+
+        return $absences->map(function ($absence) {
+            return [
+                'emp_name' => $absence->employee->full_name,
+                'absence_id' => $absence->absence_id,
+                'absence_date' => $absence->absence_date,
+                'absence_status' => [
+                    'absence_status_id' => $absence->absenceStatus->absence_status_id,
+                    'absence_status_name' => $absence->absenceStatus->absence_status_id == 1 ? 'مبرر' : 'غير مبرر',
+                ],
+            ];
+        })->toArray();
     }
 
     /**
@@ -366,6 +397,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
     /**
      * @throws EntryNotFoundException
      * @throws Exception
+     * @throws Throwable
      */
     public function editEmployeeDepartment(int $id, array $data): Employee|Builder|null
     {
@@ -466,6 +498,7 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
     /**
      * @throws EntryNotFoundException
      * @throws Exception
+     * @throws Throwable
      */
     public function editEmployeeEmploymentStatus(int $id, array $data): Employee|Builder|null
     {
