@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 // login route
 Route::post('employees/login', [AuthenticationController::class, 'employeeLogin']);
 
-//Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
 
     // get employee by token route
     Route::get('/employee', [AuthenticationController::class, 'getEmployeeActivePermissionsByToken']);
@@ -58,6 +58,9 @@ Route::post('employees/login', [AuthenticationController::class, 'employeeLogin'
 
         // get employee log
         Route::get('/log/{id}', [EmployeeController::class, 'indexLog']);
+
+        // get employee absence history
+        Route::get('/absence/{id}', [EmployeeController::class, 'indexAbsence']);
 
         Route::get('/job-title-history/{id}', [EmployeeController::class, 'indexJobTitles']);
         Route::get('/department-history/{id}', [EmployeeController::class, 'indexDepartments']);
@@ -132,4 +135,4 @@ Route::post('employees/login', [AuthenticationController::class, 'employeeLogin'
     // TEMP  ROUT FOR PDF
     Route::get('pdf', [Report::class, 'create']);
 
-//});
+});

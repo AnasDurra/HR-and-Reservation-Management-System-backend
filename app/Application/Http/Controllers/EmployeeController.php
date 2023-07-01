@@ -59,6 +59,12 @@ class EmployeeController extends Controller
         return response()->json($employee->log);
     }
 
+    public function indexAbsence(int $id): JsonResponse
+    {
+        $absenceHistory = $this->employeeService->getEmployeeAbsenceHistory($id);
+        return response()->json($absenceHistory);
+    }
+
     public function show(int $id): EmployeeDetailsResource
     {
         $employee = $this->employeeService->getEmployeeById($id);
@@ -69,12 +75,6 @@ class EmployeeController extends Controller
     {
         $validated = $request->validated();
         $employee = $this->employeeService->createEmployee($validated);
-        return new EmployeeDetailsResource($employee);
-    }
-
-    public function update(int $id): EmployeeDetailsResource
-    {
-        $employee = $this->employeeService->updateEmployee($id, request()->all());
         return new EmployeeDetailsResource($employee);
     }
 

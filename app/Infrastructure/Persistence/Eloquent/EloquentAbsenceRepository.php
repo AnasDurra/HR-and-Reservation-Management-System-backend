@@ -4,6 +4,8 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Repositories\AbsenceRepositoryInterface;
 use App\Domain\Models\Absence;
+use App\Exceptions\EntryNotFoundException;
+use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -157,7 +159,7 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
         $absence = Absence::query()->create([
             'emp_id' => $data['emp_id'],
             'absence_status_id' => 2,
-            'absence_date' => $data['absence_date'] ?? \DateTime::createFromFormat('Y-m-d', now()),
+            'absence_date' => $data['absence_date'] ?? DateTime::createFromFormat('Y-m-d', now()),
         ]);
 
         $absence->load('employee','absenceStatus');
@@ -219,12 +221,16 @@ class EloquentAbsenceRepository implements AbsenceRepositoryInterface
         return $absence;
     }
 
+    /**
+     * @throws EntryNotFoundException
+     */
     public function getEmployeeAbsences($emp_id): Collection|null
     {
         $eloquentEmployeeRepository = new EloquentEmployeeRepository();
         $employee = $eloquentEmployeeRepository->getEmployeeById($emp_id);
 
         if(!$employee) return null;
+
 
         return Absence::query()
             ->with(['employee','absenceStatus'])

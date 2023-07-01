@@ -39,6 +39,11 @@ class EmployeeService
         return $this->employeeRepository->getDepartmentsHistory($id);
     }
 
+    public function getEmployeeAbsenceHistory(int $id): array
+    {
+        return $this->employeeRepository->getEmployeeAbsenceHistory($id);
+    }
+
     public function getEmployeeListByDepId($dep_id): array
     {
         return $this->employeeRepository->getEmployeeListByDepId($dep_id);
@@ -52,11 +57,6 @@ class EmployeeService
     public function getEmployeeById(int $id): Builder|Model
     {
         return $this->employeeRepository->getEmployeeById($id);
-    }
-
-    public function updateEmployee(int $id, array $data): Builder|Model
-    {
-        return $this->employeeRepository->updateEmployee($id, $data);
     }
 
     public function createEmployee(array $data): Builder|Model
