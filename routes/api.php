@@ -8,7 +8,7 @@ use App\Application\Http\Controllers\JobTitleController;
 use App\Application\Http\Controllers\LogController;
 use App\Application\Http\Controllers\PermissionController;
 use App\Application\Http\Controllers\EmployeeController;
-use App\Application\Http\Controllers\Report;
+use App\Application\Http\Controllers\ReportController;
 use App\Application\Http\Controllers\ScheduleController;
 use App\Application\Http\Controllers\BiometricDeviceController;
 use App\Application\Http\Controllers\AttendanceController;
@@ -132,7 +132,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('absences', AbsenceController::class);
     Route::get('employee-absences/{emp_id}', [AbsenceController::class, 'showEmployeeAbsences']);
 
-    // TEMP  ROUT FOR PDF
-    Route::get('pdf', [Report::class, 'create']);
+// TEMP  ROUT FOR PDF
+Route::get('pdf', [ReportController::class,'create']);
 
 });
