@@ -25,7 +25,6 @@ class Employee extends Model
         'emp_data_id',
         'job_app_id',
         'start_date',
-        'leaves_balance',
         'schedule_id',
         'cur_title',
         'cur_dep'
@@ -62,8 +61,8 @@ class Employee extends Model
         return $this->belongsToMany(
             EmploymentStatus::class,
             'employee_statuses',
-            'emp_id',
-            'emp_status_id',
+//            'emp_id',
+//            'emp_status_id',
             'emp_id',
             'emp_status_id'
         )->withPivot('start_date', 'end_date');

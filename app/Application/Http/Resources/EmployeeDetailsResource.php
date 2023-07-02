@@ -15,7 +15,6 @@ use JetBrains\PhpStorm\Pure;
  * @property integer emp_id
  * @property JobApplication jobApplication
  * @property Staffing[] staffings
- * @property integer leaves_balance
  * @property EmploymentStatus employmentStatus
  * @property mixed current_employment_status
  * @property mixed current_department
@@ -37,7 +36,6 @@ class EmployeeDetailsResource extends JsonResource
             'email' => $this->user->email,
             'username' => $this->user->username,
             'start_working_date' => $this->start_working_date,
-            'leaves_balance' => $this->leaves_balance,
 
             // job application data
             'job_application' => new JobApplicationDetailsResource($this->jobApplication),
