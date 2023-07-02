@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->id('emp_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('job_app_id')->nullable();
-            $table->integer('leaves_balance');
             $table->unsignedBigInteger('schedule_id');
             $table->unsignedBigInteger('cur_title')->nullable();
             $table->unsignedBigInteger('cur_dep')->nullable();

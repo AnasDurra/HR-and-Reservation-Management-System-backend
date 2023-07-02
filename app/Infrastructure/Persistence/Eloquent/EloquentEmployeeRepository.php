@@ -9,7 +9,6 @@ use App\Domain\Models\EmploymentStatus;
 use App\Domain\Models\JobApplication;
 use App\Domain\Models\JobTitle;
 use App\Domain\Models\StaffPermission;
-use App\Domain\Repositories\AbsenceRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
@@ -43,7 +42,16 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
     {
         // implement search, filtration, and pagination
         $employees = Employee::query()
-            ->with('user');
+            ->with([
+                'user',
+                'schedule',
+                'staffings',
+                'jobApplication',
+                'employmentStatuses',
+                'staffings.jobTitle',
+                'staffings.department',
+                'jobApplication.empData',
+            ]);
 
         // search by email
         if (request()->has('email')) {
@@ -107,7 +115,13 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             $departments = array_map('intval', $departments);
 
             // filter the result based on department IDs
-            $employees->whereIn('cur_dep', $departments);
+            $employees->whereHas('staffings', function ($query) use ($departments) {
+
+                // get the latest staffing record (where end date = null & start date is the latest)
+                $query->whereNull('end_date')
+                    ->latest('start_date')
+                    ->whereIn('dep_id', $departments);
+            });
         }
 
         // filter by titleId
@@ -123,7 +137,36 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             $titles = array_map('intval', $titles);
 
             // filter the result based on title IDs
-            $employees->whereIn('cur_title', $titles);
+            $employees->whereHas('staffings', function ($query) use ($titles) {
+
+                // get the latest staffing record (where end date = null & start date is the latest)
+                $query->whereNull('end_date')
+                    ->latest('start_date')
+                    ->whereIn('job_title_id', $titles);
+
+            });
+        }
+
+        // filter by employment status
+        if (request()->has('status')) {
+
+            // get the statuses
+            $statuses = request()->get('status');
+
+            // extract the comma separated values
+            $statuses = explode(',', $statuses);
+
+            // convert it to array of integers
+            $statuses = array_map('intval', $statuses);
+
+            // filter the result based on status IDs
+            // by checking the M2M relationship between employee and employment status
+            // and get the latest record in the pivot table (where end date = null & start date is the latest)
+            $employees->whereHas('employmentStatuses', function ($query) use ($statuses) {
+                $query->whereNull('end_date')
+                    ->latest('start_date')
+                    ->whereIn('employment_statuses.emp_status_id', $statuses);
+            });
         }
 
         return $employees->paginate(10);
@@ -249,7 +292,6 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
                 'user_id' => $user->user_id,
                 'job_app_id' => $data['job_app_id'],
                 'schedule_id' => $data['schedule_id'],
-                'leaves_balance' => $data['leaves_balance'],
 
                 // meta data for employee
                 'cur_title' => $data['job_title_id'],

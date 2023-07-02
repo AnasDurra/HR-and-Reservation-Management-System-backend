@@ -32,7 +32,6 @@ class StoreEmployeeRequest extends FormRequest
                 Rule::unique('employees', 'job_app_id')->ignore($this->user)
             ],
             'schedule_id' => ['required', 'integer', 'exists:schedules,schedule_id'],
-            'leaves_balance' => ['required', 'integer', 'min:0'],
 
             // staffing entity fields third.
             'job_title_id' => [
@@ -87,10 +86,6 @@ class StoreEmployeeRequest extends FormRequest
             'schedule_id.required' => 'معرف جدول الدوام مطلوب.',
             'schedule_id.integer' => 'معرف جدول الدوام يجب أن يكون رقماً صحيحاً.',
             'schedule_id.exists' => 'معرف جدول الدوام غير موجود.',
-
-            'leaves_balance.required' => 'رصيد الإجازات مطلوب.',
-            'leaves_balance.integer' => 'رصيد الإجازات يجب أن يكون رقماً صحيحاً.',
-            'leaves_balance.min' => 'رصيد الإجازات يجب أن يكون على الأقل 0.',
 
             'job_title_id.required' => 'معرف المسمّى الوظيفي مطلوب.',
             'job_title_id.integer' => 'معرف المسمّى الوظيفي يجب أن يكون رقماً صحيحاً.',

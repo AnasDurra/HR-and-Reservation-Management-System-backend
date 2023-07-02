@@ -13,7 +13,6 @@ use JetBrains\PhpStorm\Pure;
  * @property mixed user
  * @property mixed job_app_id
  * @property mixed schedule_id
- * @property mixed leaves_balance
  * @property mixed job_title_id
  * @property mixed start_date
  * @property mixed start_working_date
@@ -32,7 +31,6 @@ class EmployeeBriefResource extends JsonResource
             'job_title_name' => $this->current_job_title?->name,
             'current_employment_status' => new EmploymentStatusResource($this->current_employment_status),
             'schedule' => new ScheduleResource($this->schedule),
-//            'leaves_balance' => $this->leaves_balance,
         ];
     }
 
