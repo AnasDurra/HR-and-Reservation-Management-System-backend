@@ -19,11 +19,8 @@ class AuthenticationController extends Controller
     public function employeeLogin(EmployeeLoginRequest $request): JsonResponse
     {
         $credentials = $request->only(['email', 'username', 'password']);
-        $token = $this->AuthenticationService->employeeLogin($credentials);
-        return response()->json([
-            'message' => 'تم تسجيل الدخول بنجاح',
-            'token' => $token,
-        ]);
+        $data = $this->AuthenticationService->employeeLogin($credentials);
+        return response()->json($data);
     }
 
     // Employee Logout route

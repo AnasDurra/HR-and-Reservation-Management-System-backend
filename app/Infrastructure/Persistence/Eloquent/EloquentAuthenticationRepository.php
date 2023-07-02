@@ -17,7 +17,7 @@ class EloquentAuthenticationRepository implements AuthenticationRepositoryInterf
     /**
      * @throws Exception
      */
-    public function employeeLogin(array $credentials): string
+    public function employeeLogin(array $credentials): array
     {
         $user = User::query()
             ->where('user_type_id', 1)
@@ -34,7 +34,10 @@ class EloquentAuthenticationRepository implements AuthenticationRepositoryInterf
             throw new EntryNotFoundException("كلمة المرور غير صحيحة", 401);
         }
 
-        return $user->createToken('employee_auth_token')->plainTextToken;
+        return [
+            'token' => $user->createToken('employee_auth_token')->plainTextToken,
+            'employee_name' => $user->employee->full_name,
+        ];
     }
 
     /**

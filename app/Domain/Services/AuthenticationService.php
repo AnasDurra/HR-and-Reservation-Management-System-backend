@@ -14,7 +14,7 @@ class AuthenticationService
         $this->AuthenticationRepository = $AuthenticationRepository;
     }
 
-    public function employeeLogin(array $credentials): string
+    public function employeeLogin(array $credentials): array
     {
         return $this->AuthenticationRepository->employeeLogin($credentials);
     }

@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 
 interface AuthenticationRepositoryInterface
 {
-    public function employeeLogin(array $credentials): string;
+    public function employeeLogin(array $credentials): array;
 
     public function employeeLogout(): void;
 
