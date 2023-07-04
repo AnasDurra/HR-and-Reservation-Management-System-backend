@@ -28,17 +28,17 @@ class ReportService
         $info_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $info_report = $this->employeeInformationReport($info_report,request()->all());
 
-        if(request()->has('attendance_report')) {
+        if(request()->get('attendance_report') == "true") {
             $attendance_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
             $attendance_report = $this->employeeAttendanceReport($attendance_report,request()->all());
         }
 
-        if(request()->has('absence_report')) {
+        if(request()->get('absence_report')  == "true") {
             $absence_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
             $absence_report = $this->employeeAbsenceReport($absence_report,request()->all());
         }
 
-        if(request()->has('staffing_report')) {
+        if(request()->get('staffing_report') == "true") {
             $staffing_report = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
             $staffing_report = $this->employeeStaffingReport($staffing_report,request()->all());
         }
