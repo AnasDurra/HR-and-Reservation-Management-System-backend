@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\Http\Controllers\AuthenticationController;
+use App\Application\Http\Controllers\CustomerController;
 use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
@@ -133,6 +134,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('employee-absences/{emp_id}', [AbsenceController::class, 'showEmployeeAbsences']);
 
 // TEMP  ROUT FOR PDF
-Route::get('pdf', [ReportController::class,'create']);
+    Route::get('pdf', [ReportController::class, 'create']);
 
 });
+
+
+Route::apiResource('customer', CustomerController::class);
+Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
+Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
+Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
+Route::post('customer/login', [CustomerController::class, 'userLogin']);
+Route::post('customer/logout', [CustomerController::class, 'userLogout']);
+Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
