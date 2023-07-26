@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Domain\Models;
+namespace App\Domain\Models\CD;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class AppointmentStatus extends Model
+class EducationalLevel extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'id';
     protected $fillable = ['name'];
 
-    public function appointments(): HasMany
+    public function customers(): HasMany
     {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(Customer::class);
     }
 }

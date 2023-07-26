@@ -2,11 +2,8 @@
 
 namespace App\Application\Http\Resources;
 
-use App\Http\Resources\ActionResource;
-use App\Http\Resources\AffectedUserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Domain\Models\Log;
 
 /**
  * @property mixed $log_id

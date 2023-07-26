@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Domain\Models;
+namespace App\Domain\Models\CD;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class EducationalLevel extends Model
+class Interval extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['name'];
+    protected $fillable = ['start_time', 'end_time'];
 
-    public function customers(): HasMany
+    public function shiftIntervals(): HasMany
     {
-        return $this->hasMany(Customer::class);
+        return $this->hasMany(ShiftInterval::class);
     }
 }

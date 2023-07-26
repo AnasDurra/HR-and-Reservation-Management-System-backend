@@ -2,13 +2,11 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Resources\ActionResource;
+use App\Application\Http\Resources\AffectedUserResource;
 use App\Application\Http\Resources\LogResource;
 use App\Domain\Services\LogService;
-use App\Http\Resources\ActionResource;
-use App\Http\Resources\AffectedUserResource;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Validator;
 
 class LogController extends Controller
 {

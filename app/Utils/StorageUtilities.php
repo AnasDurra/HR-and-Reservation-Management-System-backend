@@ -16,6 +16,12 @@ class StorageUtilities
         return $file->store('personal_photos', 'public');
     }
 
+    public static function storeCustomerPhoto($file): string
+    {
+        // store file in local storage & return image url
+        return $file->store('customers_photos', 'public');
+    }
+
     // delete personal photo from local storage
     public static function deletePersonalPhoto($url): void
     {

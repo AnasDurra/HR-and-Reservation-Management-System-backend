@@ -17,6 +17,7 @@ use App\Domain\Repositories\AbsenceRepositoryInterface;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 
 use App\Domain\Repositories\AuthenticationRepositoryInterface;
+use App\Domain\Repositories\CustomerRepositoryInterface;
 use App\Domain\Repositories\DepartmentRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\EmployeeVacationRepositoryInterface;
@@ -36,6 +37,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Domain\Repositories\ShiftRequestRepositoryInterface;
 use App\Domain\Repositories\VacationRequestRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentAuthenticationRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeVacationRepository;
@@ -93,6 +95,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
         $this->app->bind(AbsenceRepositoryInterface::class, EloquentAbsenceRepository::class);
         $this->app->bind(AuthenticationRepositoryInterface::class, EloquentAuthenticationRepository::class);
+        $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
     }
 
 
