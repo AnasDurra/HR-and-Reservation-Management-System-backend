@@ -3,7 +3,6 @@
 namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class EditCustomerAfterVerification extends FormRequest
 {
@@ -85,6 +84,14 @@ class EditCustomerAfterVerification extends FormRequest
                 'confirmed',
                 'min:8',
             ],
+            'verified' => [
+                'sometimes',
+                'boolean',
+            ],
+            'blocked' => [
+                'sometimes',
+                'boolean',
+            ],
         ];
     }
 
@@ -107,9 +114,9 @@ class EditCustomerAfterVerification extends FormRequest
             'num_of_children.integer' => 'يجب أن يكون عدد الأطفال رقمًا صحيحًا.',
             'num_of_children.min' => 'يجب أن يكون عدد الأطفال على الأقل :min.',
             'num_of_children.max' => 'يجب ألا يتجاوز عدد الأطفال :max.',
-            'profile_picture.image' => 'يجب أن يكون الصورة الشخصية ملف صورة.',
-            'profile_picture.mimes' => 'يجب أن تكون الصورة الشخصية من نوع: :values.',
-            'profile_picture.max' => 'يجب ألا يتجاوز حجم الصورة الشخصية :max كيلوبايت.',
+            'profile_picture.image' => 'يجب أن تكون الصورة الشخصية ملف صورة.',
+            'profile_picture.mimes' => 'يجب أن تكون الصورة الشخصية من نوع: jpeg,png,jpg,gif,svg .',
+            'profile_picture.max' => 'يجب ألا يتجاوز حجم الصورة الشخصية 2048 كيلوبايت.',
             'education_level_id.exists' => 'المستوى التعليمي المحدد غير صالح.',
             'email.email' => 'البريد الإلكتروني غير صحيح.',
             'username.string' => 'يجب أن يكون اسم المستخدم نصًا.',
@@ -117,6 +124,9 @@ class EditCustomerAfterVerification extends FormRequest
             'username.max' => 'يجب ألا يتجاوز اسم المستخدم خمسين حرفًا.',
             'username.unique' => 'اسم المستخدم موجود مسبقاُ.',
             'password.min' => 'يجب أن تكون كلمة المرور على الأقل ثمان أحرف.',
+            'password.confirmed' => 'كلمة المرور غير متطابقة.',
+            'verified.boolean' => 'حقل التوثيق غير صحيح.',
+            'blocked.boolean' => 'حقل الحظر غير صحيح.',
         ];
     }
 }

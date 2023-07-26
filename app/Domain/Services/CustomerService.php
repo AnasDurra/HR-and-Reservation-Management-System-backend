@@ -5,6 +5,7 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\CustomerRepositoryInterface;
 use App\Domain\Models\Customer;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CustomerService
 {
@@ -15,7 +16,7 @@ class CustomerService
         $this->CustomerRepository = $CustomerRepository;
     }
 
-    public function getCustomerList(): array
+    public function getCustomerList(): LengthAwarePaginator
     {
         return $this->CustomerRepository->getCustomerList();
     }

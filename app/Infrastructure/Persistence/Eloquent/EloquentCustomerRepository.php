@@ -5,26 +5,85 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Repositories\CustomerRepositoryInterface;
 use App\Domain\Models\Customer;
 use App\Exceptions\EntryNotFoundException;
+use App\Notifications\LoginNotification;
+use App\Utils\StorageUtilities;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class EloquentCustomerRepository implements CustomerRepositoryInterface
 {
-    public function getCustomerList(): array
+    public function getCustomerList(): LengthAwarePaginator
     {
-        // TODO: Implement the logic to retrieve a list of Customers
+        $customers = Customer::query();
+
+
+        if (request()->has('name')) {
+            $name = request()->query('name');
+
+            $name = trim($name);
+
+            $name = strtolower($name);
+
+            $customers->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+
+        }
+        if (request()->has('username')) {
+            $customers->where('username', 'like', '%' . request()->input('username') . '%');
+        }
+        if (request()->has('education_level_id')) {
+            $customers->where('education_level_id', '=', request()->input('education_level_id'));
+        }
+        if (request()->has('martial_status')) {
+            $customers->where('martial_status', '=', request()->input('martial_status'));
+        }
+        if (request()->has('job')) {
+            $customers->where('job', 'like', '%' . request()->input('job') . '%');
+        }
+        if (request()->has('birth_date')) {
+            $customers->where('birth_date', '=', request()->input('birth_date'));
+        }
+        if (request()->has('from_birth_date')) {
+            $customers->where('birth_date', '>=', request()->input('from_birth_date'));
+        }
+        if (request()->has('to_birth_date')) {
+            $customers->where('birth_date', '<=', request()->input('to_birth_date'));
+        }
+        if (request()->has('num_of_children')) {
+            $customers->where('num_of_children', '=', request()->input('num_of_children'));
+        }
+        if (request()->has('national_number')) {
+            $customers->where('national_number', '=', request()->input('national_number'));
+        }
+        if (request()->has('verified')) {
+            $customers->where('verified', '=', request()->input('verified'));
+        }
+        if (request()->has('blocked')) {
+            $customers->where('blocked', '=', request()->input('blocked'));
+        }
+
+        return $customers->paginate(10);
     }
 
+    /**
+     * @throws EntryNotFoundException
+     */
     public function getCustomerById(int $id): Customer|Builder|null
     {
-        // TODO: Implement the logic to retrieve a Customer by ID
-    }
+        try {
+            $customer = Customer::query()
+                ->where('id', '=', $id)
+                ->firstOrFail();
+        } catch (Exception $e) {
+            throw new EntryNotFoundException("customer with id $id not found");
+        }
 
-    public function createCustomer(array $data): Customer|Builder|null
-    {
-        // TODO: Implement the logic to create a Customer
+        return $customer;
     }
 
     /**
@@ -32,7 +91,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
      */
     public function updateCustomer(int $id, array $data): Customer|Builder|null
     {
-
         try {
             $customer = Customer::query()
                 ->where('id', '=', $id)
@@ -40,6 +98,15 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         } catch (Exception) {
             throw new EntryNotFoundException("customer with id $id not found");
+        }
+
+        // in this case, the user has sent a file instead of a the file url.
+        // so we will delete the old file and store the new one.
+        // and update the file url in the database
+
+        if (isset($data['profile_picture'])) {
+            StorageUtilities::deletePersonalPhoto($customer['profile_picture']);
+            $updated['profile_picture'] = StorageUtilities::storeCustomerPhoto($data['profile_picture']);
         }
 
         $customer->update([
@@ -56,18 +123,18 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'martial_status' => $data['martial_status'] ?? $customer->martial_status,
             'num_of_children' => $data['num_of_children'] ?? $customer->num_of_children,
             'national_number' => $data['national_number'] ?? $customer->national_number,
-            'profile_picture' => $data['profile_picture'] ?? $customer->profile_picture,
+            'profile_picture' => $updated['profile_picture'] ?? $customer->profile_picture,
+            'verified' => $data['verified'] ?? $customer->verified,
+            'blocked' => $data['blocked'] ?? $customer->blocked,
         ]);
         return $customer;
     }
 
-    public function deleteCustomer($id): Customer|Builder|null
-    {
-        // TODO: Implement the logic to delete a Customer
-    }
-
     public function userSingUp(array $data): array
     {
+        $data['profile_picture'] = StorageUtilities::storeCustomerPhoto($data['profile_picture']);
+
+
         $new_customer = Customer::query()->create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
@@ -109,6 +176,8 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             throw new EntryNotFoundException("كلمة المرور غير صحيحة", 401);
         }
 
+
+        $customer->notify(new LoginNotification());
         return [
             'token' => $customer->createToken('customer_auth_token')->plainTextToken,
             'customer_name' => $customer->full_name,

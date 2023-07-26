@@ -6,12 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Model
 {
     use HasFactory;
     use HasApiTokens;
+    use Notifiable;
+
 
     protected $primaryKey = 'id';
     protected $fillable = ['education_level_id', 'first_name', 'last_name', 'job', 'birth_date', 'phone', 'phone_number',
@@ -20,6 +23,11 @@ class Customer extends Model
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'verified' => 'boolean',
+        'blocked' => 'boolean'
     ];
 
     public function educationLevel(): BelongsTo

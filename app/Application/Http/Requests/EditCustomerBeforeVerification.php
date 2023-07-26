@@ -96,6 +96,14 @@ class EditCustomerBeforeVerification extends FormRequest
                 'confirmed',
                 'min:8',
             ],
+            'verified' => [
+                'sometimes',
+                'boolean',
+            ],
+            'blocked' => [
+                'sometimes',
+                'boolean',
+            ],
         ];
     }
 
@@ -126,9 +134,9 @@ class EditCustomerBeforeVerification extends FormRequest
             'national_number.string' => 'يجب أن يكون الرقم الوطني نصًا.',
             'national_number.min' => 'يجب أن يحتوي الرقم الوطني على أحد عشر رقماً.',
             'national_number.max' => 'يجب أن يحتوي الرقم الوطني على أحد عشر رقماً.',
-            'profile_picture.image' => 'يجب أن يكون الصورة الشخصية ملف صورة.',
-            'profile_picture.mimes' => 'يجب أن تكون الصورة الشخصية من نوع: :values.',
-            'profile_picture.max' => 'يجب ألا يتجاوز حجم الصورة الشخصية :max كيلوبايت.',
+            'profile_picture.image' => 'يجب أن تكون الصورة الشخصية ملف صورة.',
+            'profile_picture.mimes' => 'يجب أن تكون الصورة الشخصية من نوع: jpeg,png,jpg,gif,svg .',
+            'profile_picture.max' => 'يجب ألا يتجاوز حجم الصورة الشخصية 2048 كيلوبايت.',
             'education_level_id.exists' => 'المستوى التعليمي المحدد غير صالح.',
             'email.email' => 'البريد الإلكتروني غير صحيح.',
             'username.string' => 'يجب أن يكون اسم المستخدم نصًا.',
@@ -136,6 +144,9 @@ class EditCustomerBeforeVerification extends FormRequest
             'username.max' => 'يجب ألا يتجاوز اسم المستخدم خمسين حرفًا.',
             'username.unique' => 'اسم المستخدم موجود مسبقاُ.',
             'password.min' => 'يجب أن تكون كلمة المرور على الأقل ثمان أحرف.',
+            'password.confirmed' => 'كلمة المرور غير متطابقة.',
+            'verified.boolean' => 'حقل التوثيق غير صحيح.',
+            'blocked.boolean' => 'حقل الحظر غير صحيح.',
         ];
     }
 }

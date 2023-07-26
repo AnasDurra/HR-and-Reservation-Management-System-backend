@@ -7,9 +7,11 @@ use App\Application\Http\Requests\EditCustomerAfterVerification;
 use App\Application\Http\Requests\EditCustomerBeforeVerification;
 use App\Application\Http\Requests\UserLoginRequest;
 use App\Application\Http\Requests\UserSingUpRequest;
+use App\Application\Http\Resources\CustomerBriefResource;
 use App\Application\Http\Resources\CustomerResource;
 use App\Domain\Services\CustomerService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CustomerController extends Controller
 {
@@ -20,24 +22,20 @@ class CustomerController extends Controller
         $this->CustomerService = $CustomerService;
     }
 
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $customers = $this->CustomerService->getCustomerList();
-        return response()->json([
-            'data' => CustomerResource::collection($customers) //Modify it as needed
-        ], 200);
+        return CustomerBriefResource::collection($customers);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(int $id): CustomerResource
     {
         $customer = $this->CustomerService->getCustomerById($id);
-        return response()->json([
-            'data' => new CustomerResource($customer) //Modify it as needed
-        ], 200);
+        return new CustomerResource($customer);
     }
 
 
-    public function updateBeforeVerified(EditCustomerBeforeVerification $request , int $id): CustomerResource
+    public function updateBeforeVerified(EditCustomerBeforeVerification $request, int $id): CustomerResource
     {
         $validated = $request->validated();
         $customer = $this->CustomerService->updateCustomer($id, $validated);
@@ -45,21 +43,12 @@ class CustomerController extends Controller
 
     }
 
-    public function updateAfterVerified(EditCustomerAfterVerification $request , int $id): CustomerResource
+    public function updateAfterVerified(EditCustomerAfterVerification $request, int $id): CustomerResource
     {
         $validated = $request->validated();
         $customer = $this->CustomerService->updateCustomer($id, $validated);
         return new CustomerResource($customer);
 
-    }
-
-
-    public function destroy(int $id): JsonResponse
-    {
-        $customer = $this->CustomerService->deleteCustomer($id);
-        return response()->json([
-            'data' => new CustomerResource($customer) //Modify it as needed
-        ], 200);
     }
 
     public function userSingUp(UserSingUpRequest $request): JsonResponse
