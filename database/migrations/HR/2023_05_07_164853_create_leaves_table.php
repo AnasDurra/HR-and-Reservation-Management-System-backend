@@ -15,7 +15,7 @@ return new class extends Migration
             $table->tinyInteger('state')->default(0);
             $table->time('leave_time');
             $table->date('leave_date');
-            $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('status')->default(1);
             $table->tinyInteger('type')->default(1);
 
             $table->foreign('emp_id')->references('emp_id')->on('employees')->cascadeOnDelete();
