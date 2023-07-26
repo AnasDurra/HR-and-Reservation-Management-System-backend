@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Domain\Models\JobVacancy;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class JobVacancySeeder extends Seeder
@@ -14,9 +13,12 @@ class JobVacancySeeder extends Seeder
     public function run(): void
     {
         // seed a new job vacancy
-        JobVacancy::query()->create([
-            'name' => 'مدير موارد بشرية',
-            'description' => 'مدير موارد بشرية',
+        JobVacancy::create([
+            'name' => 'مهندس برمجيات',
+            'description' => 'مطلوب مهندس برمجيات للعمل في قسم البرمجيات',
+            'count' => 1,
+            'vacancy_status_id' => 1,
+            'dep_id' => 1,
         ]);
     }
 }
