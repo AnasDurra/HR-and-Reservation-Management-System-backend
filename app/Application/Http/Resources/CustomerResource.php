@@ -4,7 +4,6 @@ namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Domain\Models\Customer;
 
 class CustomerResource extends JsonResource
 {

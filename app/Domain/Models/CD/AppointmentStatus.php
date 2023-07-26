@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Domain\Models;
+namespace App\Domain\Models\CD;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Interval extends Model
+class AppointmentStatus extends Model
 {
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['start_time', 'end_time'];
+    protected $fillable = ['name'];
 
-    public function shiftIntervals(): HasMany
+    public function appointments(): HasMany
     {
-        return $this->hasMany(ShiftInterval::class);
+        return $this->hasMany(Appointment::class);
     }
 }

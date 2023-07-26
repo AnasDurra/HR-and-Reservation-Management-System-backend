@@ -2,8 +2,8 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Models\CD\Customer;
 use App\Domain\Repositories\CustomerRepositoryInterface;
-use App\Domain\Models\Customer;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 

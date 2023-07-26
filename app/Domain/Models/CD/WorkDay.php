@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Models;
+namespace App\Domain\Models\CD;
 
 use App\app\Domain\Models\WorkingDay;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

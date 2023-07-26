@@ -2,16 +2,16 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\Models\CD\Customer;
 use App\Domain\Repositories\CustomerRepositoryInterface;
-use App\Domain\Models\Customer;
 use App\Exceptions\EntryNotFoundException;
 use App\Notifications\LoginNotification;
 use App\Utils\StorageUtilities;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 
 class EloquentCustomerRepository implements CustomerRepositoryInterface
