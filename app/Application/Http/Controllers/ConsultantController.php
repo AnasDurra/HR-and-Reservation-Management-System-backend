@@ -28,9 +28,6 @@ class ConsultantController extends Controller
     public function show(int $id): JsonResponse
     {
         $consultant = $this->ConsultantService->getConsultantById($id);
-
-        $ma = new MailService();
-        $ma->sendMail("أنس","durra","aa");
         if(!$consultant){
             return response()->json(['message'=>'Consultant not found']
                 , 404);
