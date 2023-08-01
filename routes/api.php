@@ -20,6 +20,9 @@ use App\Application\Http\Controllers\HolidayController;
 use App\Application\Http\Controllers\EmployeeVacationController;
 use App\Application\Http\Controllers\ShiftRequestController;
 use App\Application\Http\Controllers\AbsenceController;
+
+
+use App\Application\Http\Controllers\ConsultantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -146,3 +149,8 @@ Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
 Route::post('customer/login', [CustomerController::class, 'userLogin']);
 Route::post('customer/logout', [CustomerController::class, 'userLogout']);
 Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
+
+
+    // Register the routes for the ConsultantController
+    Route::apiResource('consultant', ConsultantController::class);
+
