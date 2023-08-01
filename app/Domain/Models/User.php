@@ -3,6 +3,7 @@
 namespace App\Domain\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Domain\Models\CD\Consultant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -37,6 +38,11 @@ class User extends Authenticatable
     public function employee(): HasOne
     {
         return $this->hasOne(Employee::class, 'user_id', 'user_id');
+    }
+
+    public function consultant(): HasOne
+    {
+        return $this->hasOne(Consultant::class, 'user_id', 'user_id');
     }
 
     public function usertype(): BelongsTo

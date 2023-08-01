@@ -8,14 +8,15 @@ use App\Domain\Models\User;
 use App\Domain\Repositories\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
 
-    public function getUserList(): array
+    public function getUserList(): Collection
     {
-        // TODO: Implement getUserList() method.
+        return User::query()->get();
     }
 
     public function createUser(array $data): Builder|Model
