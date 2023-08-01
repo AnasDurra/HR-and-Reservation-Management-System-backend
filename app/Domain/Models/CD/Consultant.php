@@ -13,7 +13,7 @@ class Consultant extends Model
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['user_id', 'first_name', 'last_name', 'birth_date', 'phone_number', 'address'];
+    protected $fillable = ['user_id','clinic_id', 'first_name', 'last_name', 'birth_date', 'phone_number', 'address'];
 
     public function shifts(): HasMany
     {
