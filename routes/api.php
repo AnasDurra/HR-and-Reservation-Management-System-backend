@@ -23,6 +23,7 @@ use App\Application\Http\Controllers\AbsenceController;
 
 
 use App\Application\Http\Controllers\ConsultantController;
+use App\Application\Http\Controllers\ClinicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -151,6 +152,9 @@ Route::post('customer/logout', [CustomerController::class, 'userLogout']);
 Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
 
 
-    // Register the routes for the ConsultantController
-    Route::apiResource('consultant', ConsultantController::class);
+// Register the routes for the ConsultantController
+Route::apiResource('consultant', ConsultantController::class);
+
+// Register the routes for the ClinicController
+Route::apiResource('clinic', ClinicController::class);
 

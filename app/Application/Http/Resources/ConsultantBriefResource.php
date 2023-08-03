@@ -14,6 +14,7 @@ class ConsultantBriefResource extends JsonResource
             'id' => $this["id"],
             'first_name' => $this["first_name"],
             'last_name' => $this["last_name"],
+            'clinic_id' => $this["clinic_id"],
             'phone_number' => $this["phone_number"],
             'user_email'=> $this["user"]["email"],
         ];
