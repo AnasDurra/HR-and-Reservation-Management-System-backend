@@ -5,6 +5,7 @@ namespace App\Domain\Models\CD;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Shift extends Model
@@ -24,8 +25,13 @@ class Shift extends Model
         return $this->hasMany(WorkDay::class);
     }
 
-    public function shiftIntervals(): HasMany
+//    public function shiftIntervals(): HasMany
+//    {
+//        return $this->hasMany(ShiftInterval::class);
+//    }
+
+    public function intervals(): belongsToMany
     {
-        return $this->hasMany(ShiftInterval::class);
+        return $this->belongsToMany(Interval::class, 'shift_intervals', 'shift_id', 'interval_id');
     }
 }

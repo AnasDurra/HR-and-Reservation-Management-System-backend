@@ -14,6 +14,7 @@ use App\Application\Http\Controllers\ScheduleController;
 use App\Application\Http\Controllers\BiometricDeviceController;
 use App\Application\Http\Controllers\AttendanceController;
 use App\Application\Http\Controllers\LeaveController;
+use App\Application\Http\Controllers\TimeSheetController;
 use App\Application\Http\Controllers\VacationRequestController;
 use App\Application\Http\Controllers\WorkingDayController;
 use App\Application\Http\Controllers\HolidayController;
@@ -146,3 +147,6 @@ Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
 Route::post('customer/login', [CustomerController::class, 'userLogin']);
 Route::post('customer/logout', [CustomerController::class, 'userLogout']);
 Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
+
+
+Route::apiResource('time-sheet', TimeSheetController::class);
