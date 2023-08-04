@@ -44,7 +44,7 @@ class ConsultantController extends Controller
             'clinic_id' => ['required','integer','exists:clinics,id'],
             'first_name' => ['required','max:75', 'string'],
             'last_name' => ['required','max:75', 'string'],
-            'phone_number' => ['required','max:20', 'string',
+            'phone_number' => ['required','min:10','max:15', 'string',
                 Rule::unique('consultants', 'phone_number')], //TODO ->whereNull('deleted_at')],
             'email' => ['required','max:40', 'email',
                 Rule::unique('users', 'email')], //TODO ->whereNull('deleted_at')],
@@ -68,10 +68,10 @@ class ConsultantController extends Controller
     public function update(int $id): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
-            'clinic_id' => ['integer','exists:clinics,clinic_id'],
+            'clinic_id' => ['integer','exists:clinics,id'],
             'first_name' => ['max:75', 'string'],
             'last_name' => ['max:75', 'string'],
-            'phone_number' => ['max:20', 'string',
+            'phone_number' => ['min:10','max:15', 'string',
                 Rule::unique('consultants', 'phone_number')->ignore($id)], //TODO ->whereNull('deleted_at')],
             'email' => ['max:40', 'email',
                 Rule::unique('users', 'email')->ignore($id)], //TODO ->whereNull('deleted_at')],
