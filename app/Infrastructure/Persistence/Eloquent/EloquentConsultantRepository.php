@@ -64,14 +64,14 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
 
     public function updateConsultant(int $id, array $data): Consultant|Builder|null
     {
-        $consultant = Consultant::query()->find($id);
+        $consultant = Consultant::query()->with('user')->find($id);
         if(!$consultant) return null;
 
         $consultant['clinic_id'] = $data['clinic_id'] ?? $consultant['clinic_id'];
         $consultant['first_name'] = $data['first_name'] ?? $consultant['first_name'];
         $consultant['last_name'] = $data['last_name'] ?? $consultant['last_name'];
         $consultant['phone_number'] = $data['phone_number'] ?? $consultant['phone_number'];
-        $consultant['email'] = $data['email'] ?? $consultant['email'];
+        $consultant['user']['email'] = $data['email'] ?? $consultant['email'];
         $consultant['address'] = $data['address'] ?? $consultant['address'];
         $consultant['birth_date'] = $data['birth_date'] ?? $consultant['birth_date'];
         $consultant->save();
@@ -123,7 +123,7 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
 
         $eloquentUserRepository = new EloquentUserRepository();
         $users = $eloquentUserRepository->getUserList()->pluck('username');
-        if ($users->contains('name', $username)) {
+        if ($users->contains('username', $username)) {
             return $this->generateUniqueUsername($firstName);
         }
 
