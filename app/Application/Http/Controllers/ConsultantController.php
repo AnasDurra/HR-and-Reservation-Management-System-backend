@@ -74,7 +74,7 @@ class ConsultantController extends Controller
             'phone_number' => ['min:10','max:15', 'string',
                 Rule::unique('consultants', 'phone_number')->ignore($id)], //TODO ->whereNull('deleted_at')],
             'email' => ['max:40', 'email',
-                Rule::unique('users', 'email')->ignore($id)], //TODO ->whereNull('deleted_at')],
+                Rule::unique('users', 'email')], //TODO ->whereNull('deleted_at')],
 
             'address' => ['max:100', 'string'],
             'birth_date' => ['date_format:Y-m-d'],
