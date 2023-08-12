@@ -77,7 +77,7 @@ class EditCustomerBeforeVerification extends FormRequest
             'education_level_id' => [
                 'sometimes',
                 'integer',
-                'exists:educational_levels,id',
+                'exists:education_levels,education_level_id',
             ],
             'email' => [
                 'sometimes',

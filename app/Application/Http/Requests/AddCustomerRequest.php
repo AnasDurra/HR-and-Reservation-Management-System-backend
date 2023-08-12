@@ -77,7 +77,7 @@ class AddCustomerRequest extends FormRequest
             'education_level_id' => [
                 'required',
                 'integer',
-                'exists:educational_levels,id',
+                'exists:education_levels,education_level_id',
             ],
             'email' => [
                 'required', //TODO check it
@@ -138,12 +138,12 @@ class AddCustomerRequest extends FormRequest
             'education_level_id.exists' => 'المستوى التعليمي المحدد غير صالح.',
             'email.email' => 'البريد الإلكتروني غير صحيح.',
 //            'username.required' => 'حقل اسم المستخدم مطلوب.',
-            'username.string' => 'يجب أن يكون اسم المستخدم نصًا.',
-            'username.min' => 'يجب أن يحتوي اسم المستخدم على الأقل على خمس أحرف.',
-            'username.max' => 'يجب ألا يتجاوز اسم المستخدم خمسين حرفًا.',
-            'username.unique' => 'اسم المستخدم موجود مسبقاُ.',
+//            'username.string' => 'يجب أن يكون اسم المستخدم نصًا.',
+//            'username.min' => 'يجب أن يحتوي اسم المستخدم على الأقل على خمس أحرف.',
+//            'username.max' => 'يجب ألا يتجاوز اسم المستخدم خمسين حرفًا.',
+//            'username.unique' => 'اسم المستخدم موجود مسبقاُ.',
 //            'password.required' => 'حقل كلمة المرور مطلوب.',
-            'password.min' => 'يجب أن تكون كلمة المرور على الأقل ثمان أحرف.',
+//            'password.min' => 'يجب أن تكون كلمة المرور على الأقل ثمان أحرف.',
         ];
     }
 

@@ -13,7 +13,10 @@ class CustomerResource extends JsonResource
             'id' => $this["id"],
             'first_name' => $this["first_name"],
             'last_name' => $this["last_name"],
-            'education_level_id' => $this["education_level_id"],
+            'education_level' =>[
+                'education_level_id' => $this["educationLevel"]["education_level_id"],
+                'name' => $this["educationLevel"]["name"],
+            ],
             'email' => $this["email"],
             'username' => $this["username"],
             'job' => $this["job"],

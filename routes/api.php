@@ -20,6 +20,7 @@ use App\Application\Http\Controllers\HolidayController;
 use App\Application\Http\Controllers\EmployeeVacationController;
 use App\Application\Http\Controllers\ShiftRequestController;
 use App\Application\Http\Controllers\AbsenceController;
+use App\Application\Http\Controllers\EducationLevelController;
 
 
 use App\Application\Http\Controllers\ConsultantController;
@@ -146,12 +147,16 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('customer', CustomerController::class);
 //Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
 //Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
-Route::post('customer/{id}', [CustomerController::class, 'update']);
 Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
 Route::post('customer/login', [CustomerController::class, 'userLogin']);
 Route::post('customer/logout', [CustomerController::class, 'userLogout']);
-Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
 
+Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
+Route::post('customer/{id}', [CustomerController::class, 'update']);
+
+
+// Register the router for EducationLevelController
+Route::apiResource('education_levels', EducationLevelController::class);
 
 // Register the routes for the ConsultantController
 Route::apiResource('consultant', ConsultantController::class);

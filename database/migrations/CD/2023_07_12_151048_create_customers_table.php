@@ -29,7 +29,7 @@ return new class extends Migration {
             $table->boolean('verified')->default(false);
             $table->boolean('blocked')->default(false);
 
-            $table->foreign('education_level_id')->references('id')->on('educational_levels')->onDelete('cascade');
+            $table->foreign('education_level_id')->references('education_level_id')->on('education_levels')->onDelete('cascade');
 
 
             $table->timestamps();

@@ -21,6 +21,7 @@ use App\Domain\Repositories\ClinicRepositoryInterface;
 use App\Domain\Repositories\ConsultantRepositoryInterface;
 use App\Domain\Repositories\CustomerRepositoryInterface;
 use App\Domain\Repositories\DepartmentRepositoryInterface;
+use App\Domain\Repositories\EducationLevelRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\EmployeeVacationRepositoryInterface;
 use App\Domain\Repositories\FingerDeviceRepositoryInterface;
@@ -43,6 +44,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentClinicRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentConsultantRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentEducationLevelRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeVacationRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
@@ -102,6 +104,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
         $this->app->bind(ConsultantRepositoryInterface::class, EloquentConsultantRepository::class);
         $this->app->bind(ClinicRepositoryInterface::class, EloquentClinicRepository::class);
+        $this->app->bind(EducationLevelRepositoryInterface::class, EloquentEducationLevelRepository::class);
     }
 
 

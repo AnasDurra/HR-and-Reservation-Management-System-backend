@@ -77,6 +77,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     {
         try {
             $customer = Customer::query()
+                ->with('educationLevel')
                 ->where('id', '=', $id)
                 ->firstOrFail();
         } catch (Exception $e) {
@@ -100,7 +101,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             throw new EntryNotFoundException("customer with id $id not found");
         }
 
-        if($data['profile_picture']){
+        if(isset($data['profile_picture'])){
             StorageUtilities::deletePersonalPhoto($customer['profile_picture']);
         }
 
