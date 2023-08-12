@@ -10,6 +10,7 @@ use App\Application\Http\Requests\UserSingUpRequest;
 use App\Application\Http\Resources\CustomerBriefResource;
 use App\Application\Http\Resources\CustomerResource;
 use App\Domain\Services\CustomerService;
+use App\Utils\StorageUtilities;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -35,27 +36,44 @@ class CustomerController extends Controller
     }
 
 
-    public function updateBeforeVerified(EditCustomerBeforeVerification $request, int $id): CustomerResource
+//    public function updateBeforeVerified(EditCustomerBeforeVerification $request, int $id): CustomerResource
+//    {
+//        $validated = $request->validated();
+//        $customer = $this->CustomerService->updateCustomer($id, $validated);
+//        return new CustomerResource($customer);
+//
+//    }
+
+    public function update(EditCustomerAfterVerification $request, int $id): JsonResponse
     {
-        $validated = $request->validated();
-        $customer = $this->CustomerService->updateCustomer($id, $validated);
-        return new CustomerResource($customer);
+        $data = $request->validated();
+
+        if ($request->hasFile('profile_picture')) {
+            echo 3;
+            $data['profile_picture'] = StorageUtilities::storeCustomerPhoto($data['profile_picture']);
+        }
+
+        $customer = $this->CustomerService->updateCustomer($id, $data);
+        return response()->json([
+            'data'=> new CustomerResource($customer)
+        ], 200);
 
     }
 
-    public function updateAfterVerified(EditCustomerAfterVerification $request, int $id): CustomerResource
-    {
-        $validated = $request->validated();
-        $customer = $this->CustomerService->updateCustomer($id, $validated);
-        return new CustomerResource($customer);
-
-    }
-
-    public function userSingUp(UserSingUpRequest $request): JsonResponse
-    {
-        $data = $this->CustomerService->userSingUp($request->validated());
-        return response()->json($data);
-    }
+//    public function userSingUp(UserSingUpRequest $request): JsonResponse
+//    {
+//        $data = $request->validated();
+//
+//        if ($request->hasFile('profile_picture')) {
+//            $data['profile_picture'] = StorageUtilities::storeCustomerPhoto($request['profile_picture']);
+//        }
+//
+//        $data = $this->CustomerService->userSingUp($data);
+//        return response()->json([
+//            'token' => $data['token'],
+//            'data'=> new CustomerResource($data['customer_data'])
+//        ], 200);
+//    }
 
     public function userLogin(UserLoginRequest $request): JsonResponse
     {
@@ -74,8 +92,17 @@ class CustomerController extends Controller
 
     public function addCustomerByEmployee(AddCustomerRequest $request): JsonResponse
     {
-        $data = $this->CustomerService->userSingUp($request->validated());
-        return response()->json($data);
+        $data = $request->validated();
+
+        if ($request->hasFile('profile_picture')) {
+            $data['profile_picture'] = StorageUtilities::storeCustomerPhoto($request['profile_picture']);
+        }
+
+        $data = $this->CustomerService->userSingUp($data);
+        return response()->json([
+            'token' => $data['token'],
+            'data'=> new CustomerResource($data['customer_data'])
+        ], 200);
     }
 
 }

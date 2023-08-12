@@ -100,13 +100,8 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             throw new EntryNotFoundException("customer with id $id not found");
         }
 
-        // in this case, the user has sent a file instead of a the file url.
-        // so we will delete the old file and store the new one.
-        // and update the file url in the database
-
-        if (isset($data['profile_picture'])) {
+        if($data['profile_picture']){
             StorageUtilities::deletePersonalPhoto($customer['profile_picture']);
-            $updated['profile_picture'] = StorageUtilities::storeCustomerPhoto($data['profile_picture']);
         }
 
         $customer->update([
@@ -114,8 +109,8 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'last_name' => $data['last_name'] ?? $customer->last_name,
             'education_level_id' => $data['education_level_id'] ?? $customer->education_level_id,
             'email' => $data['email'] ?? $customer->email,
-            'username' => $data['username'] ?? $customer->username,
-            'password' => isset($data['password']) ? Hash::make($data['password']) : $customer->password,
+//            'username' => $data['username'] ?? $customer->username,
+//            'password' => isset($data['password']) ? Hash::make($data['password']) : $customer->password,
             'job' => $data['job'] ?? $customer->job,
             'birth_date' => $data['birth_date'] ?? $customer->birth_date,
             'phone' => $data['phone'] ?? $customer->phone,
@@ -123,25 +118,22 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'martial_status' => $data['martial_status'] ?? $customer->martial_status,
             'num_of_children' => $data['num_of_children'] ?? $customer->num_of_children,
             'national_number' => $data['national_number'] ?? $customer->national_number,
-            'profile_picture' => $updated['profile_picture'] ?? $customer->profile_picture,
-            'verified' => $data['verified'] ?? $customer->verified,
-            'blocked' => $data['blocked'] ?? $customer->blocked,
+            'profile_picture' => $data['profile_picture'] ?? $customer->profile_picture,
+//            'verified' => $data['verified'] ?? $customer->verified,
+//            'blocked' => $data['blocked'] ?? $customer->blocked,
         ]);
         return $customer;
     }
 
     public function userSingUp(array $data): array
     {
-        $data['profile_picture'] = StorageUtilities::storeCustomerPhoto($data['profile_picture']);
-
-
         $new_customer = Customer::query()->create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'education_level_id' => $data['education_level_id'],
             'email' => $data['email'] ?? null,
-            'username' => $data['username'],
-            'password' => Hash::make($data['password']),
+            'username' => $this->generateUniqueUsername($data['first_name']),
+            'password' => $this->generatePassword(),
             'job' => $data['job'],
             'birth_date' => $data['birth_date'],
             'phone' => $data['phone'] ?? null,
@@ -149,7 +141,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'martial_status' => $data['martial_status'],
             'num_of_children' => $data['num_of_children'],
             'national_number' => $data['national_number'],
-//            'profile_picture' => optional($data)['profile_picture'] ?? $data['profile_picture'],
             'profile_picture' => $data['profile_picture'] ?? null,
         ]);
         return [
@@ -199,5 +190,25 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         // Revoke the token associated with the customer
         $customer->currentAccessToken()->delete();
+    }
+
+    function generateUniqueUsername($firstName): string
+    {
+
+        $random_number = rand(100, 999);
+
+        $username = strtolower($firstName) . $random_number;
+
+        $customers = $this->getCustomerList()->pluck('username');
+        if ($customers->contains('username', $username)) {
+            return $this->generateUniqueUsername($firstName);
+        }
+
+        return $username;
+    }
+
+    function generatePassword(): string
+    {
+        return \Str::random(12);
     }
 }

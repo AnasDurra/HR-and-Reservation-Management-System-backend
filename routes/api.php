@@ -144,8 +144,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::apiResource('customer', CustomerController::class);
-Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
-Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
+//Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
+//Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
+Route::post('customer/{id}', [CustomerController::class, 'update']);
 Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
 Route::post('customer/login', [CustomerController::class, 'userLogin']);
 Route::post('customer/logout', [CustomerController::class, 'userLogout']);

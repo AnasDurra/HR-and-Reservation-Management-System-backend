@@ -3,6 +3,7 @@
 namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EditCustomerAfterVerification extends FormRequest
 {
@@ -43,6 +44,7 @@ class EditCustomerAfterVerification extends FormRequest
                 'string',
                 'min:10',
                 'max:15',
+                Rule::unique('customers', 'phone_number') //TODO ->whereNull('deleted_at')],
             ],
             'martial_status' => [
                 'sometimes',
@@ -71,6 +73,7 @@ class EditCustomerAfterVerification extends FormRequest
                 'sometimes',
                 'email',
                 'unique:customers,email',
+                Rule::unique('customers', 'email'), //TODO ->whereNull('deleted_at')],
             ],
             'username' => [
                 'sometimes',
