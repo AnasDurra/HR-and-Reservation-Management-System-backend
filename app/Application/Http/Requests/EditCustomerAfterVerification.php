@@ -16,17 +16,22 @@ class EditCustomerAfterVerification extends FormRequest
     {
         return [
             'first_name' => [
-                'prohibited'
+                'sometimes',
+                'string',
+                'min:2',
+                'max:50',
             ],
             'last_name' => [
-                'prohibited'
+                'sometimes',
+                'string',
+                'min:2',
+                'max:50',
             ],
             'birth_date' => [
-                'prohibited'
+                'sometimes',
+                'date',
+                'before:today',
             ],
-//            'national_number' => [
-//                'prohibited'
-//            ],
             'national_number' => [
                 'sometimes',
                 'string',

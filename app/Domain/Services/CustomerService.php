@@ -33,7 +33,7 @@ class CustomerService
 
     public function deleteCustomer($id): Customer|Builder|null
     {
-        return $this->CustomerRepository->deleteCustomer($id);
+        return $this->CustomerRepository->delete($id);
     }
 
     public function userSingUp(array $data): array

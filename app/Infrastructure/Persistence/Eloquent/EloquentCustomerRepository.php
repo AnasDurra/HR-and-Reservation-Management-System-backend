@@ -126,6 +126,21 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $customer;
     }
 
+    public function delete(int $id): Customer|Builder|null {
+        try {
+            $customer = Customer::query()
+                ->where('id', '=', $id)
+                ->firstOrFail();
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("customer with id $id not found");
+        }
+
+        $customer->delete();
+
+        return $customer;
+    }
+
     public function userSingUp(array $data): array
     {
         $new_customer = Customer::query()->create([

@@ -71,7 +71,6 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
         $consultant['first_name'] = $data['first_name'] ?? $consultant['first_name'];
         $consultant['last_name'] = $data['last_name'] ?? $consultant['last_name'];
         $consultant['phone_number'] = $data['phone_number'] ?? $consultant['phone_number'];
-//        $consultant['user']['email'] = $data['email'] ?? $consultant['user']['email'];
         $consultant['user']['email'] = $data['email'] ?? $consultant['user']['email'];
         $consultant['address'] = $data['address'] ?? $consultant['address'];
         $consultant['birth_date'] = $data['birth_date'] ?? $consultant['birth_date'];

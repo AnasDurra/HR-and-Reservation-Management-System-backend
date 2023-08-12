@@ -159,10 +159,8 @@ Route::post('customer/{id}', [CustomerController::class, 'update']);
 Route::apiResource('education_levels', EducationLevelController::class);
 
 // Register the routes for the ConsultantController
-Route::get('consultant', [ConsultantController::class,'index']);
+Route::apiResource('consultant',ConsultantController::class);
 
-// Register the routes for the ConsultantController
-Route::get('consultant', [ConsultantController::class,'index']);
 
 // Register the routes for the ClinicController
 Route::apiResource('clinic', ClinicController::class);

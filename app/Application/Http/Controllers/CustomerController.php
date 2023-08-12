@@ -49,11 +49,20 @@ class CustomerController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('profile_picture')) {
-            echo 3;
             $data['profile_picture'] = StorageUtilities::storeCustomerPhoto($data['profile_picture']);
         }
 
         $customer = $this->CustomerService->updateCustomer($id, $data);
+        return response()->json([
+            'data'=> new CustomerResource($customer)
+        ], 200);
+
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $customer = $this->CustomerService->deleteCustomer($id);
+
         return response()->json([
             'data'=> new CustomerResource($customer)
         ], 200);
