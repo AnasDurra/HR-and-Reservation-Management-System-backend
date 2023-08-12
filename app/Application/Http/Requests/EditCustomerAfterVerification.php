@@ -34,14 +34,13 @@ class EditCustomerAfterVerification extends FormRequest
             ],
             'national_number' => [
                 'sometimes',
-                'string',
+                'integer',
                 'min:11',
                 'max:11',
             ],
             'job' => [
                 'sometimes',
                 'string',
-                'min:5',
                 'max:100',
             ],
             'phone' => [

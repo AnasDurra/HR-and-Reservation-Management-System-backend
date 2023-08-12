@@ -98,6 +98,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
                 ->firstOrFail();
 
         } catch (Exception) {
+            StorageUtilities::deletePersonalPhoto($data['profile_picture']);
             throw new EntryNotFoundException("customer with id $id not found");
         }
 
@@ -120,8 +121,8 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'num_of_children' => $data['num_of_children'] ?? $customer->num_of_children,
             'national_number' => $data['national_number'] ?? $customer->national_number,
             'profile_picture' => $data['profile_picture'] ?? $customer->profile_picture,
-//            'verified' => $data['verified'] ?? $customer->verified,
-//            'blocked' => $data['blocked'] ?? $customer->blocked,
+            'verified' => $data['verified'] ?? $customer->verified,
+            'blocked' => $data['blocked'] ?? $customer->blocked,
         ]);
         return $customer;
     }
@@ -158,6 +159,9 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'num_of_children' => $data['num_of_children'],
             'national_number' => $data['national_number'] ?? null,
             'profile_picture' => $data['profile_picture'] ?? null,
+
+            'verified' => false,
+            'blocked' => false,
         ]);
         return [
             'token' => $new_customer->createToken('customer_auth_token')->plainTextToken,

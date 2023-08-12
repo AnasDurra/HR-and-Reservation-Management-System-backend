@@ -31,7 +31,6 @@ class AddCustomerRequest extends FormRequest
             'job' => [
                 'required',
                 'string',
-                'min:5',
                 'max:100',
             ],
             'birth_date' => [
@@ -64,7 +63,7 @@ class AddCustomerRequest extends FormRequest
                 'max:20',
             ],
             'national_number' => [
-                'string',
+                'integer',
                 'min:11',
                 'max:11',
             ],

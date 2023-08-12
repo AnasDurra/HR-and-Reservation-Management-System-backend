@@ -27,6 +27,9 @@ class CustomerResource extends JsonResource
             'num_of_children' => $this["num_of_children"],
             'national_number' => $this["national_number"],
             'profile_picture' => $this["profile_picture"] ?? null,
+
+            'verified' => $this["verified"] ?? null,
+            'blocked' => $this["blocked"] ?? null,
         ];
     }
 }
