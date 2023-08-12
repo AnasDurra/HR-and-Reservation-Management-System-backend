@@ -141,7 +141,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'phone_number' => $data['phone_number'],
             'martial_status' => $data['martial_status'],
             'num_of_children' => $data['num_of_children'],
-            'national_number' => $data['national_number'],
+            'national_number' => $data['national_number'] ?? null,
             'profile_picture' => $data['profile_picture'] ?? null,
         ]);
         return [

@@ -63,7 +63,6 @@ class UserSingUpRequest extends FormRequest
                 'max:20',
             ],
             'national_number' => [
-                'required',
                 'string',
                 'min:11',
                 'max:11',

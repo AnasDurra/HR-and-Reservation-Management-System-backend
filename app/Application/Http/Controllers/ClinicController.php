@@ -18,39 +18,7 @@ class ClinicController extends Controller
     {
         $clinics = $this->ClinicService->getClinicList();
         return response()->json([
-            'data'=>ClinicResource::collection($clinics) //Modify it as needed
-            ], 200);
-    }
-
-    public function show(int $id): JsonResponse
-    {
-        $clinic = $this->ClinicService->getClinicById($id);
-        return response()->json([
-            'data'=> new ClinicResource($clinic) //Modify it as needed
-            ], 200);
-    }
-
-    public function store(): JsonResponse
-    {
-        $clinic = $this->ClinicService->createClinic(request()->all());
-        return response()->json([
-            'data'=> new ClinicResource($clinic) //Modify it as needed
-            ], 200);
-    }
-
-    public function update(int $id): JsonResponse
-    {
-        $clinic = $this->ClinicService->updateClinic($id, request()->all());
-        return response()->json([
-            'data'=> new ClinicResource($clinic) //Modify it as needed
-            ], 200);
-    }
-
-    public function destroy(int $id): JsonResponse
-    {
-        $clinic = $this->ClinicService->deleteClinic($id);
-        return response()->json([
-            'data'=> new ClinicResource($clinic) //Modify it as needed
+            'data'=>ClinicResource::collection($clinics)
             ], 200);
     }
 }

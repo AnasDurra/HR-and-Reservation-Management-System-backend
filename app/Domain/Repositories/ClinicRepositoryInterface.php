@@ -9,12 +9,4 @@ use Illuminate\Support\Collection;
 interface ClinicRepositoryInterface
 {
     public function getClinicList(): Collection;
-
-    public function getClinicById(int $id): Clinic|Builder|null;
-
-    public function createClinic(array $data): Clinic|Builder|null;
-
-    public function updateClinic(int $id, array $data): Clinic|Builder|null;
-
-    public function deleteClinic($id): Clinic|Builder|null;
 }

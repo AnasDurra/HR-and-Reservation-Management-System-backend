@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('phone_number');
             $table->integer('martial_status');
             $table->integer('num_of_children');
-            $table->string('national_number');
+            $table->string('national_number')->nullable();
             $table->text('profile_picture')->nullable();
             $table->boolean('verified')->default(false);
             $table->boolean('blocked')->default(false);

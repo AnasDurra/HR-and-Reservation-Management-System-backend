@@ -24,8 +24,14 @@ class EditCustomerAfterVerification extends FormRequest
             'birth_date' => [
                 'prohibited'
             ],
+//            'national_number' => [
+//                'prohibited'
+//            ],
             'national_number' => [
-                'prohibited'
+                'sometimes',
+                'string',
+                'min:11',
+                'max:11',
             ],
             'job' => [
                 'sometimes',

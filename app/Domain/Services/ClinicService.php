@@ -20,24 +20,4 @@ class ClinicService
     {
         return $this->ClinicRepository->getClinicList();
     }
-
-    public function getClinicById(int $id): Clinic|Builder|null
-    {
-        return $this->ClinicRepository->getClinicById($id);
-    }
-
-    public function createClinic(array $data): Clinic|Builder|null
-    {
-        return $this->ClinicRepository->createClinic($data);
-    }
-
-    public function updateClinic(int $id, array $data): Clinic|Builder|null
-    {
-        return $this->ClinicRepository->updateClinic($id, $data);
-    }
-
-    public function deleteClinic($id): Clinic|Builder|null
-    {
-        return $this->ClinicRepository->deleteClinic($id);
-    }
 }
