@@ -24,6 +24,7 @@ class ApplicationStatusSeeder extends Seeder
                 ['name' => 'مقبول', 'description' => 'تم قبول الطلب'],
                 ['name' => 'مرفوض', 'description' => 'تم رفض الطلب'],
                 ['name' => 'مؤرشف', 'description' => 'تم أرشفة الطلب'],
+                ['name' => 'مستخدم', 'description' => 'تم استخدام إنشاء حساب للموظف صاحب ملف التوظيف'],
             ]);
     }
 }

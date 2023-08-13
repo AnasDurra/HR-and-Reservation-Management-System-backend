@@ -30,6 +30,10 @@ class JobApplicationDetailsResource extends JsonResource
                 'job_vacancy' => new JobVacancyResource($this->jobVacancy)
             ],
 
+            // employee id field is null when the job application is not used by an employee
+            // otherwise, it is the employee id of the employee who used the job application
+            'emp_id' => $this->employee ? $this->employee->emp_id : null,
+
             // Employee data
             'employee_data' => new EmployeeDataResource($this->empData),
 

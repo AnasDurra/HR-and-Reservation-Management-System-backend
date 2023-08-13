@@ -346,6 +346,15 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
                     'status' => 0,
                 ]);
 
+            // update job application status to hired
+            $jobApplication = JobApplication::query()
+                ->where('job_app_id', '=', $data['job_app_id'])
+                ->firstOrFail();
+
+            $jobApplication->update([
+                'app_status_id' => 5,
+            ]);
+
             // commit transaction
             DB::commit();
 
