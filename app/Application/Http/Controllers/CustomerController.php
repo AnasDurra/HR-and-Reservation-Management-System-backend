@@ -122,4 +122,12 @@ class CustomerController extends Controller
         return CustomersMissedAppointments::collection($data);
     }
 
+    public function customerToggleStatus(int $id): JsonResponse
+    {
+        $customer = $this->CustomerService->customerToggleStatus($id);
+        return response()->json([
+            'data'=> new CustomerResource($customer)
+        ], 200);
+    }
+
 }

@@ -154,6 +154,7 @@ Route::post('customer/logout', [CustomerController::class, 'userLogout']);
 Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
 Route::post('customer/{id}', [CustomerController::class, 'update']);
 Route::get('missed-Appointments-By-Customers', [CustomerController::class, 'customersMissedAppointments']);
+Route::put('/customer/toggle-status/{customer_id}', [CustomerController::class, 'customerToggleStatus']);
 
 
 // Register the router for EducationLevelController

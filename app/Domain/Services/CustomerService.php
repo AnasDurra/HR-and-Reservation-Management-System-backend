@@ -55,4 +55,9 @@ class CustomerService
     {
         return $this->CustomerRepository->customersMissedAppointments();
     }
+
+    public function customerToggleStatus(int $id): Customer|Builder|null
+    {
+        return $this->CustomerRepository->customerToggleStatus($id);
+    }
 }

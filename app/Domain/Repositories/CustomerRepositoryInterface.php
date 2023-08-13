@@ -18,6 +18,8 @@ interface CustomerRepositoryInterface
 
     public function customersMissedAppointments(): LengthAwarePaginator;
 
+    public function customerToggleStatus(int $id): Customer|Builder|null;
+
     public function userSingUp(array $data): array;
 
     public function userLogin(array $data): array;

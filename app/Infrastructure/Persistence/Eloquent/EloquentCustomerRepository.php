@@ -144,7 +144,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
     public function customersMissedAppointments(): LengthAwarePaginator
     {
-        return Customer::query()
+        $customers = Customer::query()
             ->whereHas('appointments.status', function ($query) {
                 $query->where('id', '=', 1);
             })
@@ -153,8 +153,51 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
                     $query->where('id', 1);
                 });
             }])
-            ->orderBy('missed_appointment_count', 'desc')
-            ->paginate(10);
+            ->orderBy('missed_appointment_count', 'desc');
+
+        if (request()->has('name')) {
+            $name = request()->query('name');
+
+            $name = trim($name);
+
+            $name = strtolower($name);
+
+            $customers->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
+                ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+        }
+
+        if (request()->has('order_by_date')) {
+            $result = request()->query('order_by_date');
+            $result = trim($result);
+            $result = strtolower($result);
+
+            if($result=="true") {
+                $customers->with(['appointments' => function ($query) {
+                    $query->orderByDesc('start_time');
+                }]);
+            }
+        }
+
+
+        return $customers->paginate(10);
+    }
+
+    public function customerToggleStatus(int $id): Customer|Builder|null
+    {
+        try {
+            $customer = Customer::query()
+                ->where('id', '=', $id)
+                ->firstOrFail();
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("customer with id $id not found");
+        }
+
+        $customer->blocked = !$customer->blocked;
+        $customer->save();
+
+        return $customer;
     }
 
     public function userSingUp(array $data): array
