@@ -21,6 +21,7 @@ use App\Application\Http\Controllers\EmployeeVacationController;
 use App\Application\Http\Controllers\ShiftRequestController;
 use App\Application\Http\Controllers\AbsenceController;
 use App\Application\Http\Controllers\EducationLevelController;
+use App\Application\Http\Controllers\EventController;
 
 
 use App\Application\Http\Controllers\ConsultantController;
@@ -166,4 +167,8 @@ Route::apiResource('consultant',ConsultantController::class);
 
 // Register the routes for the ClinicController
 Route::apiResource('clinic', ClinicController::class);
+
+// Register the routes for the EventController
+Route::apiResource('events', EventController::class)->except(['update']);
+Route::post('events/{event}', [EventController::class, 'update']);
 

@@ -24,6 +24,7 @@ use App\Domain\Repositories\DepartmentRepositoryInterface;
 use App\Domain\Repositories\EducationLevelRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\EmployeeVacationRepositoryInterface;
+use App\Domain\Repositories\EventRepositoryInterface;
 use App\Domain\Repositories\FingerDeviceRepositoryInterface;
 use App\Domain\Repositories\HolidayRepositoryInterface;
 use App\Domain\Repositories\JobTitleRepositoryInterface;
@@ -47,6 +48,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEducationLevelRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeVacationRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentHolidayRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobApplicationRepository;
@@ -105,6 +107,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ConsultantRepositoryInterface::class, EloquentConsultantRepository::class);
         $this->app->bind(ClinicRepositoryInterface::class, EloquentClinicRepository::class);
         $this->app->bind(EducationLevelRepositoryInterface::class, EloquentEducationLevelRepository::class);
+        $this->app->bind(EventRepositoryInterface::class, EloquentEventRepository::class);
     }
 
 
