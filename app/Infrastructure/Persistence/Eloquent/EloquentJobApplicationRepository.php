@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class EloquentJobApplicationRepository implements JobApplicationRepositoryInterface
 {
@@ -390,7 +391,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function updateJobApplication(int $id, array $data): Builder|Model
     {
@@ -440,6 +441,12 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                     optional($jobApplicationData)['app_status_id'] &&
                     optional($jobApplicationData)['app_status_id'] != $jobApplication->getAttribute("app_status_id")
                 ) {
+
+                    // if it's already = 5 (hired) then we can't update it
+                    if ($jobApplication->getAttribute("app_status_id") == 5) {
+                        throw new Exception(" لا يمكن تحديث الحالة", 400);
+                    }
+
                     $updated['app_status_id'] = $jobApplicationData['app_status_id'];
                 }
 
