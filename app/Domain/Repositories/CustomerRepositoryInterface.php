@@ -16,6 +16,8 @@ interface CustomerRepositoryInterface
 
     public function delete(int $id): Customer|Builder|null;
 
+    public function customersMissedAppointments(): LengthAwarePaginator;
+
     public function userSingUp(array $data): array;
 
     public function userLogin(array $data): array;

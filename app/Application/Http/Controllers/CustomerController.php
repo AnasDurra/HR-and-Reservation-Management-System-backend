@@ -9,6 +9,7 @@ use App\Application\Http\Requests\UserLoginRequest;
 use App\Application\Http\Requests\UserSingUpRequest;
 use App\Application\Http\Resources\CustomerBriefResource;
 use App\Application\Http\Resources\CustomerResource;
+use App\Application\Http\Resources\CustomersMissedAppointments;
 use App\Domain\Services\CustomerService;
 use App\Utils\StorageUtilities;
 use Illuminate\Http\JsonResponse;
@@ -112,6 +113,13 @@ class CustomerController extends Controller
             'token' => $data['token'],
             'data'=> new CustomerResource($data['customer_data'])
         ], 200);
+    }
+
+
+    public function customersMissedAppointments(): AnonymousResourceCollection
+    {
+        $data = $this->CustomerService->customersMissedAppointments();
+        return CustomersMissedAppointments::collection($data);
     }
 
 }

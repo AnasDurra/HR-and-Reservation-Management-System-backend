@@ -30,6 +30,8 @@ class CustomerResource extends JsonResource
 
             'verified' => $this["verified"] ?? null,
             'blocked' => $this["blocked"] ?? null,
+
+            'created_at' => $this["created_at"]->format('Y-m-d_H:i:s'),
         ];
     }
 }

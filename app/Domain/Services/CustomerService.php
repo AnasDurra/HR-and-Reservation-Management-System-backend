@@ -50,4 +50,9 @@ class CustomerService
     {
         $this->CustomerRepository->userLogout();
     }
+
+    public function customersMissedAppointments(): LengthAwarePaginator
+    {
+        return $this->CustomerRepository->customersMissedAppointments();
+    }
 }

@@ -142,6 +142,21 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $customer;
     }
 
+    public function customersMissedAppointments(): LengthAwarePaginator
+    {
+        return Customer::query()
+            ->whereHas('appointments.status', function ($query) {
+                $query->where('id', '=', 1);
+            })
+            ->withCount(['appointments as missed_appointment_count' => function ($query) {
+                $query->whereHas('status', function ($query) {
+                    $query->where('id', 1);
+                });
+            }])
+            ->orderBy('missed_appointment_count', 'desc')
+            ->paginate(10);
+    }
+
     public function userSingUp(array $data): array
     {
         $new_customer = Customer::query()->create([
