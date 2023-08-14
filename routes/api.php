@@ -21,6 +21,12 @@ use App\Application\Http\Controllers\HolidayController;
 use App\Application\Http\Controllers\EmployeeVacationController;
 use App\Application\Http\Controllers\ShiftRequestController;
 use App\Application\Http\Controllers\AbsenceController;
+use App\Application\Http\Controllers\EducationLevelController;
+use App\Application\Http\Controllers\EventController;
+
+
+use App\Application\Http\Controllers\ConsultantController;
+use App\Application\Http\Controllers\ClinicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -141,12 +147,32 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::apiResource('customer', CustomerController::class);
-Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
-Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
+//Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
+//Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
 Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
 Route::post('customer/login', [CustomerController::class, 'userLogin']);
 Route::post('customer/logout', [CustomerController::class, 'userLogout']);
+
 Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
+Route::post('customer/{id}', [CustomerController::class, 'update']);
+Route::get('missed-Appointments-By-Customers', [CustomerController::class, 'customersMissedAppointments']);
+Route::put('/customer/toggle-status/{customer_id}', [CustomerController::class, 'customerToggleStatus']);
+
+
+// Register the router for EducationLevelController
+Route::apiResource('education_levels', EducationLevelController::class);
+
+// Register the routes for the ConsultantController
+Route::apiResource('consultant',ConsultantController::class);
+
+
+// Register the routes for the ClinicController
+Route::apiResource('clinic', ClinicController::class);
+
+// Register the routes for the EventController
+Route::apiResource('events', EventController::class)->except(['update']);
+Route::post('events/{event}', [EventController::class, 'update']);
+
 
 
 Route::apiResource('time-sheet', TimeSheetController::class);

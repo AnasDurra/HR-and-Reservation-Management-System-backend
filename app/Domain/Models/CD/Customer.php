@@ -33,7 +33,7 @@ class Customer extends Model
 
     public function educationLevel(): BelongsTo
     {
-        return $this->belongsTo(EducationLevel::class);
+        return $this->belongsTo(EducationLevel::class,'education_level_id','education_level_id');
     }
 
     public function appointments(): HasMany

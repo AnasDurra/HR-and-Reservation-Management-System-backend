@@ -3,6 +3,7 @@
 namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserSingUpRequest extends FormRequest
 {
@@ -47,6 +48,7 @@ class UserSingUpRequest extends FormRequest
                 'string',
                 'min:10',
                 'max:15',
+                Rule::unique('customers', 'phone_number') //TODO ->whereNull('deleted_at')],
             ],
             'martial_status' => [
                 'required',
@@ -61,7 +63,6 @@ class UserSingUpRequest extends FormRequest
                 'max:20',
             ],
             'national_number' => [
-                'required',
                 'string',
                 'min:11',
                 'max:11',
@@ -77,22 +78,23 @@ class UserSingUpRequest extends FormRequest
                 'exists:educational_levels,id',
             ],
             'email' => [
-                'required',
+                'required', //TODO check it
                 'email',
                 'unique:customers,email',
+                Rule::unique('customers', 'email'), //TODO ->whereNull('deleted_at')],
             ],
-            'username' => [
-                'required',
-                'string',
-                'min:5',
-                'max:50',
-                'unique:customers,username',
-            ],
-            'password' => [
-                'required',
-                'confirmed',
-                'min:8',
-            ],
+//            'username' => [
+//                'required',
+//                'string',
+//                'min:5',
+//                'max:50',
+//                'unique:customers,username',
+//            ],
+//            'password' => [
+//                'required',
+//                'confirmed',
+//                'min:8',
+//            ],
         ];
     }
 

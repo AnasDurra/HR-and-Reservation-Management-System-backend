@@ -33,7 +33,7 @@ class CustomerService
 
     public function deleteCustomer($id): Customer|Builder|null
     {
-        return $this->CustomerRepository->deleteCustomer($id);
+        return $this->CustomerRepository->delete($id);
     }
 
     public function userSingUp(array $data): array
@@ -49,5 +49,15 @@ class CustomerService
     public function userLogout(): void
     {
         $this->CustomerRepository->userLogout();
+    }
+
+    public function customersMissedAppointments(): LengthAwarePaginator
+    {
+        return $this->CustomerRepository->customersMissedAppointments();
+    }
+
+    public function customerToggleStatus(int $id): Customer|Builder|null
+    {
+        return $this->CustomerRepository->customerToggleStatus($id);
     }
 }
