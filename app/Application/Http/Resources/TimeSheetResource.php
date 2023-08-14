@@ -12,14 +12,9 @@ class TimeSheetResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'customer_id' => $this->customer_id,
-//            'periods' => $this->intervals->map(function ($period) {
-//                return [
-////                    'id' => $period->id,
-//                    'start_time' => $period->start_time,
-//                    'end_time' => $period->end_time,
-//                ];
-//            }),
+            'consultant_id' => $this->consultant_id,
+            // get work days with appointment
+            'work_days' => WorkDayResource::collection($this->workDays),
         ];
     }
 }

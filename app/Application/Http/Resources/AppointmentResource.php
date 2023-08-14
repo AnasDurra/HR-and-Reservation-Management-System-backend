@@ -4,17 +4,23 @@ namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Domain\Models\Appointment;
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
 
+/**
+ * Transform the resource into an array.
+ *
+ * @return array<string, mixed>
+ */
 class AppointmentResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'status_id' => $this->status_id,
+            'customer_id' => $this->customer_id,
+            'cancellation_reason' => $this->cancellation_reason,
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
+        ];
     }
 }

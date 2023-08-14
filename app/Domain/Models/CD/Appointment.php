@@ -15,9 +15,9 @@ class Appointment extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['work_day_id', 'status_id', 'customer_id', 'start_time', 'end_time', 'cancellation_reason'];
 
-    public function workDay(): HasMany
+    public function workDay(): BelongsTo
     {
-        return $this->hasMany(WorkDay::class);
+        return $this->belongsTo(WorkDay::class);
     }
 
     public function status(): BelongsTo

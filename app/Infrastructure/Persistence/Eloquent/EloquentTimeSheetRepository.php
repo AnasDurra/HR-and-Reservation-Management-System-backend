@@ -203,30 +203,42 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
 
     //TODO : pagination
-    public function getConsultantSchedule(): Builder
+    public function getConsultantSchedule(): LengthAwarePaginator
     {
-        $customer_id = Auth::id();
+        //TODO : uncomment this lines
+//        $user_id = Auth::id();
+//        $consultant = Consultant::query()->where('user_id', '=', $user_id)->first();
+//        $shift = Shift::query()->where('consultant_id', '=', $consultant_id->consultant_id);
 
-        $shift = Shift::query()->where('customer_id', '=', $customer_id);
 
-        //get shifts with 2 tables workDays and appointments
+        //TODO : delete this line
+        $shift = Shift::query()->where('consultant_id', '=', 1);
 
-        return $shift->with('workDays');
+        return $shift->paginate(10);
     }
 
 
-    public function cancelAppointmentByConsultant($id): Builder
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function cancelAppointmentByConsultant($id): Appointment|Builder|null
     {
-        $canceled_appointment = Appointment::query()->where('id', '=', $id);
+        try {
+            $canceled_appointment = Appointment::query()->findOrFail($id);
 
-        $canceled_appointment->status_id = '7';
-        $canceled_appointment->save();
+            //TODO : check if the number is correct
+            $canceled_appointment->status_id = '7';
+            $canceled_appointment->save();
 
-        return $canceled_appointment;
+            return $canceled_appointment;
+        } catch (Exception) {
+            throw new EntryNotFoundException("Appointment with ID $id not found.");
+        }
     }
 
     public function getCanceledAppointment(): LengthAwarePaginator
     {
+        //TODO : check if the number is correct
         return Appointment::query()
             ->where('status_id', '=', '7')
             ->paginate(10);

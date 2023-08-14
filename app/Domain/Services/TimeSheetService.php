@@ -42,12 +42,12 @@ class TimeSheetService
         return $this->TimeSheetRepository->bookAnAppointmentByEmployee($appointment_id, $customer_id);
     }
 
-    public function getConsultantSchedule(): Builder
+    public function getConsultantSchedule(): LengthAwarePaginator
     {
         return $this->TimeSheetRepository->getConsultantSchedule();
     }
 
-    public function cancelAppointmentByConsultant($id): Builder
+    public function cancelAppointmentByConsultant($id):  Appointment|Builder|null
     {
         return $this->TimeSheetRepository->cancelAppointmentByConsultant($id);
     }
