@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('address', 100);
             $table->string('side_address', 100)->nullable();
             $table->string('description', 255);
-            $table->string('link', 50)->nullable();
+            $table->string('link', 255)->nullable();
             $table->text('image')->nullable();
             $table->text('blurhash')->nullable();
             $table->date('start_date');

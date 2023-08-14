@@ -6,6 +6,7 @@ use App\Domain\Repositories\EventRepositoryInterface;
 use App\Domain\Models\CD\Event;
 use App\Exceptions\EntryNotFoundException;
 use App\Utils\StorageUtilities;
+use Bepsvpt\Blurhash\BlurHash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -45,7 +46,11 @@ class EloquentEventRepository implements EventRepositoryInterface
     {
         if (request()->hasFile('image')) {
             $image = request()->file('image');
-            $image_data = StorageUtilities::storeEventPhoto($image);
+            $imageData = StorageUtilities::storeEventPhoto($image);
+
+            $blurhash = new Blurhash();
+            // Generate BlurHash code for the image
+            $blurhashCode = $blurhash->encode($image);
         }
 
         return Event::query()->create([
@@ -54,8 +59,8 @@ class EloquentEventRepository implements EventRepositoryInterface
             'side_address' => $data['side_address'] ?? null,
             'description' => $data['description'] ?? null,
             'link' => $data['link'] ?? null,
-            'image' => $image_data ?? null,
-            'blurhash' => $data['blurhash'] ?? null,
+            'image' => $imageData ?? null,
+            'blurhash' => $blurhashCode ?? null,
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'] ?? null,
         ]);
@@ -73,7 +78,11 @@ class EloquentEventRepository implements EventRepositoryInterface
 
         if (request()->hasFile('image')) {
             $image = request()->file('image');
-            $image_data = StorageUtilities::storeEventPhoto($image);
+            $imageData = StorageUtilities::storeEventPhoto($image);
+
+            $blurhash = new Blurhash();
+            // Generate BlurHash code for the image
+            $blurhashCode = $blurhash->encode($image);
         }
 
         $event->update([
@@ -82,8 +91,8 @@ class EloquentEventRepository implements EventRepositoryInterface
             'side_address' => $data['side_address'] ?? $event['side_address'],
             'description' => $data['description'] ?? $event['description'],
             'link' => $data['link'] ?? $event['link'],
-            'image' => $image_data ?? $event['image'],
-            'blurhash' => $data['blurhash'] ?? $event['blurhash'],
+            'image' => $imageData ?? $event['image'],
+            'blurhash' => $blurhashCode ?? $event['blurhash'],
             'start_date' => $data['start_date'] ?? $event['start_date'],
             'end_date' => $data['end_date'] ?? $event['end_date'],
         ]);
