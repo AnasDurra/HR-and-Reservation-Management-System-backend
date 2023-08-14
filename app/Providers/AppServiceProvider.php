@@ -30,6 +30,7 @@ use App\Domain\Repositories\LeaveRepositoryInterface;
 use App\Domain\Repositories\LogRepositoryInterface;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\ScheduleRepositoryInterface;
+use App\Domain\Repositories\TimeSheetRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Repositories\WorkingDayRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentAbsenceRepository;
@@ -50,6 +51,7 @@ use App\Infrastructure\Persistence\Eloquent\EloquentLeaveRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentLogRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentPermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentScheduleRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentTimeSheetRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentUserRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentWorkingDayRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentShiftRequestRepository;
@@ -96,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AbsenceRepositoryInterface::class, EloquentAbsenceRepository::class);
         $this->app->bind(AuthenticationRepositoryInterface::class, EloquentAuthenticationRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
+        $this->app->bind(TimeSheetRepositoryInterface::class, EloquentTimeSheetRepository::class);
     }
 
 

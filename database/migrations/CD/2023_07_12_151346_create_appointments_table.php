@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('work_day_id');
             $table->unsignedBigInteger('status_id')->default('1');
-            $table->unsignedBigInteger('customer_id');
-            $table->dateTime('start_time');
-            $table->dateTime('end_time');
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->Time('start_time');
+            $table->Time('end_time');
             $table->text('cancellation_reason')->nullable();
 
             $table->foreign('work_day_id')->references('id')->on('work_days')->onDelete('cascade');

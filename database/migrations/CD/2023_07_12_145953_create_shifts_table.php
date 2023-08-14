@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('consultant_id');
             $table->string('name');
-            $table->integer('slot_duration');
             $table->timestamps();
 
 

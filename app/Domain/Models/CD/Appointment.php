@@ -5,6 +5,7 @@ namespace App\Domain\Models\CD;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Appointment extends Model
@@ -12,11 +13,11 @@ class Appointment extends Model
     use HasFactory;
 
     protected $primaryKey = 'id';
-    protected $fillable = ['work_day_id ', 'status_id', 'customer_id', 'start_time', 'end_time', 'cancellation_reason'];
+    protected $fillable = ['work_day_id', 'status_id', 'customer_id', 'start_time', 'end_time', 'cancellation_reason'];
 
-    public function workDay(): BelongsTo
+    public function workDay(): HasMany
     {
-        return $this->belongsTo(WorkDay::class);
+        return $this->hasMany(WorkDay::class);
     }
 
     public function status(): BelongsTo
