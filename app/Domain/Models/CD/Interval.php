@@ -14,13 +14,14 @@ class Interval extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['start_time', 'end_time'];
 
-    public function shiftIntervals(): HasMany
-    {
-        return $this->hasMany(ShiftInterval::class);
-    }
+//    public function shiftIntervals(): HasMany
+//    {
+//        return $this->hasMany(ShiftInterval::class);
+//    }
 
     public function shifts(): belongsToMany
     {
-        return $this->belongsToMany(Shift::class, 'shift_intervals', 'interval_id', 'shift_id');
+        return $this->belongsToMany(Shift::class , 'shift_intervals');
+
     }
 }

@@ -2,11 +2,9 @@
 
 namespace App\Domain\Models\CD;
 
-use App\app\Domain\Models\WorkingDay;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class WorkDay extends Model
 {
@@ -20,13 +18,9 @@ class WorkDay extends Model
         return $this->belongsTo(Shift::class);
     }
 
-    public function workingDay(): BelongsTo
-    {
-        return $this->belongsTo(WorkingDay::class);
-    }
 
-    public function appointments(): HasMany
+    public function appointments(): BelongsTo
     {
-        return $this->hasMany(Appointment::class);
+        return $this->belongsTo(Appointment::class);
     }
 }

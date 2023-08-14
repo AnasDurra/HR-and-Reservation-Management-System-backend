@@ -150,3 +150,8 @@ Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmp
 
 
 Route::apiResource('time-sheet', TimeSheetController::class);
+Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
+Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
+Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
+Route::put('cancel-appointment', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
+Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);

@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('work_days', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('shift_id');
-            $table->unsignedBigInteger('day_id');
+//            $table->unsignedBigInteger('day_id');
             $table->date('day_date');
 
             $table->foreign('shift_id')->references('id')->on('shifts')->onDelete('cascade');
-            $table->foreign('day_id')->references('working_day_id')->on('working_days')->onDelete('cascade');
+//            $table->foreign('day_id')->references('working_day_id')->on('working_days')->onDelete('cascade');
             $table->timestamps();
         });
     }
