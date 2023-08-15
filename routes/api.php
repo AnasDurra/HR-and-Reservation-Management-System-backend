@@ -44,9 +44,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthenticationController::class, 'userLogin']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    // login route
+    Route::post('/logout', [AuthenticationController::class, 'userLogout']);
 
     // get employee by token route
-    Route::get('/employee', [AuthenticationController::class, 'getEmployeeActivePermissionsByToken']);
+    Route::get('/employee', [AuthenticationController::class, 'getUserActivePermissionsByToken']);
 
     // Register the routes for the JobApplicationController
     Route::post("job-applications/update/{id}", [JobApplicationController::class, 'update']);
@@ -57,9 +59,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Register the routes for Employee Management
     Route::prefix('employees')->group(function () {
-
-        // login route
-        Route::post('/logout', [AuthenticationController::class, 'employeeLogout']);
 
         // get all employees
         Route::get('/list', [EmployeeController::class, 'indexList']);

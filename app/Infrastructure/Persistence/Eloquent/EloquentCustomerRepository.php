@@ -33,6 +33,19 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
                 ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
 
         }
+
+        if (request()->has('usingApp')) {
+            $result = request()->query('usingApp');
+
+            $result = trim($result);
+
+            $result = strtolower($result);
+
+            if($result == "true") {
+                $customers->where('isUsingApp', '=', true);
+            }
+
+        }
         if (request()->has('username')) {
             $customers->where('username', 'like', '%' . request()->input('username') . '%');
         }
