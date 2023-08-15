@@ -14,6 +14,7 @@ use App\Domain\Services\CustomerService;
 use App\Utils\StorageUtilities;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
@@ -129,5 +130,29 @@ class CustomerController extends Controller
             'data'=> new CustomerResource($customer)
         ], 200);
     }
+
+    public function customerDetection(): JsonResponse
+    {
+        $validator = Validator::make(request()->all(), [
+            'national_number' => [
+                'required',
+                'integer',
+                'digits:11'
+            ],
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            return response()->json([
+                'errors'=> $errors
+            ], 400);
+        }
+        $data = request()->all();
+        $customerStatus = $this->CustomerService->customerDetection($data['national_number']);
+        return response()->json([
+            'data' => $customerStatus
+        ], 200);
+    }
+
+
 
 }

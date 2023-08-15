@@ -28,4 +28,19 @@ class AuthenticationService
     {
         return $this->AuthenticationRepository->getEmployeeActivePermissionsByToken();
     }
+
+    public function consultantLogin(array $credentials): array
+    {
+        return $this->AuthenticationRepository->consultantLogin($credentials);
+    }
+
+    public function consultantLogout(): void
+    {
+        $this->AuthenticationRepository->consultantLogout();
+    }
+
+    public function getConsultantActivePermissionsByToken(): Collection
+    {
+        return $this->AuthenticationRepository->getConsultantActivePermissionsByToken();
+    }
 }

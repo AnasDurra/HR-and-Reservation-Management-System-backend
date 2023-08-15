@@ -289,4 +289,23 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     {
         return \Str::random(12);
     }
+
+
+    public function customerDetection(int $national_number): array
+    {
+        $result = Customer::query()->where('national_number','=',$national_number)->first();
+
+        if($result == null){
+            $status = ['status' => 1];
+        }
+
+        else if(!$result['isUsingApp']){
+            $status = ['status' => 2 , 'customer_id'=>$result['id']];
+        }
+
+        else
+            $status = ['status' => 3 , 'customer_id'=>$result['id']];
+
+        return $status;
+    }
 }

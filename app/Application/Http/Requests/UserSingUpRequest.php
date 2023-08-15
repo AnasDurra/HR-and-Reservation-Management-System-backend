@@ -64,8 +64,7 @@ class UserSingUpRequest extends FormRequest
             ],
             'national_number' => [
                 'string',
-                'min:11',
-                'max:11',
+                'digits:11'
             ],
             'profile_picture' => [
                 'image',

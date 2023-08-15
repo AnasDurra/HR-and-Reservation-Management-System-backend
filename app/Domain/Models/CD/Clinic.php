@@ -4,19 +4,19 @@ namespace App\Domain\Models\CD;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Clinic extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'clinic_id';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'name'
     ];
 
-    public function consultant(): HasOne
+    public function consultant(): HasMany
     {
-        return $this->hasOne(Consultant::class, 'clinic_id', 'clinic_id');
+        return $this->hasMany(Consultant::class);
     }
 
 }

@@ -12,4 +12,10 @@ interface AuthenticationRepositoryInterface
 
     public function getEmployeeActivePermissionsByToken(): Collection;
 
+    public function consultantLogin(array $credentials): array;
+
+    public function consultantLogout(): void;
+
+    public function getConsultantActivePermissionsByToken(): Collection;
+
 }
