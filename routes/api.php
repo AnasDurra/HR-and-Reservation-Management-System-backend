@@ -165,7 +165,7 @@ Route::post('customer-detection', [CustomerController::class, 'customerDetection
 Route::apiResource('education_levels', EducationLevelController::class);
 
 // Register the routes for the ConsultantController
-Route::apiResource('consultant',ConsultantController::class);
+Route::apiResource('consultant', ConsultantController::class);
 
 
 // Register the routes for the ClinicController
@@ -183,5 +183,18 @@ Route::apiResource('time-sheet', TimeSheetController::class);
 Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
 Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
 Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
-Route::put('cancel-appointment', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
+Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
 Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);
+
+// cancel reservation(deny future reservation)
+// 1. by customer
+Route::post('cancel-reservation-by-customer/{appointment}', [TimeSheetController::class, 'cancelReservationByCustomer']);
+
+// 2. by employee
+Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservationByEmployee']);
+
+// 3. by consultant
+Route::post('cancel-reservation-by-consultant/{appointment}', [TimeSheetController::class, 'cancelReservationByConsultant']);
+
+// cancel reservation(to be reservable again)
+Route::post('cancel-reservation/{appointment}', [TimeSheetController::class, 'cancelReservation']);

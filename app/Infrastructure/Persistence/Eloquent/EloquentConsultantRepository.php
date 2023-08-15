@@ -7,6 +7,7 @@ use App\Domain\Models\CD\Consultant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Str;
 
 class EloquentConsultantRepository implements ConsultantRepositoryInterface
 {
@@ -133,6 +134,6 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
 
     function generatePassword(): string
     {
-        return \Str::random(8);
+        return Str::random(8);
     }
 }

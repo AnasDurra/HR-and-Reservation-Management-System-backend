@@ -106,11 +106,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AbsenceRepositoryInterface::class, EloquentAbsenceRepository::class);
         $this->app->bind(AuthenticationRepositoryInterface::class, EloquentAuthenticationRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
-        $this->app->bind(TimeSheetRepositoryInterface::class, EloquentTimeSheetRepository::class);
         $this->app->bind(ConsultantRepositoryInterface::class, EloquentConsultantRepository::class);
         $this->app->bind(ClinicRepositoryInterface::class, EloquentClinicRepository::class);
         $this->app->bind(EducationLevelRepositoryInterface::class, EloquentEducationLevelRepository::class);
         $this->app->bind(EventRepositoryInterface::class, EloquentEventRepository::class);
+        $this->app->bind(TimeSheetRepositoryInterface::class, EloquentTimeSheetRepository::class);
     }
 
 

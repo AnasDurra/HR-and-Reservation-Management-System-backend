@@ -7,16 +7,13 @@ use App\Domain\Models\CD\Customer;
 use App\Domain\Models\CD\Shift;
 use App\Domain\Models\CD\WorkDay;
 use App\Domain\Repositories\TimeSheetRepositoryInterface;
-use App\Exceptions\DuplicatedEntryException;
 use App\Exceptions\EntryNotFoundException;
-use Auth;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use function Symfony\Component\Translation\t;
 
 class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 {
@@ -155,7 +152,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                         'start_time' => $start_time,
                         'end_time' => $end_time,
                         'customer_id' => null,
-                        'status_id' => 1,
+                        'status_id' => 6,
                         'cancellation_reason' => null,
                     ]);
                 }
@@ -203,34 +200,89 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
 
     //TODO : pagination
-    public function getConsultantSchedule(): Builder
+    public function getConsultantSchedule(): LengthAwarePaginator
     {
-        $customer_id = Auth::id();
+        //TODO : uncomment this lines
+//        $user_id = Auth::id();
+//        $consultant = Consultant::query()->where('user_id', '=', $user_id)->first();
+//        $shift = Shift::query()->where('consultant_id', '=', $consultant_id->consultant_id);
 
-        $shift = Shift::query()->where('customer_id', '=', $customer_id);
 
-        //get shifts with 2 tables workDays and appointments
+        //TODO : delete this line
+        $shift = Shift::query()->where('consultant_id', '=', 1);
 
-        return $shift->with('workDays');
+        return $shift->paginate(10);
     }
 
 
-    public function cancelAppointmentByConsultant($id): Builder
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function cancelAppointmentByConsultant($id): Appointment|Builder|null
     {
-        $canceled_appointment = Appointment::query()->where('id', '=', $id);
+        try {
+            $canceled_appointment = Appointment::query()->findOrFail($id);
 
-        $canceled_appointment->status_id = '7';
-        $canceled_appointment->save();
+            //TODO : check if the number is correct
+            $canceled_appointment->status_id = '7';
+            $canceled_appointment->save();
 
-        return $canceled_appointment;
+            return $canceled_appointment;
+        } catch (Exception) {
+            throw new EntryNotFoundException("Appointment with ID $id not found.");
+        }
     }
 
     public function getCanceledAppointment(): LengthAwarePaginator
     {
+        //TODO : check if the number is correct
         return Appointment::query()
             ->where('status_id', '=', '7')
             ->paginate(10);
     }
 
+    public function cancelReservationByCustomer($appointment): Appointment|Builder|null
+    {
+        $appointment->update([
+            'status_id' => 1,
+        ]);
 
+        // Notify the consultant
+        return $appointment;
+    }
+
+    public function cancelReservationByEmployee($appointment): Appointment|Builder|null
+    {
+        // set the status to canceled by employee
+        $appointment->update([
+            'status_id' => 2,
+        ]);
+
+        // TODO: Notify the customer & consultant
+
+        return $appointment;
+    }
+
+    public function cancelReservationByConsultant($appointment): Appointment|Builder|null
+    {
+        // set the status to canceled by consultant
+        $appointment->update([
+            'status_id' => 3,
+        ]);
+
+        // TODO: Notify the customer & consultant
+
+        return $appointment;
+    }
+
+    public function cancelReservation(Appointment $appointment): Appointment|Builder|null
+    {
+        // set the status to canceled by consultant
+        $appointment->update([
+            'status_id' => 6,
+            'customer_id' => null,
+        ]);
+
+        return $appointment;
+    }
 }
