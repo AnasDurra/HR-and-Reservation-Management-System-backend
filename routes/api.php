@@ -41,8 +41,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // login route
-Route::post('employees/login', [AuthenticationController::class, 'employeeLogin']);
-Route::post('consultants/login', [AuthenticationController::class, 'consultantLogin']);
+Route::post('login', [AuthenticationController::class, 'userLogin']);
 
 Route::middleware('auth:sanctum')->group(function () {
 

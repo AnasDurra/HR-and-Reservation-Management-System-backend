@@ -218,7 +218,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'national_number' => $data['national_number'] ?? null,
             'profile_picture' => $data['profile_picture'] ?? null,
 
-            'verified' => false,
+            'verified' => isset($data['national_number']),
             'blocked' => false,
         ]);
         return [

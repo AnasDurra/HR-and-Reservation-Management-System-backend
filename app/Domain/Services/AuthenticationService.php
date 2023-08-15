@@ -14,33 +14,18 @@ class AuthenticationService
         $this->AuthenticationRepository = $AuthenticationRepository;
     }
 
-    public function employeeLogin(array $credentials): array
+    public function userLogin(array $credentials): array
     {
-        return $this->AuthenticationRepository->employeeLogin($credentials);
+        return $this->AuthenticationRepository->userLogin($credentials);
     }
 
-    public function employeeLogout(): void
+    public function userLogout(): void
     {
-        $this->AuthenticationRepository->employeeLogout();
+        $this->AuthenticationRepository->userLogout();
     }
 
-    public function getEmployeeActivePermissionsByToken(): Collection
+    public function getUserActivePermissionsByToken(): Collection
     {
-        return $this->AuthenticationRepository->getEmployeeActivePermissionsByToken();
-    }
-
-    public function consultantLogin(array $credentials): array
-    {
-        return $this->AuthenticationRepository->consultantLogin($credentials);
-    }
-
-    public function consultantLogout(): void
-    {
-        $this->AuthenticationRepository->consultantLogout();
-    }
-
-    public function getConsultantActivePermissionsByToken(): Collection
-    {
-        return $this->AuthenticationRepository->getConsultantActivePermissionsByToken();
+        return $this->AuthenticationRepository->getUserActivePermissionsByToken();
     }
 }
