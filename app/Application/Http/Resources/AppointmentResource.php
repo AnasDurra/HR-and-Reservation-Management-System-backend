@@ -19,6 +19,7 @@ class AppointmentResource extends JsonResource
             'status_id' => $this->status_id,
             'customer_id' => $this->customer_id,
             'cancellation_reason' => $this->cancellation_reason,
+            'date' => $this->workDay->day_date,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
         ];

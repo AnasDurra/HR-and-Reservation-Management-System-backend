@@ -6,10 +6,11 @@ use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\Shift;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface TimeSheetRepositoryInterface
 {
-    public function getTimeSheetList(): LengthAwarePaginator;
+    public function getTimeSheetList(): Collection;
 
     public function createTimeSheet(array $data): Shift|Builder|null;
 
@@ -19,7 +20,7 @@ interface TimeSheetRepositoryInterface
 
     public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): Appointment|Builder|null;
 
-    public function getConsultantSchedule(): LengthAwarePaginator;
+    public function getConsultantSchedule(): Collection;
 
     public function cancelAppointmentByConsultant($id):  Appointment|Builder|null;
 
