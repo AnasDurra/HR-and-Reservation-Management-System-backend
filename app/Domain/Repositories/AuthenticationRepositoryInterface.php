@@ -6,10 +6,10 @@ use Illuminate\Support\Collection;
 
 interface AuthenticationRepositoryInterface
 {
-    public function employeeLogin(array $credentials): array;
+    public function userLogin(array $credentials): array;
 
-    public function employeeLogout(): void;
+    public function userLogout(): void;
 
-    public function getEmployeeActivePermissionsByToken(): Collection;
+    public function getUserActivePermissionsByToken(): Collection;
 
 }

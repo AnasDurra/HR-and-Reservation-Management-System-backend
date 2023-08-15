@@ -27,7 +27,7 @@ class Consultant extends Model
 
     public function clinic(): BelongsTo
     {
-        return $this->belongsTo(Clinic::class, 'clinic_id', 'clinic_id');
+        return $this->belongsTo(Clinic::class);
     }
 
 

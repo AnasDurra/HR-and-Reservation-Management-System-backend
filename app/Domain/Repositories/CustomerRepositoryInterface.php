@@ -25,4 +25,6 @@ interface CustomerRepositoryInterface
     public function userLogin(array $data): array;
 
     public function userLogout(): void;
+
+    public function customerDetection(int $national_number): array;
 }

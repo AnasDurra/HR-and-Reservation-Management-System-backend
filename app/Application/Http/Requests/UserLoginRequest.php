@@ -1,6 +1,8 @@
 <?php
 
+
 namespace App\Application\Http\Requests;
+
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -19,12 +21,14 @@ class UserLoginRequest extends FormRequest
                 'required_without:username',
                 'email',
                 'nullable',
-                Rule::exists('customers', 'email')
+                Rule::exists('users', 'email')
+                    ->whereIn('user_type_id', [1,2])
             ],
             'username' => [
                 'required_without:email',
                 'nullable',
-                Rule::exists('customers', 'username')
+                Rule::exists('users', 'username')
+                    ->whereIn('user_type_id', [1,2])
             ],
             'password' => [
                 'required',

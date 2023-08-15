@@ -33,6 +33,19 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
                 ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
 
         }
+
+        if (request()->has('usingApp')) {
+            $result = request()->query('usingApp');
+
+            $result = trim($result);
+
+            $result = strtolower($result);
+
+            if($result == "true") {
+                $customers->where('isUsingApp', '=', true);
+            }
+
+        }
         if (request()->has('username')) {
             $customers->where('username', 'like', '%' . request()->input('username') . '%');
         }
@@ -218,7 +231,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'national_number' => $data['national_number'] ?? null,
             'profile_picture' => $data['profile_picture'] ?? null,
 
-            'verified' => false,
+            'verified' => isset($data['national_number']),
             'blocked' => false,
         ]);
         return [
@@ -288,5 +301,24 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     function generatePassword(): string
     {
         return \Str::random(12);
+    }
+
+
+    public function customerDetection(int $national_number): array
+    {
+        $result = Customer::query()->where('national_number','=',$national_number)->first();
+
+        if($result == null){
+            $status = ['status' => 1];
+        }
+
+        else if(!$result['isUsingApp']){
+            $status = ['status' => 2 , 'customer_id'=>$result['id']];
+        }
+
+        else
+            $status = ['status' => 3 , 'customer_id'=>$result['id']];
+
+        return $status;
     }
 }
