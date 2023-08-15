@@ -30,7 +30,6 @@ class EditCustomerBeforeVerification extends FormRequest
             'job' => [
                 'sometimes',
                 'string',
-                'min:5',
                 'max:100',
             ],
             'birth_date' => [
@@ -64,9 +63,8 @@ class EditCustomerBeforeVerification extends FormRequest
             ],
             'national_number' => [
                 'sometimes',
-                'string',
-                'min:11',
-                'max:11',
+                'integer',
+                'digits:11'
             ],
             'profile_picture' => [
                 'sometimes',
@@ -77,7 +75,7 @@ class EditCustomerBeforeVerification extends FormRequest
             'education_level_id' => [
                 'sometimes',
                 'integer',
-                'exists:educational_levels,id',
+                'exists:education_levels,education_level_id',
             ],
             'email' => [
                 'sometimes',

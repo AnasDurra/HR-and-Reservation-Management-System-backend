@@ -3,6 +3,7 @@
 namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AddCustomerRequest extends FormRequest
 {
@@ -30,7 +31,6 @@ class AddCustomerRequest extends FormRequest
             'job' => [
                 'required',
                 'string',
-                'min:5',
                 'max:100',
             ],
             'birth_date' => [
@@ -48,6 +48,7 @@ class AddCustomerRequest extends FormRequest
                 'string',
                 'min:10',
                 'max:15',
+                Rule::unique('customers', 'phone_number') //TODO ->whereNull('deleted_at')],
             ],
             'martial_status' => [
                 'required',
@@ -62,32 +63,37 @@ class AddCustomerRequest extends FormRequest
                 'max:20',
             ],
             'national_number' => [
-                'required',
-                'string',
-                'min:11',
-                'max:11',
+                'integer',
+                'digits:11'
+            ],
+            'profile_picture' => [
+                'image',
+                'mimes:jpeg,png,jpg,gif,svg',
+                'max:2048',
             ],
             'education_level_id' => [
                 'required',
                 'integer',
-                'exists:educational_levels,id',
+                'exists:education_levels,education_level_id',
             ],
             'email' => [
+                'required', //TODO check it
                 'email',
                 'unique:customers,email',
+                Rule::unique('customers', 'email'), //TODO ->whereNull('deleted_at')],
             ],
-            'username' => [
-                'required',
-                'string',
-                'min:5',
-                'max:50',
-                'unique:customers,username',
-            ],
-            'password' => [
-                'required',
-                'confirmed',
-                'min:8',
-            ],
+//            'username' => [
+//                'required',
+//                'string',
+//                'min:5',
+//                'max:50',
+//                'unique:customers,username',
+//            ],
+//            'password' => [
+//                'required',
+//                'confirmed',
+//                'min:8',
+//            ],
         ];
     }
 
@@ -128,13 +134,13 @@ class AddCustomerRequest extends FormRequest
             'education_level_id.required' => 'حقل المستوى التعليمي مطلوب.',
             'education_level_id.exists' => 'المستوى التعليمي المحدد غير صالح.',
             'email.email' => 'البريد الإلكتروني غير صحيح.',
-            'username.required' => 'حقل اسم المستخدم مطلوب.',
-            'username.string' => 'يجب أن يكون اسم المستخدم نصًا.',
-            'username.min' => 'يجب أن يحتوي اسم المستخدم على الأقل على خمس أحرف.',
-            'username.max' => 'يجب ألا يتجاوز اسم المستخدم خمسين حرفًا.',
-            'username.unique' => 'اسم المستخدم موجود مسبقاُ.',
-            'password.required' => 'حقل كلمة المرور مطلوب.',
-            'password.min' => 'يجب أن تكون كلمة المرور على الأقل ثمان أحرف.',
+//            'username.required' => 'حقل اسم المستخدم مطلوب.',
+//            'username.string' => 'يجب أن يكون اسم المستخدم نصًا.',
+//            'username.min' => 'يجب أن يحتوي اسم المستخدم على الأقل على خمس أحرف.',
+//            'username.max' => 'يجب ألا يتجاوز اسم المستخدم خمسين حرفًا.',
+//            'username.unique' => 'اسم المستخدم موجود مسبقاُ.',
+//            'password.required' => 'حقل كلمة المرور مطلوب.',
+//            'password.min' => 'يجب أن تكون كلمة المرور على الأقل ثمان أحرف.',
         ];
     }
 

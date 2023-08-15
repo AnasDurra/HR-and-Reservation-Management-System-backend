@@ -3,6 +3,7 @@
 namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EditCustomerAfterVerification extends FormRequest
 {
@@ -15,21 +16,30 @@ class EditCustomerAfterVerification extends FormRequest
     {
         return [
             'first_name' => [
-                'prohibited'
+                'sometimes',
+                'string',
+                'min:2',
+                'max:50',
             ],
             'last_name' => [
-                'prohibited'
+                'sometimes',
+                'string',
+                'min:2',
+                'max:50',
             ],
             'birth_date' => [
-                'prohibited'
+                'sometimes',
+                'date',
+                'before:today',
             ],
             'national_number' => [
-                'prohibited'
+                'sometimes',
+                'integer',
+                'digits:11'
             ],
             'job' => [
                 'sometimes',
                 'string',
-                'min:5',
                 'max:100',
             ],
             'phone' => [
@@ -43,6 +53,7 @@ class EditCustomerAfterVerification extends FormRequest
                 'string',
                 'min:10',
                 'max:15',
+                Rule::unique('customers', 'phone_number') //TODO ->whereNull('deleted_at')],
             ],
             'martial_status' => [
                 'sometimes',
@@ -65,12 +76,13 @@ class EditCustomerAfterVerification extends FormRequest
             'education_level_id' => [
                 'sometimes',
                 'integer',
-                'exists:educational_levels,id',
+                'exists:education_levels,education_level_id',
             ],
             'email' => [
                 'sometimes',
                 'email',
                 'unique:customers,email',
+                Rule::unique('customers', 'email'), //TODO ->whereNull('deleted_at')],
             ],
             'username' => [
                 'sometimes',

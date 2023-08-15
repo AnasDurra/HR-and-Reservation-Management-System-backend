@@ -14,9 +14,17 @@ interface CustomerRepositoryInterface
 
     public function updateCustomer(int $id, array $data): Customer|Builder|null;
 
+    public function delete(int $id): Customer|Builder|null;
+
+    public function customersMissedAppointments(): LengthAwarePaginator;
+
+    public function customerToggleStatus(int $id): Customer|Builder|null;
+
     public function userSingUp(array $data): array;
 
     public function userLogin(array $data): array;
 
     public function userLogout(): void;
+
+    public function customerDetection(int $national_number): array;
 }

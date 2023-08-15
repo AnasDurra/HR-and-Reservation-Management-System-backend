@@ -17,10 +17,14 @@ use App\Domain\Repositories\AbsenceRepositoryInterface;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 
 use App\Domain\Repositories\AuthenticationRepositoryInterface;
+use App\Domain\Repositories\ClinicRepositoryInterface;
+use App\Domain\Repositories\ConsultantRepositoryInterface;
 use App\Domain\Repositories\CustomerRepositoryInterface;
 use App\Domain\Repositories\DepartmentRepositoryInterface;
+use App\Domain\Repositories\EducationLevelRepositoryInterface;
 use App\Domain\Repositories\EmployeeRepositoryInterface;
 use App\Domain\Repositories\EmployeeVacationRepositoryInterface;
+use App\Domain\Repositories\EventRepositoryInterface;
 use App\Domain\Repositories\FingerDeviceRepositoryInterface;
 use App\Domain\Repositories\HolidayRepositoryInterface;
 use App\Domain\Repositories\JobTitleRepositoryInterface;
@@ -38,10 +42,14 @@ use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Domain\Repositories\ShiftRequestRepositoryInterface;
 use App\Domain\Repositories\VacationRequestRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentAuthenticationRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentClinicRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentConsultantRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentDepartmentRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentEducationLevelRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeVacationRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentEventRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentFingerDeviceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentHolidayRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentJobApplicationRepository;
@@ -99,6 +107,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AuthenticationRepositoryInterface::class, EloquentAuthenticationRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
         $this->app->bind(TimeSheetRepositoryInterface::class, EloquentTimeSheetRepository::class);
+        $this->app->bind(ConsultantRepositoryInterface::class, EloquentConsultantRepository::class);
+        $this->app->bind(ClinicRepositoryInterface::class, EloquentClinicRepository::class);
+        $this->app->bind(EducationLevelRepositoryInterface::class, EloquentEducationLevelRepository::class);
+        $this->app->bind(EventRepositoryInterface::class, EloquentEventRepository::class);
     }
 
 

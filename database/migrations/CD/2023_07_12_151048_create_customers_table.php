@@ -24,12 +24,13 @@ return new class extends Migration {
             $table->string('phone_number');
             $table->integer('martial_status');
             $table->integer('num_of_children');
-            $table->string('national_number');
+            $table->string('national_number')->nullable();
             $table->text('profile_picture')->nullable();
             $table->boolean('verified')->default(false);
             $table->boolean('blocked')->default(false);
+            $table->boolean('isUsingApp')->default(false);
 
-            $table->foreign('education_level_id')->references('id')->on('educational_levels')->onDelete('cascade');
+            $table->foreign('education_level_id')->references('education_level_id')->on('education_levels')->onDelete('cascade');
 
 
             $table->timestamps();
