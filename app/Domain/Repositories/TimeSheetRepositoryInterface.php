@@ -21,9 +21,15 @@ interface TimeSheetRepositoryInterface
 
     public function getConsultantSchedule(): LengthAwarePaginator;
 
-    public function cancelAppointmentByConsultant($id):  Appointment|Builder|null;
+    public function cancelAppointmentByConsultant($id): Appointment|Builder|null;
 
     public function getCanceledAppointment(): LengthAwarePaginator;
 
+    public function cancelReservationByCustomer(Appointment $appointment): Appointment|Builder|null;
 
+    public function cancelReservationByEmployee(Appointment $appointment): Appointment|Builder|null;
+
+    public function cancelReservationByConsultant(Appointment $appointment): Appointment|Builder|null;
+
+    public function cancelReservation(Appointment $appointment): Appointment|Builder|null;
 }

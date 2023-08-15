@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             JobVacancySeeder::class,
             PermissionSeeder::class,
+            ClinicSeeder::class,
+            AppointmentStatusSeeder::class,
         ]);
     }
 }
