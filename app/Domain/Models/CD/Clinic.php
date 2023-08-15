@@ -14,7 +14,7 @@ class Clinic extends Model
         'name'
     ];
 
-    public function consultant(): HasMany
+    public function consultants(): HasMany
     {
         return $this->hasMany(Consultant::class);
     }

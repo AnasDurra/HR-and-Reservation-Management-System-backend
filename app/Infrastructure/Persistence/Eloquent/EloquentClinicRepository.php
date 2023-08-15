@@ -11,6 +11,6 @@ class EloquentClinicRepository implements ClinicRepositoryInterface
 {
     public function getClinicList(): Collection
     {
-        return Clinic::query()->get();
+        return Clinic::query()->withCount('consultants')->get();
     }
 }

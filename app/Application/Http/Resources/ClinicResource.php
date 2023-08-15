@@ -11,6 +11,7 @@ class ClinicResource extends JsonResource
         return [
             'id' => $this["id"],
             'name' => $this["name"],
+            'consultants_count' => $this["consultants_count"],
         ];
     }
 }
