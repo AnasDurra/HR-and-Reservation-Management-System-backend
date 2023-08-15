@@ -27,4 +27,6 @@ interface CustomerRepositoryInterface
     public function userLogout(): void;
 
     public function customerDetection(int $national_number): array;
+
+    public function customerVerification(array $data): Customer|Builder|null;
 }

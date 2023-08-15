@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 
 class EloquentCustomerRepository implements CustomerRepositoryInterface
@@ -303,7 +304,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return \Str::random(12);
     }
 
-
     public function customerDetection(int $national_number): array
     {
         $result = Customer::query()->where('national_number','=',$national_number)->first();
@@ -320,5 +320,56 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             $status = ['status' => 3 , 'customer_id'=>$result['id']];
 
         return $status;
+    }
+
+    public function customerVerification(array $data): Customer|Builder|null
+    {
+        $accounts = Customer::query()->where('national_number','=',$data['national_number'])->get();
+
+        // Status 1
+        if (sizeof($accounts) == 0) {
+            $app_account = Customer::query()->where('id','=',$data['app_account_id'])->first();
+            if($app_account != null) {
+                $app_account['national_number'] = $data['national_number'];
+                $app_account['verified'] = true;
+                $app_account->save();
+
+                return $app_account;
+            }
+            else{
+                throw new BadRequestException('حدث خطأ', 400);
+            }
+        }
+        else{
+            // Status 2
+            $account = $accounts
+                ->where('verified','=',true)
+                ->where('isUsingApp','=',false)->first();
+            if($account != null){
+                $app_account = Customer::query()->where('id','=',$data['app_account_id'])->first();
+                if($app_account != null){
+                    $app_account->delete();
+                    $account['isUsingApp'] = true;
+                    $account['username'] = $app_account['username'];
+                    $account['password'] = $app_account['password'];
+
+                    $eloquentAppointmentRepository = new EloquentAppointmentRepository();
+                    $appointments = $eloquentAppointmentRepository->getAppointmentList()
+                        ->where('customer_id','=',$app_account['id']);
+
+                    foreach ($appointments as $appointment){
+                        $appointment['customer_id'] = $account['id'];
+                        $appointment->save();
+                    }
+
+                    $account->save();
+                    return $account;
+                }
+                else{
+                    throw new BadRequestException('حدث خطأ', 400);
+                }
+            }
+        }
+        return $account;
     }
 }
