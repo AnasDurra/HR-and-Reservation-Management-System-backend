@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Repositories\ConsultantRepositoryInterface;
 use App\Domain\Models\CD\Consultant;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
 {
     public function getConsultantList(): Collection
     {
-        $consultants =  Consultant::query()->with('user');
+        $consultants = Consultant::query()->with('user');
 
         // search by name (full name)
         if (request()->has('name')) {
@@ -26,16 +27,23 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
 
             // search after ignoring the case
             $consultants->whereRaw('LOWER(first_name) LIKE ?', ["%$name%"])
-                        ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
-                        ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
+                ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$name%"])
+                ->orWhereRaw('CONCAT(LOWER(first_name), " ", LOWER(last_name)) LIKE ?', ["%$name%"]);
         }
+
+        // filter by clinic id
+        if (request()->has('clinic_id')) {
+            $clinic_id = request()->get('clinic_id');
+            $consultants->where('clinic_id', $clinic_id);
+        }
+
         return $consultants->get();
     }
 
     public function getConsultantById(int $id): Consultant|Builder|null
     {
-        $consultant =  Consultant::query()->find($id);
-        if(!$consultant)
+        $consultant = Consultant::query()->find($id);
+        if (!$consultant)
             return null;
 
         return $consultant;
@@ -53,20 +61,20 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
         ]);
 
         return Consultant::query()->create([
-           'user_id' => $user['user_id'],
-           'clinic_id' => $data['clinic_id'],
-           'first_name' => $data['first_name'],
-           'last_name' => $data['last_name'],
-           'birth_date' => $data['birth_date'],
-           'phone_number' => $data['phone_number'],
-           'address' => $data['address'],
+            'user_id' => $user['user_id'],
+            'clinic_id' => $data['clinic_id'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'birth_date' => $data['birth_date'],
+            'phone_number' => $data['phone_number'],
+            'address' => $data['address'],
         ])->load('user');
     }
 
     public function updateConsultant(int $id, array $data): Consultant|Builder|null
     {
         $consultant = Consultant::query()->with('user')->find($id);
-        if(!$consultant) return null;
+        if (!$consultant) return null;
 
         $consultant['clinic_id'] = $data['clinic_id'] ?? $consultant['clinic_id'];
         $consultant['first_name'] = $data['first_name'] ?? $consultant['first_name'];
@@ -87,8 +95,8 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
      */
     public function deleteConsultant($id): Consultant|Builder|null
     {
-        $consultant =  Consultant::query()->find($id);
-        if(!$consultant)
+        $consultant = Consultant::query()->find($id);
+        if (!$consultant)
             return null;
 
         $user = $consultant->user;
@@ -102,7 +110,7 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
 
                 DB::commit();
 
-            } catch (\Exception $e) {
+            } catch (Exception) {
 
                 DB::rollback();
                 $consultant["message"] = "Error occurred while deleting consultant";

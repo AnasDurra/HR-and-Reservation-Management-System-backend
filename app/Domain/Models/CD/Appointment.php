@@ -40,7 +40,7 @@ class Appointment extends Model
      */
     public function getIsReservedAttribute(): bool
     {
-        return $this->status_id == 5 && $this->customer_id != null;
+        return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null;
     }
 
     /**

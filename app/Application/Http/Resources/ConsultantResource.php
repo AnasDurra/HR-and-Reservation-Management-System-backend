@@ -4,7 +4,6 @@ namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Domain\Models\CD\Consultant;
 
 class ConsultantResource extends JsonResource
 {
@@ -19,10 +18,10 @@ class ConsultantResource extends JsonResource
             'phone_number' => $this["phone_number"],
             'address' => $this["address"],
             'user' => [
-            'user_id'=> $this["user"]["user_id"],
-            'user_email'=> $this["user"]["email"],
-            'user_username'=> $this["user"]["username"], // TODO Delete it
-                ]
+                'user_id' => $this["user"]["user_id"],
+                'user_email' => $this["user"]["email"],
+                'user_username' => $this["user"]["username"], // TODO Delete it
+            ]
         ];
     }
 }

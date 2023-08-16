@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Models\CD\Appointment;
+use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Models\CD\Shift;
 use App\Domain\Models\CD\WorkDay;
@@ -110,7 +111,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
             DB::commit();
             return $shift;
-        } catch (Exception $exception) {
+        } catch (Exception) {
             DB::rollBack();
             throw new EntryNotFoundException("Entry with ID $id not found.");
         }
@@ -259,7 +260,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
     public function cancelReservationByCustomer($appointment): Appointment|Builder|null
     {
         $appointment->update([
-            'status_id' => 1,
+            'status_id' => AppointmentStatus::STATUS_AVAILABLE,
         ]);
 
         // Notify the consultant
@@ -270,7 +271,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
     {
         // set the status to canceled by employee
         $appointment->update([
-            'status_id' => 2,
+            'status_id' => AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE,
         ]);
 
         // TODO: Notify the customer & consultant
@@ -282,7 +283,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
     {
         // set the status to canceled by consultant
         $appointment->update([
-            'status_id' => 3,
+            'status_id' => AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT
         ]);
 
         // TODO: Notify the customer & consultant
@@ -294,7 +295,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
     {
         // set the status to canceled by consultant
         $appointment->update([
-            'status_id' => 6,
+            'status_id' => AppointmentStatus::STATUS_AVAILABLE,
             'customer_id' => null,
         ]);
 

@@ -168,7 +168,6 @@ Route::apiResource('education_levels', EducationLevelController::class);
 // Register the routes for the ConsultantController
 Route::apiResource('consultant', ConsultantController::class);
 
-
 // Register the routes for the ClinicController
 Route::apiResource('clinic', ClinicController::class);
 
