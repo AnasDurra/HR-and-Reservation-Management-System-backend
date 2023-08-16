@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Route;
 
 // login route
 Route::post('login', [AuthenticationController::class, 'userLogin']);
-Route::apiResource('job-titles', JobTitleController::class);
+
 Route::middleware('auth:sanctum')->group(function () {
     // login route
     Route::post('/logout', [AuthenticationController::class, 'userLogout']);
@@ -100,7 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('vacation-request', VacationRequestController::class)->except(['update']);
 
     // Register the routes for the JobTitleController
-
+    Route::apiResource('job-titles', JobTitleController::class);
 
     // Register the routes for the PermissionController
     Route::get('permissions', [PermissionController::class, 'index']);
