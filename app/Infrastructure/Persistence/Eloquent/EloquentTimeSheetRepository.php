@@ -11,7 +11,9 @@ use App\Exceptions\EntryNotFoundException;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -19,7 +21,8 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 {
     public function getTimeSheetList(): LengthAwarePaginator
     {
-        $time_sheet = Shift::query()->with('intervals');
+        $time_sheet = Shift::query()/*->with('intervals')*/
+        ;
 
         // check if the request has search by employee name
         if (request()->has('name')) {
@@ -115,7 +118,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
      * @throws EntryNotFoundException
      * @throws Throwable
      */
-    public function addWorkDay(array $data): void
+    public function addWorkDay(array $data): Model|Builder
     {
         try {
 
@@ -147,7 +150,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                     $start_time = $interval->start_time;
                     $end_time = $interval->end_time;
 
-                    Appointment::query()->create([
+                    $appointment = Appointment::query()->create([
                         'work_day_id' => $work_day->id,
                         'start_time' => $start_time,
                         'end_time' => $end_time,
@@ -156,9 +159,9 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                         'cancellation_reason' => null,
                     ]);
                 }
-
             }
             DB::commit();
+            return $appointment;
         } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
@@ -209,9 +212,11 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
 
         //TODO : delete this line
-        $shift = Shift::query()->where('consultant_id', '=', 1);
+        $shift_id = Shift::query()->where('consultant_id', '=', 1)->pluck('id');
 
-        return $shift->paginate(10);
+        $work_day_id = WorkDay::query()->whereIn('shift_id', $shift_id)->pluck('id');
+        return Appointment::query()->whereIn('work_day_id', $work_day_id)->paginate(10);
+
     }
 
 

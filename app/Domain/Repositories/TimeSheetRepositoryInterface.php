@@ -5,7 +5,9 @@ namespace App\Domain\Repositories;
 use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\Shift;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface TimeSheetRepositoryInterface
 {
@@ -15,7 +17,7 @@ interface TimeSheetRepositoryInterface
 
     public function deleteTimeSheet($id): Shift|Builder|null;
 
-    public function addWorkDay(array $data): void;
+    public function addWorkDay(array $data): Model|Builder;
 
     public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): Appointment|Builder|null;
 

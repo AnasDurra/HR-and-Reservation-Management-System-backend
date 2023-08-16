@@ -5,8 +5,6 @@ namespace App\Domain\Services;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 class AppointmentService
 {
@@ -17,7 +15,7 @@ class AppointmentService
         $this->AppointmentRepository = $AppointmentRepository;
     }
 
-    public function getAppointmentList(): LengthAwarePaginator
+    public function getAppointmentList(): array
     {
         return $this->AppointmentRepository->getAppointmentList();
     }
@@ -41,4 +39,10 @@ class AppointmentService
     {
         return $this->AppointmentRepository->deleteAppointment($id);
     }
+
+    public function attendanceModification($app_id, $status_id): Appointment|Builder|null
+    {
+        return $this->AppointmentRepository->attendanceModification($app_id, $status_id);
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Application\Http\Controllers;
 use App\Application\Http\Requests\AddWorkDayRequest;
 use App\Application\Http\Requests\StoreTimeSheetRequest;
 use App\Application\Http\Resources\AppointmentResource;
+use App\Application\Http\Resources\ShiftResource;
 use App\Application\Http\Resources\TimeSheetResource;
 use App\Domain\Models\CD\Appointment;
 use App\Domain\Services\TimeSheetService;
@@ -23,56 +24,48 @@ class TimeSheetController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $timeSheets = $this->TimeSheetService->getTimeSheetList();
-        return TimeSheetResource::collection($timeSheets);
+        return ShiftResource::collection($timeSheets);
     }
 
 
-    public function store(StoreTimeSheetRequest $request): JsonResponse
+    public function store(StoreTimeSheetRequest $request): ShiftResource
+    {
+        $validated = $request->validated();
+
+        $shift = $this->TimeSheetService->createTimeSheet($validated);
+
+        return new ShiftResource($shift);
+    }
+
+
+    public function destroy(int $id): ShiftResource
+    {
+        $shift = $this->TimeSheetService->deleteTimeSheet($id);
+
+        return new ShiftResource($shift);
+
+    }
+
+    public function addWorkDay(AddWorkDayRequest $request): AnonymousResourceCollection
     {
         // validate request data
         $validated = $request->validated();
+        $appointment = $this->TimeSheetService->addWorkDay($validated);
 
-        // create job application
-        $this->TimeSheetService->createTimeSheet($validated);
-
-        return response()->json([
-            'message' => 'Time Sheet Created Successfully'
-        ]);
+        return AppointmentResource::collection($appointment);
     }
 
-
-    public function destroy(int $id): JsonResponse
+    public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): AppointmentResource
     {
-        $this->TimeSheetService->deleteTimeSheet($id);
-        return response()->json([
-            'message' => 'Time Sheet Deleted Successfully'
-        ]);
-    }
+        $appointment = $this->TimeSheetService->bookAnAppointmentByEmployee($appointment_id, $customer_id);
 
-    public function addWorkDay(AddWorkDayRequest $request): JsonResponse
-    {
-        // validate request data
-        $validated = $request->validated();
-        $this->TimeSheetService->addWorkDay($validated);
-
-        return response()->json([
-            'message' => 'Work Day Added Successfully'
-        ]);
-    }
-
-    public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): JsonResponse
-    {
-        $this->TimeSheetService->bookAnAppointmentByEmployee($appointment_id, $customer_id);
-
-        return response()->json([
-            'message' => 'Appointment booked Successfully for Customer with id : ' . $customer_id
-        ]);
+        return new AppointmentResource($appointment);
     }
 
     public function getConsultantSchedule(): AnonymousResourceCollection
     {
         $schedule = $this->TimeSheetService->getConsultantSchedule();
-        return TimeSheetResource::collection($schedule);
+        return AppointmentResource::collection($schedule);
 
     }
 

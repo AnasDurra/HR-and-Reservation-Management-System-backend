@@ -1,5 +1,6 @@
 <?php
 
+use App\Application\Http\Controllers\AppointmentController;
 use App\Application\Http\Controllers\AuthenticationController;
 use App\Application\Http\Controllers\CustomerController;
 use App\Application\Http\Controllers\JobApplicationController;
@@ -176,15 +177,15 @@ Route::apiResource('events', EventController::class)->except(['update']);
 Route::post('events/{event}', [EventController::class, 'update']);
 
 
-
-
-
 Route::apiResource('time-sheet', TimeSheetController::class);
 Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
 Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
 Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
 Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
 Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);
+
+//Appointment
+Route::put('attendance-modification/{app_id}/{status_id}', [AppointmentController::class, 'attendanceModification']);
 
 // cancel reservation(deny future reservation)
 // 1. by customer

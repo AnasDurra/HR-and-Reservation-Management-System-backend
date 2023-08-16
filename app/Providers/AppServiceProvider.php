@@ -14,6 +14,7 @@ use App\Domain\Models\Staffing;
 use App\Domain\Models\StaffPermission;
 use App\Domain\Models\VacationRequest;
 use App\Domain\Repositories\AbsenceRepositoryInterface;
+use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 
 use App\Domain\Repositories\AuthenticationRepositoryInterface;
@@ -38,6 +39,7 @@ use App\Domain\Repositories\TimeSheetRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Repositories\WorkingDayRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentAbsenceRepository;
+use App\Infrastructure\Persistence\Eloquent\EloquentAppointmentRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Domain\Repositories\ShiftRequestRepositoryInterface;
 use App\Domain\Repositories\VacationRequestRepositoryInterface;
@@ -111,6 +113,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EducationLevelRepositoryInterface::class, EloquentEducationLevelRepository::class);
         $this->app->bind(EventRepositoryInterface::class, EloquentEventRepository::class);
         $this->app->bind(TimeSheetRepositoryInterface::class, EloquentTimeSheetRepository::class);
+        $this->app->bind(AppointmentRepositoryInterface::class, EloquentAppointmentRepository::class);
     }
 
 

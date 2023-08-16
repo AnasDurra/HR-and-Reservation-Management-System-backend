@@ -6,6 +6,7 @@ use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\Shift;
 use App\Domain\Repositories\TimeSheetRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class TimeSheetService
@@ -32,7 +33,7 @@ class TimeSheetService
         return $this->TimeSheetRepository->deleteTimeSheet($id);
     }
 
-    public function addWorkDay(array $data): void
+    public function addWorkDay(array $data): Model|Builder
     {
         $this->TimeSheetRepository->addWorkDay($data);
     }

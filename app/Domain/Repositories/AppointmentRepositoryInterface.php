@@ -4,12 +4,10 @@ namespace App\Domain\Repositories;
 
 use App\Domain\Models\CD\Appointment;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 interface AppointmentRepositoryInterface
 {
-    public function getAppointmentList(): LengthAwarePaginator;
+    public function getAppointmentList(): array;
 
     public function getAppointmentById(int $id): Appointment|Builder|null;
 
@@ -18,4 +16,6 @@ interface AppointmentRepositoryInterface
     public function updateAppointment(int $id, array $data): Appointment|Builder|null;
 
     public function deleteAppointment($id): Appointment|Builder|null;
+
+    public function attendanceModification($app_id, $status_id): Appointment|Builder|null;
 }
