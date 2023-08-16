@@ -60,28 +60,24 @@ class TimeSheetController extends Controller
         ]);
     }
 
-    public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): JsonResponse
+    public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): AppointmentResource
     {
-        $this->TimeSheetService->bookAnAppointmentByEmployee($appointment_id, $customer_id);
+        $appointment = $this->TimeSheetService->bookAnAppointmentByEmployee($appointment_id, $customer_id);
 
-        return response()->json([
-            'message' => 'Appointment booked Successfully for Customer with id : ' . $customer_id
-        ]);
+        return new AppointmentResource($appointment);
     }
 
     public function getConsultantSchedule(): AnonymousResourceCollection
     {
         $schedule = $this->TimeSheetService->getConsultantSchedule();
-        return TimeSheetResource::collection($schedule);
+        return AppointmentResource::collection($schedule);
 
     }
 
-    public function cancelAppointmentByConsultant($id): JsonResponse
+    public function cancelAppointmentByConsultant($id): AppointmentResource
     {
-        $this->TimeSheetService->cancelAppointmentByConsultant($id);
-        return response()->json([
-            'message' => 'AppointmentResource Canceled Successfully'
-        ]);
+        $appointment = $this->TimeSheetService->cancelAppointmentByConsultant($id);
+        return new AppointmentResource($appointment);
     }
 
     public function getCanceledAppointment(): AnonymousResourceCollection
