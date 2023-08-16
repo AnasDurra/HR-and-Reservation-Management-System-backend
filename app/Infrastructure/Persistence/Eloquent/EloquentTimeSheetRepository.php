@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\AppointmentStatus;
+use App\Domain\Models\CD\Consultant;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Models\CD\Shift;
 use App\Domain\Models\CD\WorkDay;
@@ -19,7 +20,7 @@ use Throwable;
 
 class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 {
-    public function getTimeSheetList(): LengthAwarePaginator
+    public function getTimeSheetList(): Collection
     {
         $time_sheet = Shift::query()/*->with('intervals')*/
         ;
@@ -37,7 +38,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
             $time_sheet->whereRaw('LOWER(name) LIKE ?', ["%$name%"]);
         }
 
-        return $time_sheet->paginate(10);
+        return $time_sheet->get();
 
     }
 
@@ -300,5 +301,25 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         ]);
 
         return $appointment;
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getConsultantTimeSlots($consultant_id, $date): Collection
+    {
+
+        try {
+
+            $consultant = Consultant::query()->findOrFail($consultant_id);
+        } catch (Exception) {
+            throw new EntryNotFoundException("المستشار غير موجود.");
+        }
+
+        $shift = Shift::query()->where('consultant_id', '=', $consultant->id)->pluck('id');
+
+        $work_days = WorkDay::query()->whereIn('shift_id', $shift)->whereDate('day_date', '=', $date)->pluck('id');
+
+        return Appointment::query()->whereIn('work_day_id', $work_days)->get();
     }
 }

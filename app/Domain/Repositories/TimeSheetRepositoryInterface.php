@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 interface TimeSheetRepositoryInterface
 {
-    public function getTimeSheetList(): LengthAwarePaginator;
+    public function getTimeSheetList(): Collection;
 
     public function createTimeSheet(array $data): Shift|Builder|null;
 
@@ -34,4 +34,6 @@ interface TimeSheetRepositoryInterface
     public function cancelReservationByConsultant(Appointment $appointment): Appointment|Builder|null;
 
     public function cancelReservation(Appointment $appointment): Appointment|Builder|null;
+
+    public function getConsultantTimeSlots($consultant_id, $date): Collection;
 }
