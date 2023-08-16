@@ -11,8 +11,21 @@ class EloquentJobTitleRepository implements JobTitleRepositoryInterface
 {
     public function getJobTitleList(): Collection
     {
+        $jobTitles = JobTitle::query()->with('permissions');
+
+        if (request()->has('name')) {
+            $name = request()->query('name');
+
+            $name = trim($name);
+
+            $name = strtolower($name);
+
+            $jobTitles->whereRaw('LOWER(name) LIKE ?', ["%$name%"]);
+        }
+
+        $jobTitles = $jobTitles->get();
+
         $employeeRepository = new EloquentEmployeeRepository();
-        $jobTitles = JobTitle::query()->with('permissions')->get();
         foreach ($jobTitles as &$jobTitle)
             $jobTitle['employees_count']=count($employeeRepository->getEmployeeListByTitleId($jobTitle['job_title_id']));
 

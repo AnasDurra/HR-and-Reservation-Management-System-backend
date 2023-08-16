@@ -11,7 +11,19 @@ class EloquentJobVacancyRepository implements JobVacancyRepositoryInterface
 {
     public function getJobVacancyList(): LengthAwarePaginator
     {
-        return JobVacancy::with('department', 'vacancyStatus')->paginate(10);
+        $jobVacancies = JobVacancy::query()->with('department', 'vacancyStatus');
+
+        if (request()->has('name')) {
+            $name = request()->query('name');
+
+            $name = trim($name);
+
+            $name = strtolower($name);
+
+            $jobVacancies->whereRaw('LOWER(name) LIKE ?', ["%$name%"]);
+        }
+
+        return $jobVacancies->paginate(10);
     }
 
     public function getJobVacancyById(int $id): JobVacancy|Builder|null
