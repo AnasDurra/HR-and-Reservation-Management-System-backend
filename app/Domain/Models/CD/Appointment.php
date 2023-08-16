@@ -52,4 +52,18 @@ class Appointment extends Model
         return $this->workDay->day_date > now();
     }
 
+    /**
+     * mutator to return whether the appointment is in the future or not
+     * by checking date of appointment's work day is greater than today
+     */
+    public function getConsultantId(): int
+    {
+        $consultant = $this->workDay->shift->consultant;
+
+        $consultantID = $consultant->id;
+        $this->unsetRelation('workDay');
+
+        return $consultantID;
+    }
+
 }

@@ -40,4 +40,9 @@ class ConsultantService
     {
         return $this->ConsultantRepository->deleteConsultant($id);
     }
+
+    public function getStatistics($id): array|null
+    {
+        return $this->ConsultantRepository->getStatistics($id);
+    }
 }

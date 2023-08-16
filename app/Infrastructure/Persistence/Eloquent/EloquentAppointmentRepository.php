@@ -8,14 +8,16 @@ use App\Exceptions\InvalidArgument;
 use Exception;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use InvalidArgumentException;
 
 class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
-    public function getAppointmentList(): array
+    public function getAppointmentList(): LengthAwarePaginator
     {
-        // TODO: Implement the logic to retrieve a list of Appointments
+        return Appointment::query()->paginate(10);
     }
+
 
     public function getAppointmentById(int $id): Appointment|Builder|null
     {
