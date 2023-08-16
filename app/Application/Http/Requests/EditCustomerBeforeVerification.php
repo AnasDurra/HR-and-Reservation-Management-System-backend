@@ -63,9 +63,8 @@ class EditCustomerBeforeVerification extends FormRequest
             ],
             'national_number' => [
                 'sometimes',
-                'integer',
-                'min:11',
-                'max:11',
+                'string',
+                'size:11',
             ],
             'profile_picture' => [
                 'sometimes',

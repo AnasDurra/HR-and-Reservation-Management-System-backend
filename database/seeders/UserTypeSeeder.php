@@ -18,8 +18,11 @@ class UserTypeSeeder extends Seeder
                 'name' => 'موظف',
                 'description' => 'موظف يعمل ضمن المركز',
             ],
-
-            // TODO: Add Consultant
+            // consultant
+            [
+                'name' => 'مستشار',
+                'description' => 'مستشار يعمل ضمن المركز',
+            ],
         ];
 
         foreach ($userTypes as $userType) {

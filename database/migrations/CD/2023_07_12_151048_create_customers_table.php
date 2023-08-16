@@ -28,6 +28,7 @@ return new class extends Migration {
             $table->text('profile_picture')->nullable();
             $table->boolean('verified')->default(false);
             $table->boolean('blocked')->default(false);
+            $table->boolean('isUsingApp')->default(false);
 
             $table->foreign('education_level_id')->references('education_level_id')->on('education_levels')->onDelete('cascade');
 

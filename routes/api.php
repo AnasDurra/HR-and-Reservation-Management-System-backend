@@ -41,12 +41,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 // login route
-Route::post('employees/login', [AuthenticationController::class, 'employeeLogin']);
+Route::post('login', [AuthenticationController::class, 'userLogin']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    // login route
+    Route::post('/logout', [AuthenticationController::class, 'userLogout']);
 
     // get employee by token route
-    Route::get('/employee', [AuthenticationController::class, 'getEmployeeActivePermissionsByToken']);
+    Route::get('/employee', [AuthenticationController::class, 'getUserActivePermissionsByToken']);
 
     // Register the routes for the JobApplicationController
     Route::post("job-applications/update/{id}", [JobApplicationController::class, 'update']);
@@ -57,9 +59,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Register the routes for Employee Management
     Route::prefix('employees')->group(function () {
-
-        // login route
-        Route::post('/logout', [AuthenticationController::class, 'employeeLogout']);
 
         // get all employees
         Route::get('/list', [EmployeeController::class, 'indexList']);
@@ -145,7 +144,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-
+// Register the routes for the CustomerController
 Route::apiResource('customer', CustomerController::class);
 //Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
 //Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
@@ -156,14 +155,17 @@ Route::post('customer/logout', [CustomerController::class, 'userLogout']);
 Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
 Route::post('customer/{id}', [CustomerController::class, 'update']);
 Route::get('missed-Appointments-By-Customers', [CustomerController::class, 'customersMissedAppointments']);
-Route::put('/customer/toggle-status/{customer_id}', [CustomerController::class, 'customerToggleStatus']);
+Route::put('customer/toggle-status/{customer_id}', [CustomerController::class, 'customerToggleStatus']);
+
+// Register the routes for the customerDetection
+Route::post('customer-detection', [CustomerController::class, 'customerDetection']);
 
 
 // Register the router for EducationLevelController
 Route::apiResource('education_levels', EducationLevelController::class);
 
 // Register the routes for the ConsultantController
-Route::apiResource('consultant',ConsultantController::class);
+Route::apiResource('consultant', ConsultantController::class);
 
 
 // Register the routes for the ClinicController
@@ -175,9 +177,24 @@ Route::post('events/{event}', [EventController::class, 'update']);
 
 
 
+
+
 Route::apiResource('time-sheet', TimeSheetController::class);
 Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
 Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
 Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
 Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
 Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);
+
+// cancel reservation(deny future reservation)
+// 1. by customer
+Route::post('cancel-reservation-by-customer/{appointment}', [TimeSheetController::class, 'cancelReservationByCustomer']);
+
+// 2. by employee
+Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservationByEmployee']);
+
+// 3. by consultant
+Route::post('cancel-reservation-by-consultant/{appointment}', [TimeSheetController::class, 'cancelReservationByConsultant']);
+
+// cancel reservation(to be reservable again)
+Route::post('cancel-reservation/{appointment}', [TimeSheetController::class, 'cancelReservation']);

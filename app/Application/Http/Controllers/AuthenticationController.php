@@ -2,7 +2,7 @@
 
 namespace App\Application\Http\Controllers;
 
-use App\Application\Http\Requests\EmployeeLoginRequest;
+use App\Application\Http\Requests\UserLoginRequest;
 use App\Domain\Services\AuthenticationService;
 use Illuminate\Http\JsonResponse;
 
@@ -16,26 +16,26 @@ class AuthenticationController extends Controller
     }
 
     // Employee Login route
-    public function employeeLogin(EmployeeLoginRequest $request): JsonResponse
+    public function userLogin(UserLoginRequest $request): JsonResponse
     {
         $credentials = $request->only(['email', 'username', 'password']);
-        $data = $this->AuthenticationService->employeeLogin($credentials);
+        $data = $this->AuthenticationService->userLogin($credentials);
         return response()->json($data);
     }
 
     // Employee Logout route
-    public function employeeLogout(): JsonResponse
+    public function userLogout(): JsonResponse
     {
-        $this->AuthenticationService->employeeLogout();
+        $this->AuthenticationService->userLogout();
         return response()->json([
             'message' => 'تم تسجيل الخروج بنجاح',
         ]);
     }
 
     // Retrieve Employee by token route
-    public function getEmployeeActivePermissionsByToken(): JsonResponse
+    public function getUserActivePermissionsByToken(): JsonResponse
     {
-        $activePermissions = $this->AuthenticationService->getEmployeeActivePermissionsByToken();
+        $activePermissions = $this->AuthenticationService->getUserActivePermissionsByToken();
         return response()->json([
             'message' => 'تم استرجاع الصلاحيات بنجاح',
             'active_permissions' => $activePermissions,

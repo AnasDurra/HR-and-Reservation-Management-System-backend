@@ -22,6 +22,10 @@ class AppointmentResource extends JsonResource
             'date' => $this->workDay->day_date,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
+            'status' => [
+                'id' => $this->status->id,
+                'name' => $this->status->name,
+            ],
         ];
     }
 }

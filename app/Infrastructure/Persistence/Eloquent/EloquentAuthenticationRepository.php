@@ -17,10 +17,10 @@ class EloquentAuthenticationRepository implements AuthenticationRepositoryInterf
     /**
      * @throws Exception
      */
-    public function employeeLogin(array $credentials): array
+    public function userLogin(array $credentials): array
     {
         $user = User::query()
-            ->where('user_type_id', 1)
+            ->whereIn('user_type_id', [1,2])
             ->where(function (Builder $query) use ($credentials) {
                 $query->where('email', optional($credentials)['email'])
                     ->orWhere('username', optional($credentials)['username']);
@@ -34,16 +34,27 @@ class EloquentAuthenticationRepository implements AuthenticationRepositoryInterf
             throw new EntryNotFoundException("كلمة المرور غير صحيحة", 401);
         }
 
-        return [
-            'token' => $user->createToken('employee_auth_token')->plainTextToken,
-            'employee_name' => $user->employee->full_name,
-        ];
+        if($user->user_type_id == 1) {
+            return [
+                'token' => $user->createToken('employee_auth_token')->plainTextToken,
+                'user_type' => $user->user_type_id,
+                'employee_name' => $user->employee->full_name,
+            ];
+        }
+        else {
+            return [
+                'token' => $user->createToken('consultant_auth_token')->plainTextToken,
+                'user_type' => $user->user_type_id,
+                'consultant_name' => $user->consultant->first_name . ' ' . $user->consultant->last_name,
+            ];
+        }
+
     }
 
     /**
      * @throws EntryNotFoundException
      */
-    public function employeeLogout(): void
+    public function userLogout(): void
     {
         // get the current authenticated user
         $user = Auth::user();
@@ -62,7 +73,7 @@ class EloquentAuthenticationRepository implements AuthenticationRepositoryInterf
     /**
      * @throws EntryNotFoundException
      */
-    public function getEmployeeActivePermissionsByToken(): Collection
+    public function getUserActivePermissionsByToken(): Collection
     {
         $user = Auth::user();
 

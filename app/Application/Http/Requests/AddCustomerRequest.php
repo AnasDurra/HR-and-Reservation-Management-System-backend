@@ -63,9 +63,8 @@ class AddCustomerRequest extends FormRequest
                 'max:20',
             ],
             'national_number' => [
-                'integer',
-                'min:11',
-                'max:11',
+                'string',
+                'size:11',
             ],
             'profile_picture' => [
                 'image',

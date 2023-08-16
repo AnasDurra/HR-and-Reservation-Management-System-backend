@@ -47,7 +47,7 @@ class TimeSheetService
         return $this->TimeSheetRepository->getConsultantSchedule();
     }
 
-    public function cancelAppointmentByConsultant($id):  Appointment|Builder|null
+    public function cancelAppointmentByConsultant($id): Appointment|Builder|null
     {
         return $this->TimeSheetRepository->cancelAppointmentByConsultant($id);
     }
@@ -55,6 +55,26 @@ class TimeSheetService
     public function getCanceledAppointment(): LengthAwarePaginator
     {
         return $this->TimeSheetRepository->getCanceledAppointment();
+    }
+
+    public function cancelReservationByCustomer(Appointment $appointment): Appointment|Builder|null
+    {
+        return $this->TimeSheetRepository->cancelReservationByCustomer($appointment);
+    }
+
+    public function cancelReservationByEmployee(Appointment $appointment): Appointment|Builder|null
+    {
+        return $this->TimeSheetRepository->cancelReservationByEmployee($appointment);
+    }
+
+    public function cancelReservationByConsultant(Appointment $appointment): Appointment|Builder|null
+    {
+        return $this->TimeSheetRepository->cancelReservationByConsultant($appointment);
+    }
+
+    public function cancelReservation(Appointment $appointment): Appointment|Builder|null
+    {
+        return $this->TimeSheetRepository->cancelReservation($appointment);
     }
 
 }

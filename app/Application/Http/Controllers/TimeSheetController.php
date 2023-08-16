@@ -10,7 +10,6 @@ use App\Domain\Models\CD\Appointment;
 use App\Domain\Services\TimeSheetService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use PharIo\Version\Exception;
 
 class TimeSheetController extends Controller
 {
@@ -87,4 +86,102 @@ class TimeSheetController extends Controller
         return AppointmentResource::collection($canceled_appointment);
     }
 
+    /**
+     * cancel reservation by customer
+     */
+    public function cancelReservationByCustomer(Appointment $appointment): JsonResponse
+    {
+
+        // make sure the appointment is in the future
+        if ($appointment->is_future === false) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه مضى',
+            ], 422);
+        }
+
+        // make sure the appointment is reserved
+        if ($appointment->is_reserved === false) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه لم يتم حجزه',
+            ], 422);
+        }
+
+        $appointment = $this->TimeSheetService->cancelReservationByCustomer($appointment);
+        return response()->json([
+            'message' => 'تم إلغاء الموعد بنجاح',
+            'data' => new AppointmentResource($appointment),
+        ]);
+    }
+
+    /**
+     * cancel reservation by employee
+     */
+    public function cancelReservationByEmployee(Appointment $appointment): JsonResponse
+    {
+        // make sure the appointment is in the future
+        if (!$appointment->is_future) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه مضى',
+            ], 422);
+        }
+
+        $appointment = $this->TimeSheetService->cancelReservationByEmployee($appointment->id);
+        return response()->json([
+            'message' => 'تم إلغاء الموعد بنجاح',
+            'data' => new AppointmentResource($appointment),
+        ]);
+    }
+
+    /**
+     * cancel reservation by consultant
+     */
+    public function cancelReservationByConsultant(Appointment $appointment): JsonResponse
+    {
+        // make sure the appointment is in the future
+        if ($appointment->is_future === false) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه مضى',
+            ], 422);
+        }
+
+        $appointment = $this->TimeSheetService->cancelReservationByConsultant($appointment->id);
+        return response()->json([
+            'message' => 'تم إلغاء الموعد بنجاح',
+            'data' => new AppointmentResource($appointment),
+        ]);
+    }
+
+    /**
+     * cancel reservation (make it available again)
+     */
+    public function cancelReservation(Appointment $appointment): JsonResponse
+    {
+        // make sure the user is an employee
+        if (!auth()->user()->isEmployee()) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنك لست موظف',
+            ], 403);
+        }
+
+        // make sure the appointment is in the future
+        if (!$appointment->is_future) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه مضى',
+            ], 422);
+        }
+
+        // make sure the appointment is already reserved
+        if (!$appointment->is_reserved) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه غير محجوز',
+            ], 422);
+        }
+
+        // cancel the appointment
+        $appointment = $this->TimeSheetService->cancelReservation($appointment);
+        return response()->json([
+            'message' => 'تم إلغاء الموعد بنجاح',
+            'data' => new AppointmentResource($appointment),
+        ]);
+    }
 }

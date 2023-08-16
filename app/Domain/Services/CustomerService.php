@@ -60,4 +60,9 @@ class CustomerService
     {
         return $this->CustomerRepository->customerToggleStatus($id);
     }
+
+    public function customerDetection(int $national_number): array
+    {
+        return $this->CustomerRepository->customerDetection($national_number);
+    }
 }
