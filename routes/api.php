@@ -191,10 +191,14 @@ Route::put('attendance-modification/{app_id}/{status_id}', [AppointmentControlle
 Route::post('cancel-reservation-by-customer/{appointment}', [TimeSheetController::class, 'cancelReservationByCustomer']);
 
 // 2. by employee
-Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservationByEmployee']);
+Route::post('cancel-appointment-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservationByEmployee']);
 
 // 3. by consultant
 Route::post('cancel-reservation-by-consultant/{appointment}', [TimeSheetController::class, 'cancelReservationByConsultant']);
 
 // cancel reservation(to be reservable again)
-Route::post('cancel-reservation/{appointment}', [TimeSheetController::class, 'cancelReservation']);
+Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservation']);
+
+
+// get all time slots (appointments) for a specific consultant in a specific date
+Route::get('consultant-time-slots/{consultant_id}/{date}', [TimeSheetController::class, 'getConsultantTimeSlots']);

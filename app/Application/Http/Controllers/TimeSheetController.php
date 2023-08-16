@@ -94,6 +94,13 @@ class TimeSheetController extends Controller
             ], 422);
         }
 
+        // make sure the appointment is not cancelled already
+        if ($appointment->is_cancelled) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه ملغى بالفعل',
+            ], 422);
+        }
+
         // make sure the appointment is reserved
         if ($appointment->is_reserved === false) {
             return response()->json([
@@ -120,7 +127,14 @@ class TimeSheetController extends Controller
             ], 422);
         }
 
-        $appointment = $this->TimeSheetService->cancelReservationByEmployee($appointment->id);
+        // make sure the appointment is not cancelled already
+        if ($appointment->is_cancelled) {
+            return response()->json([
+                'message' => 'لا يمكن إلغاء الموعد لأنه ملغى بالفعل',
+            ], 422);
+        }
+
+        $appointment = $this->TimeSheetService->cancelReservationByEmployee($appointment);
         return response()->json([
             'message' => 'تم إلغاء الموعد بنجاح',
             'data' => new AppointmentResource($appointment),
@@ -178,5 +192,11 @@ class TimeSheetController extends Controller
             'message' => 'تم إلغاء الموعد بنجاح',
             'data' => new AppointmentResource($appointment),
         ]);
+    }
+
+    public function getConsultantTimeSlots($consultant_id, $date): AnonymousResourceCollection
+    {
+        $timeSlots = $this->TimeSheetService->getConsultantTimeSlots($consultant_id, $date);
+        return AppointmentResource::collection($timeSlots);
     }
 }

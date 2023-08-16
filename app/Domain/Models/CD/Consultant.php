@@ -30,5 +30,4 @@ class Consultant extends Model
         return $this->belongsTo(Clinic::class);
     }
 
-
 }

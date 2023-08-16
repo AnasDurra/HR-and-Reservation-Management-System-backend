@@ -52,4 +52,15 @@ class Appointment extends Model
         return $this->workDay->day_date > now();
     }
 
+    /**
+     * mutator to return whether the appointment is already cancelled or not
+     * by checking status_id == 1 || status_id == 2 || status_id == 3
+     */
+    public function getIsCancelledAttribute(): bool
+    {
+        return $this->status_id == AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT ||
+            $this->status_id == AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE ||
+            $this->status_id == AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT;
+    }
+
 }

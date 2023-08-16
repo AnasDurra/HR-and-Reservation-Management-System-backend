@@ -78,4 +78,8 @@ class TimeSheetService
         return $this->TimeSheetRepository->cancelReservation($appointment);
     }
 
+    public  function getConsultantTimeSlots($consultant_id, $date): Collection
+    {
+        return $this->TimeSheetRepository->getConsultantTimeSlots($consultant_id, $date);
+    }
 }
