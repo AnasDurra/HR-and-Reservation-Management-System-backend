@@ -69,12 +69,10 @@ class TimeSheetController extends Controller
 
     }
 
-    public function cancelAppointmentByConsultant($id): JsonResponse
+    public function cancelAppointmentByConsultant($id): AppointmentResource
     {
-        $this->TimeSheetService->cancelAppointmentByConsultant($id);
-        return response()->json([
-            'message' => 'AppointmentResource Canceled Successfully'
-        ]);
+        $appointment = $this->TimeSheetService->cancelAppointmentByConsultant($id);
+        return new AppointmentResource($appointment);
     }
 
     public function getCanceledAppointment(): AnonymousResourceCollection

@@ -11,7 +11,6 @@ use App\Exceptions\EntryNotFoundException;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -57,13 +56,16 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
      */
     public function createTimeSheet(array $data): Shift|Builder|null
     {
+        //TODO : uncomment this lines
+//        $user_id = Auth::id();
+//        $consultant = Consultant::query()->where('user_id', '=', $user_id)->first();
         try {
             DB::beginTransaction();
 
             $shift = Shift::query()->create([
                 'consultant_id' => '1',
                 //TODO : uncomment this
-                //'consultant_id' => \Auth::id(),
+                //'consultant_id' => $consultant->id,
                 'name' => $data['name'],
             ]);
 
@@ -118,7 +120,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
      * @throws EntryNotFoundException
      * @throws Throwable
      */
-    public function addWorkDay(array $data): Model|Builder
+    public function addWorkDay(array $data): void
     {
         try {
 
@@ -150,7 +152,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                     $start_time = $interval->start_time;
                     $end_time = $interval->end_time;
 
-                    $appointment = Appointment::query()->create([
+                    Appointment::query()->create([
                         'work_day_id' => $work_day->id,
                         'start_time' => $start_time,
                         'end_time' => $end_time,
@@ -161,7 +163,6 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                 }
             }
             DB::commit();
-            return $appointment;
         } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
@@ -203,7 +204,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
 
     //TODO : pagination
-    public function getConsultantSchedule(): LengthAwarePaginator
+    public function getConsultantSchedule(): Collection
     {
         //TODO : uncomment this lines
 //        $user_id = Auth::id();
@@ -212,11 +213,22 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
 
         //TODO : delete this line
-        $shift_id = Shift::query()->where('consultant_id', '=', 1)->pluck('id');
+        $shift = Shift::query()->where('consultant_id', '=', 1)->pluck('id');
 
-        $work_day_id = WorkDay::query()->whereIn('shift_id', $shift_id)->pluck('id');
-        return Appointment::query()->whereIn('work_day_id', $work_day_id)->paginate(10);
+        $work_days = WorkDay::query()->whereIn('shift_id', $shift);
 
+        $start_date = request('start_date');
+        $end_date = request('end_date');
+
+        if ($start_date) {
+            $work_days->where('day_date', '>=', $start_date)->pluck('id');
+        }
+        if ($end_date) {
+            $work_days->where('day_date', '<=', $end_date)->pluck('id');
+        }
+        $work_days = $work_days->pluck('id');
+
+        return Appointment::query()->whereIn('work_day_id', $work_days)->get();
     }
 
 
@@ -228,8 +240,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         try {
             $canceled_appointment = Appointment::query()->findOrFail($id);
 
-            //TODO : check if the number is correct
-            $canceled_appointment->status_id = '7';
+            $canceled_appointment->status_id = '6';
             $canceled_appointment->save();
 
             return $canceled_appointment;
@@ -240,9 +251,8 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
     public function getCanceledAppointment(): LengthAwarePaginator
     {
-        //TODO : check if the number is correct
         return Appointment::query()
-            ->where('status_id', '=', '7')
+            ->where('status_id', '=', '6')
             ->paginate(10);
     }
 

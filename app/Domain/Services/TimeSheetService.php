@@ -8,7 +8,7 @@ use App\Domain\Repositories\TimeSheetRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-
+use Illuminate\Support\Collection;
 class TimeSheetService
 {
     private TimeSheetRepositoryInterface $TimeSheetRepository;
@@ -18,7 +18,7 @@ class TimeSheetService
         $this->TimeSheetRepository = $TimeSheetRepository;
     }
 
-    public function getTimeSheetList(): LengthAwarePaginator
+    public function getTimeSheetList(): Collection
     {
         return $this->TimeSheetRepository->getTimeSheetList();
     }
@@ -43,7 +43,7 @@ class TimeSheetService
         return $this->TimeSheetRepository->bookAnAppointmentByEmployee($appointment_id, $customer_id);
     }
 
-    public function getConsultantSchedule(): LengthAwarePaginator
+    public function getConsultantSchedule(): Collection
     {
         return $this->TimeSheetRepository->getConsultantSchedule();
     }
