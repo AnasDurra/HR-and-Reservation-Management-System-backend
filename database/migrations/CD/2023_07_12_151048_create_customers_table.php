@@ -21,10 +21,10 @@ return new class extends Migration {
             $table->string('job');
             $table->date('birth_date');
             $table->string('phone')->nullable();
-            $table->string('phone_number');
+            $table->string('phone_number')->unique();
             $table->integer('martial_status');
             $table->integer('num_of_children');
-            $table->string('national_number')->nullable();
+            $table->string('national_number')->unique()->nullable();
             $table->text('profile_picture')->nullable();
             $table->boolean('verified')->default(false);
             $table->boolean('blocked')->default(false);

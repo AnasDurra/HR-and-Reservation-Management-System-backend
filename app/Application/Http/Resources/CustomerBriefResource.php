@@ -42,6 +42,7 @@ class CustomerBriefResource extends JsonResource
             'national_number' => $this->national_number,
             'verified' => $this->verified,
             'blocked' => $this->blocked,
+            'isUsingApp' => $this["isUsingApp"] ?? false,
         ];
     }
 }

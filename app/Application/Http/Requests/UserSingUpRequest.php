@@ -65,6 +65,7 @@ class UserSingUpRequest extends FormRequest
             'national_number' => [
                 'string',
                 'size:11',
+                Rule::unique('customers', 'national_number') //TODO ->whereNull('deleted_at')],
             ],
             'profile_picture' => [
                 'image',

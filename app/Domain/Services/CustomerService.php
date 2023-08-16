@@ -65,4 +65,9 @@ class CustomerService
     {
         return $this->CustomerRepository->customerDetection($national_number);
     }
+
+    public function customerVerification(array $data): Customer|Builder|null
+    {
+        return $this->CustomerRepository->customerVerification($data);
+    }
 }

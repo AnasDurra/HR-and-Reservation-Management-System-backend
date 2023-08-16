@@ -136,8 +136,8 @@ class CustomerController extends Controller
         $validator = Validator::make(request()->all(), [
             'national_number' => [
                 'required',
-                'integer',
-                'digits:11'
+                'string',
+                'size:11',
             ],
         ]);
         if ($validator->fails()) {
@@ -148,6 +148,44 @@ class CustomerController extends Controller
         }
         $data = request()->all();
         $customerStatus = $this->CustomerService->customerDetection($data['national_number']);
+        return response()->json([
+            'data' => $customerStatus
+        ], 200);
+    }
+
+    public function customerVerification(): JsonResponse
+    {
+        $validator = Validator::make(request()->all(), [
+            'national_number' => [
+                'required',
+                'string',
+                'size:11',
+            ],
+            'app_account_id'=>[
+                'required',
+                'integer',
+                'exists:customers,id',
+            ]
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            return response()->json([
+                'errors'=> $errors
+            ], 400);
+        }
+        $customerStatus = $this->CustomerService->customerVerification(request()->all());
+
+        if($customerStatus == null){
+            return response()->json([
+                'error' => 'Customer does not have application account'
+            ], 404);
+        }
+
+        if($customerStatus['message'] != null){
+            return response()->json([
+                'error' => $customerStatus['message']
+            ], 400);
+        }
         return response()->json([
             'data' => $customerStatus
         ], 200);

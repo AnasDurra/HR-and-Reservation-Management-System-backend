@@ -161,6 +161,9 @@ Route::put('customer/toggle-status/{customer_id}', [CustomerController::class, '
 // Register the routes for the customerDetection
 Route::post('customer-detection', [CustomerController::class, 'customerDetection']);
 
+// Register the routes for the customerVerification
+Route::post('customer-verification', [CustomerController::class, 'customerVerification']);
+
 
 // Register the router for EducationLevelController
 Route::apiResource('education_levels', EducationLevelController::class);
