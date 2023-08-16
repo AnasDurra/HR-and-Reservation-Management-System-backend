@@ -284,26 +284,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         $customer->currentAccessToken()->delete();
     }
 
-    function generateUniqueUsername($firstName): string
-    {
-
-        $random_number = rand(100, 999);
-
-        $username = strtolower($firstName) . $random_number;
-
-        $customers = $this->getCustomerList()->pluck('username');
-        if ($customers->contains('username', $username)) {
-            return $this->generateUniqueUsername($firstName);
-        }
-
-        return $username;
-    }
-
-    function generatePassword(): string
-    {
-        return \Str::random(12);
-    }
-
     public function customerDetection(int $national_number): array
     {
         $result = Customer::query()->where('national_number','=',$national_number)->first();
@@ -322,6 +302,9 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $status;
     }
 
+    /**
+     * @throws BadRequestException
+     */
     public function customerVerification(array $data): Customer|Builder|null
     {
         $accounts = Customer::query()->where('national_number','=',$data['national_number'])->get();
@@ -337,7 +320,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
                 return $app_account;
             }
             else{
-                throw new BadRequestException('حدث خطأ', 400);
+                return null; // TODO NO APP ACCOUNT
             }
         }
         else{
@@ -348,11 +331,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             if($account != null){
                 $app_account = Customer::query()->where('id','=',$data['app_account_id'])->first();
                 if($app_account != null){
-                    $app_account->delete();
-                    $account['isUsingApp'] = true;
-                    $account['username'] = $app_account['username'];
-                    $account['password'] = $app_account['password'];
-
                     $eloquentAppointmentRepository = new EloquentAppointmentRepository();
                     $appointments = $eloquentAppointmentRepository->getAppointmentList()
                         ->where('customer_id','=',$app_account['id']);
@@ -361,15 +339,45 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
                         $appointment['customer_id'] = $account['id'];
                         $appointment->save();
                     }
+                    $app_account->delete();
+
+                    $account['isUsingApp'] = true;
+                    $account['email'] = $app_account['email'];
+                    $account['username'] = $app_account['username'];
+                    $account['password'] = $app_account['password'];
 
                     $account->save();
                     return $account;
                 }
                 else{
-                    throw new BadRequestException('حدث خطأ', 400);
+                    return null; // TODO NO APP ACCOUNT
                 }
             }
         }
-        return $account;
+
+        $accounts[0]['message'] = 'Customer already has verified application account';
+        $accounts[0]['status'] = '400';
+        return $accounts[0];
+    }
+
+    function generateUniqueUsername($firstName): string
+    {
+
+        $random_number = rand(100, 999);
+
+        $username = strtolower($firstName) . $random_number;
+
+        $customers = Customer::query()->get();
+        if ($customers->contains('username', $username)) {
+            $username = $this->generateUniqueUsername($firstName);
+            return $username;
+        }
+
+        return $username;
+    }
+
+    function generatePassword(): string
+    {
+        return \Str::random(12);
     }
 }

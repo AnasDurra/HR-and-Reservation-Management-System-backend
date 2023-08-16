@@ -3,6 +3,7 @@
 namespace App\Application\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EditCustomerBeforeVerification extends FormRequest
 {
@@ -65,6 +66,7 @@ class EditCustomerBeforeVerification extends FormRequest
                 'sometimes',
                 'string',
                 'size:11',
+                Rule::unique('customers', 'national_number') //TODO ->whereNull('deleted_at')],
             ],
             'profile_picture' => [
                 'sometimes',

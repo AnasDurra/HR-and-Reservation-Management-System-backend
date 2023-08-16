@@ -36,6 +36,7 @@ class EditCustomerAfterVerification extends FormRequest
                 'sometimes',
                 'string',
                 'size:11',
+                Rule::unique('customers', 'national_number') //TODO ->whereNull('deleted_at')],
             ],
             'job' => [
                 'sometimes',

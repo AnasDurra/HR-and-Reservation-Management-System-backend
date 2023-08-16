@@ -174,6 +174,18 @@ class CustomerController extends Controller
             ], 400);
         }
         $customerStatus = $this->CustomerService->customerVerification(request()->all());
+
+        if($customerStatus == null){
+            return response()->json([
+                'error' => 'Customer does not have application account'
+            ], 404);
+        }
+
+        if($customerStatus['message'] != null){
+            return response()->json([
+                'error' => $customerStatus['message']
+            ], 400);
+        }
         return response()->json([
             'data' => $customerStatus
         ], 200);
