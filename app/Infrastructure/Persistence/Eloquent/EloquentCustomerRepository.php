@@ -294,11 +294,11 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         }
 
         else if(!$result['isUsingApp']){
-            $status = ['status' => 2 , 'customer_id'=>$result['id']];
+            $status = ['status' => 2 , 'customer_id'=>$result['id'] , 'created_at' => date('Y-m-d', strtotime($result['created_at']))];
         }
 
         else
-            $status = ['status' => 3 , 'customer_id'=>$result['id']];
+            $status = ['status' => 3 , 'customer_id'=>$result['id'] , 'created_at' => date('Y-m-d', strtotime($result['created_at']))];
 
         return $status;
     }
