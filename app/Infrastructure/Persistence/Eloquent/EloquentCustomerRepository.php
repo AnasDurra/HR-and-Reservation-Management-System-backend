@@ -376,7 +376,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         }
 
         $eloquentAppointmentRepository = new EloquentAppointmentRepository();
-        $appointments = $eloquentAppointmentRepository->getAppointmentList()->getCollection();
+        $appointments = $eloquentAppointmentRepository->getAppointmentList();
 
         $consultant_appointments = $appointments->where('customer_id','=',$id);
         foreach ($consultant_appointments as $consultant_appointment){

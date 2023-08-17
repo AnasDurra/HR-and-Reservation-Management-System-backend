@@ -139,7 +139,7 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
         }
 
         $eloquentAppointmentRepository = new EloquentAppointmentRepository();
-        $appointments = $eloquentAppointmentRepository->getAppointmentList()->getCollection();
+        $appointments = $eloquentAppointmentRepository->getAppointmentList();
 
         foreach ($appointments as $appointment){
             $appointment['consultant_id'] = $appointment->getConsultantId();
@@ -180,7 +180,7 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
         }
 
         $eloquentAppointmentRepository = new EloquentAppointmentRepository();
-        $appointments = $eloquentAppointmentRepository->getAppointmentList()->getCollection();
+        $appointments = $eloquentAppointmentRepository->getAppointmentList();
 
         foreach ($appointments as $appointment){
             $appointment['consultant_id'] = $appointment->getConsultantId();
