@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Application\Http\Resources\PermissionResource;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Repositories\CustomerRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
@@ -358,6 +359,42 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         $accounts[0]['message'] = 'Customer already has verified application account';
         $accounts[0]['status'] = '400';
         return $accounts[0];
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getStatistics(int $id): array|null
+    {
+        try {
+            $customer = Customer::query()
+                ->where('id', '=', $id)
+                ->firstOrFail();
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("customer with id $id not found");
+        }
+
+        $eloquentAppointmentRepository = new EloquentAppointmentRepository();
+        $appointments = $eloquentAppointmentRepository->getAppointmentList()->getCollection();
+
+        $consultant_appointments = $appointments->where('customer_id','=',$id);
+        foreach ($consultant_appointments as $consultant_appointment){
+            $consultant_appointment['clinic_name'] = $consultant_appointment->getClinicName();
+        }
+
+        $consultant_appointments = $appointments->groupBy('clinic_name');
+
+        $responseData = [];
+
+        foreach ($consultant_appointments as $clinic_name => $appointments){
+            $responseData[$clinic_name]['clinic_name'] = $clinic_name;
+            $responseData[$clinic_name]['completed_appointments'] = $appointments->where('status_id', 4)->count();
+            $responseData[$clinic_name]['cancelled_appointments'] = $appointments->whereIn('status_id',[1,7])->count();
+        }
+
+        return $responseData;
+
     }
 
     function generateUniqueUsername($firstName): string

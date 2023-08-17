@@ -45,4 +45,9 @@ class ConsultantService
     {
         return $this->ConsultantRepository->getStatistics($id);
     }
+
+    public function getMonthlyStatistics($id) : array|null
+    {
+        return $this->ConsultantRepository->getMonthlyStatistics($id);
+    }
 }

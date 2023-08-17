@@ -29,4 +29,6 @@ interface CustomerRepositoryInterface
     public function customerDetection(int $national_number): array;
 
     public function customerVerification(array $data): Customer|Builder|null;
+
+    public function getStatistics(int $id): array|null;
 }

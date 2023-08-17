@@ -147,15 +147,15 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
 
         $consultant_appointments = $appointments->where('consultant_id','=',$id);
 
-        $completed_appointments = $consultant_appointments->where('status_id','=',4);
-        $cancelled_by_consultant_appointments = $consultant_appointments->whereIn('status_id',[3,8]);
-        $cancelled_by_customers_appointments = $consultant_appointments->whereIn('status_id',[1,7]);
+        $completed_appointments = $consultant_appointments->where('status_id','=',4)->values();;
+        $cancelled_by_consultant_appointments = $consultant_appointments->whereIn('status_id',[3,8])->values();;
+        $cancelled_by_customers_appointments = $consultant_appointments->whereIn('status_id',[1,7])->values();;
 
         $now = now()->toDateString();
         $available_appointments = $consultant_appointments->filter(function ($appointment) use ($now) {
             $appointmentDate = substr($appointment->start_time, 0, 10);
             return $appointment->status_id === 6 && $appointmentDate <= $now;
-        });
+        })->values();
 
         return [
             'completed_appointments' => $completed_appointments,
@@ -163,6 +163,57 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
             'cancelled_by_customers_appointments' => $cancelled_by_customers_appointments,
             'available_appointments' => $available_appointments,
         ];
+    }
+
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getMonthlyStatistics($id) : array|null
+    {
+        try {
+            $consultant = Consultant::query()
+                ->where('id', '=', $id)
+                ->firstOrFail();
+
+        } catch (Exception) {
+            throw new EntryNotFoundException("consultant with id $id not found");
+        }
+
+        $eloquentAppointmentRepository = new EloquentAppointmentRepository();
+        $appointments = $eloquentAppointmentRepository->getAppointmentList()->getCollection();
+
+        foreach ($appointments as $appointment){
+            $appointment['consultant_id'] = $appointment->getConsultantId();
+        }
+
+        $consultant_appointments = $appointments->where('consultant_id','=',$id);
+
+        // Initialize the response data array
+        $responseData = [];
+
+        // List of month names
+        $months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December',
+        ];
+
+        // Count appointments with status = 4 for each month
+        foreach ($months as $month) {
+            $count = $consultant_appointments->filter(function ($appointment) use ($month) {
+                return $appointment->status_id === 4 &&
+                    date('F', strtotime($appointment->start_time)) === $month;
+            })->count();
+
+            // Add data to the response array
+            $responseData[] = [
+                'name' => $month,
+                'عدد المواعيد' => $count,
+            ];
+        }
+
+        // Return the response data
+        return $responseData;
+
     }
 
 
