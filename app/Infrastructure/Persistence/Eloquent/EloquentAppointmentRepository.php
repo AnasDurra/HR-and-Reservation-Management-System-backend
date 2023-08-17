@@ -2,23 +2,19 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Domain\Models\ApplicationStatus;
 use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\CaseNote;
-use App\Domain\Models\CD\Shift;
 use App\Domain\Models\CD\WorkDay;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
-use App\Exceptions\InvalidArgument;
 use Exception;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
-use InvalidArgumentException;
+use Illuminate\Support\Collection;
 
 class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
-    public function getAppointmentList(): LengthAwarePaginator
+    public function getAppointmentList(): Collection
     {
 
         $work_days = WorkDay::query();
@@ -34,7 +30,7 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
         }
         $work_days = $work_days->pluck('id');
 
-        return Appointment::query()->whereIn('work_day_id', $work_days)->paginate(10);
+        return Appointment::query()->whereIn('work_day_id', $work_days)->get();
     }
 
 
