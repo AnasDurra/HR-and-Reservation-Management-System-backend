@@ -17,7 +17,7 @@ interface TimeSheetRepositoryInterface
 
     public function deleteTimeSheet($id): Shift|Builder|null;
 
-    public function addWorkDay(array $data): void;
+    public function addWorkDay(array $data): Collection;
 
     public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): Appointment|Builder|null;
 
