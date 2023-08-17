@@ -18,6 +18,9 @@ class AppointmentResource extends JsonResource
             'id' => $this->id,
             'status_id' => $this->status_id,
             'customer_id' => $this->customer_id,
+            //get customer name
+//            dd($this->customer->getFullNameAttribute()),
+            'customer_name' => $this->customer ? $this->customer->getFullNameAttribute() : null,
             'cancellation_reason' => $this->cancellation_reason,
             'date' => $this->workDay->day_date,
             'start_time' => $this->start_time,

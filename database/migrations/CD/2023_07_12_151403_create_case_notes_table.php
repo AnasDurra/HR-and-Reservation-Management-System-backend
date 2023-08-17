@@ -13,7 +13,6 @@ return new class extends Migration {
         Schema::create('case_notes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('app_id')->unique();
-            $table->dateTime('date');
             $table->string('title');
             $table->text('description');
             $table->timestamps();

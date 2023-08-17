@@ -2,8 +2,11 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Requests\AddCaseNoteRequest;
 use App\Application\Http\Resources\AppointmentResource;
+use App\Application\Http\Resources\CaseNoteResource;
 use App\Domain\Models\CD\Appointment;
+use App\Domain\Models\CD\CaseNote;
 use App\Domain\Services\AppointmentService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -63,4 +66,12 @@ class AppointmentController extends Controller
         $appointment = $this->AppointmentService->attendanceModification($app_id, $status_id);
         return new AppointmentResource($appointment);
     }
+
+    public function appointmentPreview(AddCaseNoteRequest $request): CaseNoteResource
+    {
+        $validated = $request->validated();
+        $case_note = $this->AppointmentService->appointmentPreview($validated);
+        return new CaseNoteResource($case_note);
+    }
+
 }

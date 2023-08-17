@@ -188,6 +188,7 @@ Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppo
 
 //Appointment
 Route::put('attendance-modification/{app_id}/{status_id}', [AppointmentController::class, 'attendanceModification']);
+Route::post('add-case-note', [AppointmentController::class, 'appointmentPreview']);
 
 // cancel reservation(deny future reservation)
 // 1. by customer

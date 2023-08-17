@@ -2,6 +2,7 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Models\CD\CaseNote;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,5 +45,11 @@ class AppointmentService
     {
         return $this->AppointmentRepository->attendanceModification($app_id, $status_id);
     }
+
+    public function appointmentPreview(array $data): CaseNote|Builder|null
+    {
+        return $this->AppointmentRepository->appointmentPreview($data);
+    }
+
 
 }
