@@ -39,7 +39,8 @@ class EloquentUnRegisteredAccountRepository implements UnRegisteredAccountReposi
         $eloquentAppointmentRepository = new EloquentAppointmentRepository();
         $appointment = $eloquentAppointmentRepository->getAppointmentById($data['app_id']);
 
-        // TODO change status to reserved by un registered account
+        $appointment->status_id = 9;
+        $appointment->save();
         return UnRegisteredAccount::query()->create([
             'app_id' => $data['app_id'],
             'name' => $data['name'],
