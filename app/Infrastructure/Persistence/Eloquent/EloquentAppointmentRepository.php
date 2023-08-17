@@ -20,9 +20,19 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
     }
 
 
+    /**
+     * @throws EntryNotFoundException
+     */
     public function getAppointmentById(int $id): Appointment|Builder|null
     {
-        // TODO: Implement the logic to retrieve a Appointment by ID
+        try {
+            $appointment = Appointment::query()
+                ->where('id', '=', $id)
+                ->firstOrFail();
+        } catch (Exception $e) {
+            throw new EntryNotFoundException("appointment with id $id not found");
+        }
+        return $appointment;
     }
 
     public function createAppointment(array $data): Appointment|Builder|null

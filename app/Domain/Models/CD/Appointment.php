@@ -34,6 +34,11 @@ class Appointment extends Model
         return $this->hasOne(CaseNote::class);
     }
 
+    public function unRegisteredAccount(): BelongsTo
+    {
+        return $this->belongsTo(UnRegisteredAccount::class, 'app_id', 'id');
+    }
+
     /**
      * mutator to return whether the appointment is reserved
      * or not. by checking status_id == 5 && customer_id != null

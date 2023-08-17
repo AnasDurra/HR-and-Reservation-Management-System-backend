@@ -24,6 +24,7 @@ use App\Application\Http\Controllers\ShiftRequestController;
 use App\Application\Http\Controllers\AbsenceController;
 use App\Application\Http\Controllers\EducationLevelController;
 use App\Application\Http\Controllers\EventController;
+use App\Application\Http\Controllers\UnRegisteredAccountController;
 
 
 use App\Application\Http\Controllers\ConsultantController;
@@ -183,6 +184,8 @@ Route::apiResource('clinic', ClinicController::class);
 Route::apiResource('events', EventController::class)->except(['update']);
 Route::post('events/{event}', [EventController::class, 'update']);
 
+// Register the routes for the UnRegisteredAccountController
+Route::apiResource('book-un-registered-account', UnRegisteredAccountController::class);
 
 Route::apiResource('time-sheet', TimeSheetController::class);
 Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
