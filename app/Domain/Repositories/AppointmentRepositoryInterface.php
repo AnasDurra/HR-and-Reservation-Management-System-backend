@@ -5,10 +5,11 @@ namespace App\Domain\Repositories;
 use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\CaseNote;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 interface AppointmentRepositoryInterface
 {
-    public function getAppointmentList(): array;
+    public function getAppointmentList(): Collection;
 
     public function getAppointmentById(int $id): Appointment|Builder|null;
 
@@ -20,5 +21,4 @@ interface AppointmentRepositoryInterface
 
     public function attendanceModification($app_id, $status_id): Appointment|Builder|null;
 
-    public function appointmentPreview(array $data): CaseNote|Builder|null;
 }

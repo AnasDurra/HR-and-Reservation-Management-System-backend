@@ -5,12 +5,9 @@ namespace App\Application\Http\Controllers;
 use App\Application\Http\Requests\AddCaseNoteRequest;
 use App\Application\Http\Resources\AppointmentResource;
 use App\Application\Http\Resources\CaseNoteResource;
-use App\Domain\Models\CD\Appointment;
-use App\Domain\Models\CD\CaseNote;
 use App\Domain\Services\AppointmentService;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AppointmentController extends Controller
 {
@@ -21,12 +18,10 @@ class AppointmentController extends Controller
         $this->AppointmentService = $AppointmentService;
     }
 
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
         $appointments = $this->AppointmentService->getAppointmentList();
-        return response()->json([
-            'data' => AppointmentResource::collection($appointments) //Modify it as needed
-        ], 200);
+        return AppointmentResource::collection($appointments);
     }
 
     public function show(int $id): JsonResponse
@@ -67,11 +62,6 @@ class AppointmentController extends Controller
         return new AppointmentResource($appointment);
     }
 
-    public function appointmentPreview(AddCaseNoteRequest $request): CaseNoteResource
-    {
-        $validated = $request->validated();
-        $case_note = $this->AppointmentService->appointmentPreview($validated);
-        return new CaseNoteResource($case_note);
-    }
+
 
 }
