@@ -70,4 +70,9 @@ class CustomerService
     {
         return $this->CustomerRepository->customerVerification($data);
     }
+
+    public function getStatistics(int $id): array|null
+    {
+        return $this->CustomerRepository->getStatistics($id);
+    }
 }

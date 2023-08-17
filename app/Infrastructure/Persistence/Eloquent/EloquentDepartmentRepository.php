@@ -11,7 +11,21 @@ class EloquentDepartmentRepository implements DepartmentRepositoryInterface
 {
     public function getList(): Collection
     {
-        $departments = Department::all();
+        $departments = Department::query();
+
+        if (request()->has('name')) {
+            $name = request()->query('name');
+
+            $name = trim($name);
+
+            $name = strtolower($name);
+
+            $departments->whereRaw('LOWER(name) LIKE ?', ["%$name%"]);
+
+        }
+
+        $departments = $departments->get();
+
         $employeeRepository = new EloquentEmployeeRepository();
         foreach ($departments as &$department) {
             $department['employees_count'] = count($employeeRepository->getEmployeeListByDepId($department['dep_id']));

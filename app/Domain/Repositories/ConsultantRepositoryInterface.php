@@ -17,4 +17,8 @@ interface ConsultantRepositoryInterface
     public function updateConsultant(int $id, array $data): Consultant|Builder|null;
 
     public function deleteConsultant($id): Consultant|Builder|null;
+
+    public function getStatistics($id): array|null;
+
+    public function getMonthlyStatistics($id) : array|null;
 }

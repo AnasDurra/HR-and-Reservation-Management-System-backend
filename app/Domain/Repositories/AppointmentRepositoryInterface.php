@@ -5,10 +5,11 @@ namespace App\Domain\Repositories;
 use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\CaseNote;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface AppointmentRepositoryInterface
 {
-    public function getAppointmentList(): array;
+    public function getAppointmentList(): LengthAwarePaginator;
 
     public function getAppointmentById(int $id): Appointment|Builder|null;
 

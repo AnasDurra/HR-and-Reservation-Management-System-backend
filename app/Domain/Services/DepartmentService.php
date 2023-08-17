@@ -4,6 +4,7 @@ namespace App\Domain\Services;
 
 use App\Domain\Repositories\DepartmentRepositoryInterface;
 use App\Domain\Models\Department;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 

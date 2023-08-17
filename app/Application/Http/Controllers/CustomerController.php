@@ -191,6 +191,14 @@ class CustomerController extends Controller
         ], 200);
     }
 
+    public function getStatistics(int $id): JsonResponse
+    {
+        $statistics = $this->CustomerService->getStatistics($id);
+
+        return response()->json([
+            'data' => ($statistics)
+        ], 200);
+    }
 
 
 }

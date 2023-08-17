@@ -113,4 +113,22 @@ class ConsultantController extends Controller
             'data' => new ConsultantResource($consultant)
         ], 200);
     }
+
+    public function getStatistics(int $id): JsonResponse
+    {
+        $statistics = $this->ConsultantService->getStatistics($id);
+
+        return response()->json([
+            'data' => ($statistics)
+        ], 200);
+    }
+
+    public function getMonthlyStatistics(int $id): JsonResponse
+    {
+        $statistics = $this->ConsultantService->getMonthlyStatistics($id);
+
+        return response()->json([
+            'data' => ($statistics)
+        ], 200);
+    }
 }

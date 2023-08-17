@@ -63,4 +63,30 @@ class Appointment extends Model
             $this->status_id == AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT;
     }
 
+    /**
+     * mutator to return consultant id for the appointment
+     */
+    public function getConsultantId(): int
+    {
+        $consultant = $this->workDay->shift->consultant;
+
+        $consultantID = $consultant->id;
+        $this->unsetRelation('workDay');
+
+        return $consultantID;
+    }
+
+    /**
+     * mutator to return clinic name for the appointment
+     */
+    public function getClinicName(): string|null
+    {
+        $clinic = $this->workDay->shift->consultant->clinic;
+
+        $clinicName = $clinic->name;
+        $this->unsetRelation('workDay');
+
+        return $clinicName;
+    }
+
 }

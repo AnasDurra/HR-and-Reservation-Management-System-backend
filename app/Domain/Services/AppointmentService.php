@@ -6,6 +6,7 @@ use App\Domain\Models\CD\CaseNote;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AppointmentService
 {
@@ -16,7 +17,7 @@ class AppointmentService
         $this->AppointmentRepository = $AppointmentRepository;
     }
 
-    public function getAppointmentList(): array
+    public function getAppointmentList(): LengthAwarePaginator
     {
         return $this->AppointmentRepository->getAppointmentList();
     }

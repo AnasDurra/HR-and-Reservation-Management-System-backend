@@ -164,12 +164,17 @@ Route::post('customer-detection', [CustomerController::class, 'customerDetection
 // Register the routes for the customerVerification
 Route::post('customer-verification', [CustomerController::class, 'customerVerification']);
 
+// Register the routes for the customerStatistics
+Route::get('customer/statistics/{id}', [CustomerController::class,'getStatistics']);
+
 
 // Register the router for EducationLevelController
 Route::apiResource('education_levels', EducationLevelController::class);
 
 // Register the routes for the ConsultantController
 Route::apiResource('consultant', ConsultantController::class);
+Route::get('consultant/statistics/{id}', [ConsultantController::class,'getStatistics']);
+Route::get('consultant/monthly-statistics/{id}', [ConsultantController::class,'getMonthlyStatistics']);
 
 // Register the routes for the ClinicController
 Route::apiResource('clinic', ClinicController::class);
