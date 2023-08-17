@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\Models\CD\CaseNote;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
 use App\Exceptions\InvalidArgument;
@@ -64,4 +65,14 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
         }
 
     }
+
+    public function appointmentPreview(array $data): CaseNote|Builder|null
+    {
+        return CaseNote::query()->create([
+            'app_id' => $data['app_id'],
+            'title' => $data['title'],
+            'description' => $data['description'],
+        ]);
+    }
+
 }
