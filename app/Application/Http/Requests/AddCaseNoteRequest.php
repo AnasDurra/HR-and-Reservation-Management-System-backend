@@ -16,7 +16,8 @@ class AddCaseNoteRequest extends FormRequest
         return [
             'app_id' => [
                 'required',
-                'exists:appointments,id'
+                'exists:appointments,id',
+                'unique:case_notes,app_id',
             ],
             'title' => [
                 'required',
@@ -34,6 +35,7 @@ class AddCaseNoteRequest extends FormRequest
         return [
             'app_id.required' => 'Appointment ID is required',
             'app_id.exists' => 'Appointment ID does not exist',
+            'app_id.unique' => 'Appointment ID already has a case note',
             'title.required' => 'Title is required',
             'title.string' => 'Title must be a string',
             'title.max' => 'Title must be less than 255 characters',

@@ -122,9 +122,11 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
      * @throws EntryNotFoundException
      * @throws Throwable
      */
-    public function addWorkDay(array $data): void
+    public function addWorkDay(array $data): Collection
     {
         try {
+
+            $createdAppointments = new Collection();
 
             DB::beginTransaction();
             foreach ($data['dates'] as $date) {
@@ -154,7 +156,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                     $start_time = $interval->start_time;
                     $end_time = $interval->end_time;
 
-                    Appointment::query()->create([
+                    $appointment = Appointment::query()->create([
                         'work_day_id' => $work_day->id,
                         'start_time' => $start_time,
                         'end_time' => $end_time,
@@ -162,9 +164,13 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                         'status_id' => 6,
                         'cancellation_reason' => null,
                     ]);
+
+                    $createdAppointments->push($appointment);
                 }
             }
             DB::commit();
+
+            return $createdAppointments;
         } catch (Exception $exception) {
             DB::rollBack();
             throw $exception;
@@ -242,7 +248,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         try {
             $canceled_appointment = Appointment::query()->findOrFail($id);
 
-            $canceled_appointment->status_id = '6';
+            $canceled_appointment->status_id = AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT;
             $canceled_appointment->save();
 
             return $canceled_appointment;
@@ -253,12 +259,38 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
     public function getCanceledAppointment(): LengthAwarePaginator
     {
+        $consultant_id = request('consultant_id');
+        $start_date = request('start_date');
+        $end_date = request('end_date');
+
+
+        //filter by consultant id
+        $shift = Shift::query();
+        if ($consultant_id) {
+            $shift->where('consultant_id', '=', $consultant_id);
+        }
+        $shift = $shift->pluck('id');
+
+        //filter by start & end date
+        $work_days = WorkDay::query()->whereIn('shift_id', $shift);
+        if ($start_date) {
+            $work_days->where('day_date', '>=', $start_date)->pluck('id');
+        }
+        if ($end_date) {
+            $work_days->where('day_date', '<=', $end_date)->pluck('id');
+        }
+        $work_days = $work_days->pluck('id');
+
         return Appointment::query()
-            ->where('status_id', '=', '6')
+            ->whereIn('work_day_id', $work_days)
+            ->where('status_id', '=',
+                AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT
+                || AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE)
             ->paginate(10);
     }
 
-    public function cancelReservationByCustomer($appointment): Appointment|Builder|null
+    public
+    function cancelReservationByCustomer($appointment): Appointment|Builder|null
     {
         $appointment->update([
             'status_id' => AppointmentStatus::STATUS_AVAILABLE,
@@ -268,7 +300,8 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         return $appointment;
     }
 
-    public function cancelReservationByEmployee($appointment): Appointment|Builder|null
+    public
+    function cancelReservationByEmployee($appointment): Appointment|Builder|null
     {
         // set the status to canceled by employee
         $appointment->update([
@@ -280,7 +313,8 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         return $appointment;
     }
 
-    public function cancelReservationByConsultant($appointment): Appointment|Builder|null
+    public
+    function cancelReservationByConsultant($appointment): Appointment|Builder|null
     {
         // set the status to canceled by consultant
         $appointment->update([
@@ -292,7 +326,8 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         return $appointment;
     }
 
-    public function cancelReservation(Appointment $appointment): Appointment|Builder|null
+    public
+    function cancelReservation(Appointment $appointment): Appointment|Builder|null
     {
         // set the status to canceled by consultant
         $appointment->update([
@@ -306,7 +341,8 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
     /**
      * @throws EntryNotFoundException
      */
-    public function getConsultantTimeSlots($consultant_id, $date): Collection
+    public
+    function getConsultantTimeSlots($consultant_id, $date): Collection
     {
 
         try {

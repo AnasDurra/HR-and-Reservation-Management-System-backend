@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+
 class TimeSheetService
 {
     private TimeSheetRepositoryInterface $TimeSheetRepository;
@@ -33,9 +34,9 @@ class TimeSheetService
         return $this->TimeSheetRepository->deleteTimeSheet($id);
     }
 
-    public function addWorkDay(array $data): Model|Builder
+    public function addWorkDay(array $data): Collection
     {
-        $this->TimeSheetRepository->addWorkDay($data);
+        return $this->TimeSheetRepository->addWorkDay($data);
     }
 
     public function bookAnAppointmentByEmployee(int $appointment_id, int $customer_id): Appointment|Builder|null
@@ -78,7 +79,7 @@ class TimeSheetService
         return $this->TimeSheetRepository->cancelReservation($appointment);
     }
 
-    public  function getConsultantTimeSlots($consultant_id, $date): Collection
+    public function getConsultantTimeSlots($consultant_id, $date): Collection
     {
         return $this->TimeSheetRepository->getConsultantTimeSlots($consultant_id, $date);
     }
