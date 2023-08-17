@@ -161,7 +161,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                         'start_time' => $start_time,
                         'end_time' => $end_time,
                         'customer_id' => null,
-                        'status_id' => 6,
+                        'status_id' => AppointmentStatus::STATUS_AVAILABLE,
                         'cancellation_reason' => null,
                     ]);
 
