@@ -2,7 +2,11 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\Models\ApplicationStatus;
+use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\CaseNote;
+use App\Domain\Models\CD\Shift;
+use App\Domain\Models\CD\WorkDay;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
 use App\Exceptions\InvalidArgument;
@@ -16,7 +20,21 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
     public function getAppointmentList(): LengthAwarePaginator
     {
-        return Appointment::query()->paginate(10);
+
+        $work_days = WorkDay::query();
+
+        $start_date = request('start_date');
+        $end_date = request('end_date');
+
+        if ($start_date) {
+            $work_days->where('day_date', '>=', $start_date)->pluck('id');
+        }
+        if ($end_date) {
+            $work_days->where('day_date', '<=', $end_date)->pluck('id');
+        }
+        $work_days = $work_days->pluck('id');
+
+        return Appointment::query()->whereIn('work_day_id', $work_days)->paginate(10);
     }
 
 
@@ -61,7 +79,11 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
             //status_id must be 4 or 7 or 8
 
             // Check if status_id is within the specified range
-            $validStatuses = [4, 7, 8];
+            $validStatuses = [
+                AppointmentStatus::STATUS_COMPLETED
+                , AppointmentStatus::STATUS_MISSED_BY_CUSTOMER
+                , AppointmentStatus::STATUS_MISSED_BY_CONSULTANT
+            ];
             if (!in_array($status_id, $validStatuses))
                 abort(400, "Invalid status id");
 
@@ -71,8 +93,8 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 
             return $appointment;
         } catch (Exception $exception) {
-//            throw new EntryNotFoundException("Appointment with ID $app_id not found.");
-            throw $exception;
+            throw new EntryNotFoundException("Appointment with ID $app_id not found.");
+//            throw $exception;
 
         }
 
