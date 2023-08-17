@@ -12,7 +12,7 @@ class EloquentUnRegisteredAccountRepository implements UnRegisteredAccountReposi
 {
     public function getUnRegisteredAccountList(): LengthAwarePaginator
     {
-        return UnRegisteredAccount::query()->with('appointment')->paginate(10);
+        return UnRegisteredAccount::query()->with('appointment.status')->paginate(10);
     }
 
     /**
@@ -22,7 +22,7 @@ class EloquentUnRegisteredAccountRepository implements UnRegisteredAccountReposi
     {
         try {
             $unRegisteredAccount = UnRegisteredAccount::query()
-                ->with('appointment')
+                ->with('appointment.status')
                 ->with('appointment')
                 ->where('id', '=', $id)
                 ->firstOrFail();
@@ -44,7 +44,7 @@ class EloquentUnRegisteredAccountRepository implements UnRegisteredAccountReposi
             'app_id' => $data['app_id'],
             'name' => $data['name'],
             'phone_number' => $data['phone_number'],
-        ])->load('appointment');
+        ])->load('appointment.status');
     }
 //
 //    public function updateUnRegisteredAccount(int $id, array $data): UnRegisteredAccount|Builder|null
@@ -60,7 +60,7 @@ class EloquentUnRegisteredAccountRepository implements UnRegisteredAccountReposi
 
         try {
             $unRegisteredAccount = UnRegisteredAccount::query()
-                ->with('appointment')
+                ->with('appointment.status')
                 ->where('id', '=', $id)
                 ->firstOrFail();
         } catch (\Exception $e) {
