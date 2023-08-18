@@ -3,11 +3,12 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Ichtrojan\Otp\Otp;
 
-class LoginNotification extends Notification
+
+class EmailVerificationNotification extends Notification
 {
     use Queueable;
 
@@ -15,16 +16,18 @@ class LoginNotification extends Notification
     public $subject;
     public $fromEmail;
     public $mailer;
+    private $opt;
 
     /**
      * Create a new notification instance.
      */
     public function __construct()
     {
-        $this->message = 'You have logged in successfully';
-        $this->subject = 'Login Notification';
+        $this->message = 'Use the code below for verification of your email address.';
+        $this->subject = 'Email Verification';
         $this->fromEmail = 'stomeh6@gmail.com';
         $this->mailer = 'smtp';
+        $this->otp = new Otp;
     }
 
     /**
@@ -42,11 +45,13 @@ class LoginNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $otp = $this->otp->generate($notifiable->email, 6, 60);
         return (new MailMessage)
             ->mailer('smtp')
             ->subject($this->subject)
             ->greeting('Hello ' . $notifiable->first_name)
-            ->line($this->message);
+            ->line($this->message)
+            ->line('code: ' . $otp->token);
     }
 
     /**
