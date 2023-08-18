@@ -383,14 +383,20 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             $consultant_appointment['clinic_name'] = $consultant_appointment->getClinicName();
         }
 
-        $consultant_appointments = $appointments->groupBy('clinic_name');
+        $eloquentClinicRepository = new EloquentClinicRepository();
+        $clinics = $eloquentClinicRepository->getClinicList();
+
 
         $responseData = [];
 
-        foreach ($consultant_appointments as $clinic_name => $appointments){
-            $responseData[$clinic_name]['clinic_name'] = $clinic_name;
-            $responseData[$clinic_name]['completed_appointments'] = $appointments->where('status_id', 4)->count();
-            $responseData[$clinic_name]['cancelled_appointments'] = $appointments->whereIn('status_id',[1,7])->count();
+        foreach ($clinics as $clinic){
+            $responseData[$clinic->name]['clinic_name'] = $clinic->name;
+            $responseData[$clinic->name]['completed_appointments'] =$consultant_appointments
+                ->where('clinic_name','=',$clinic->name)
+                ->where('status_id','=',4)->count();
+            $responseData[$clinic->name]['cancelled_appointments'] =$consultant_appointments
+                ->where('clinic_name','=',$clinic->name)
+                ->whereIn('status_id',[1,7])->count();
         }
 
         return $responseData;

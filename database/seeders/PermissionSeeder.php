@@ -50,6 +50,14 @@ class PermissionSeeder extends Seeder
             [
                 'name' => 'إصدار التقارير',
             ],
+            [
+                'name' => 'إدارة الاستشاريين',
+            ],
+            [
+                'name' => 'إدارة المستفيدين',
+            ],[
+                'name' => 'إدراة الفعاليات',
+            ],
         ];
 
         foreach ($permissions as $permission) {
