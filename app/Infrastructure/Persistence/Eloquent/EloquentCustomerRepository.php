@@ -43,7 +43,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
             $result = strtolower($result);
 
-            if($result == "true") {
+            if ($result == "true") {
                 $customers->where('isUsingApp', '=', true);
             }
 
@@ -117,7 +117,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             throw new EntryNotFoundException("customer with id $id not found");
         }
 
-        if(isset($data['profile_picture'])){
+        if (isset($data['profile_picture'])) {
             StorageUtilities::deletePersonalPhoto($customer['profile_picture']);
         }
 
@@ -142,7 +142,8 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $customer;
     }
 
-    public function delete(int $id): Customer|Builder|null {
+    public function delete(int $id): Customer|Builder|null
+    {
         try {
             $customer = Customer::query()
                 ->where('id', '=', $id)
@@ -187,7 +188,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             $result = trim($result);
             $result = strtolower($result);
 
-            if($result=="true") {
+            if ($result == "true") {
                 $customers->with(['appointments' => function ($query) {
                     $query->orderByDesc('start_time');
                 }]);
@@ -220,22 +221,24 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         $new_customer = Customer::query()->create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
-            'education_level_id' => $data['education_level_id'],
-            'email' => $data['email'] ?? null,
-            'username' => $this->generateUniqueUsername($data['first_name']),
-            'password' => $this->generatePassword(),
-            'job' => $data['job'],
             'birth_date' => $data['birth_date'],
             'phone' => $data['phone'] ?? null,
             'phone_number' => $data['phone_number'],
-            'martial_status' => $data['martial_status'],
-            'num_of_children' => $data['num_of_children'],
-            'national_number' => $data['national_number'] ?? null,
-            'profile_picture' => $data['profile_picture'] ?? null,
 
-            'verified' => isset($data['national_number']),
+            'education_level_id' => $data['education_level_id'],
+            'martial_status' => $data['martial_status'],
+            'job' => $data['job'],
+            'num_of_children' => $data['num_of_children'],
+
+            'profile_picture' => $data['profile_picture'] ?? null,
+            'email' => $data['email'],
+            'username' => $data['username'],
+            'password' => Hash::make($data['password']),
+
+            'verified' => false,
             'blocked' => false,
         ]);
+
         return [
             'token' => $new_customer->createToken('customer_auth_token')->plainTextToken,
             'customer_data' => $new_customer,
@@ -287,18 +290,14 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
     public function customerDetection(int $national_number): array
     {
-        $result = Customer::query()->where('national_number','=',$national_number)->first();
+        $result = Customer::query()->where('national_number', '=', $national_number)->first();
 
-        if($result == null){
+        if ($result == null) {
             $status = ['status' => 1];
-        }
-
-        else if(!$result['isUsingApp']){
-            $status = ['status' => 2 , 'customer_id'=>$result['id'] , 'created_at' => date('Y-m-d', strtotime($result['created_at']))];
-        }
-
-        else
-            $status = ['status' => 3 , 'customer_id'=>$result['id'] , 'created_at' => date('Y-m-d', strtotime($result['created_at']))];
+        } else if (!$result['isUsingApp']) {
+            $status = ['status' => 2, 'customer_id' => $result['id'], 'created_at' => date('Y-m-d', strtotime($result['created_at']))];
+        } else
+            $status = ['status' => 3, 'customer_id' => $result['id'], 'created_at' => date('Y-m-d', strtotime($result['created_at']))];
 
         return $status;
     }
@@ -308,35 +307,33 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
      */
     public function customerVerification(array $data): Customer|Builder|null
     {
-        $accounts = Customer::query()->where('national_number','=',$data['national_number'])->get();
+        $accounts = Customer::query()->where('national_number', '=', $data['national_number'])->get();
 
         // Status 1
         if (sizeof($accounts) == 0) {
-            $app_account = Customer::query()->where('id','=',$data['app_account_id'])->first();
-            if($app_account != null) {
+            $app_account = Customer::query()->where('id', '=', $data['app_account_id'])->first();
+            if ($app_account != null) {
                 $app_account['national_number'] = $data['national_number'];
                 $app_account['verified'] = true;
                 $app_account->save();
 
                 return $app_account;
-            }
-            else{
+            } else {
                 return null; // TODO NO APP ACCOUNT
             }
-        }
-        else{
+        } else {
             // Status 2
             $account = $accounts
-                ->where('verified','=',true)
-                ->where('isUsingApp','=',false)->first();
-            if($account != null){
-                $app_account = Customer::query()->where('id','=',$data['app_account_id'])->first();
-                if($app_account != null){
+                ->where('verified', '=', true)
+                ->where('isUsingApp', '=', false)->first();
+            if ($account != null) {
+                $app_account = Customer::query()->where('id', '=', $data['app_account_id'])->first();
+                if ($app_account != null) {
                     $eloquentAppointmentRepository = new EloquentAppointmentRepository();
                     $appointments = $eloquentAppointmentRepository->getAppointmentList()
-                        ->where('customer_id','=',$app_account['id']);
+                        ->where('customer_id', '=', $app_account['id']);
 
-                    foreach ($appointments as $appointment){
+                    foreach ($appointments as $appointment) {
                         $appointment['customer_id'] = $account['id'];
                         $appointment->save();
                     }
@@ -349,8 +346,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
                     $account->save();
                     return $account;
-                }
-                else{
+                } else {
                     return null; // TODO NO APP ACCOUNT
                 }
             }
@@ -378,8 +374,8 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         $eloquentAppointmentRepository = new EloquentAppointmentRepository();
         $appointments = $eloquentAppointmentRepository->getAppointmentList();
 
-        $consultant_appointments = $appointments->where('customer_id','=',$id);
-        foreach ($consultant_appointments as $consultant_appointment){
+        $consultant_appointments = $appointments->where('customer_id', '=', $id);
+        foreach ($consultant_appointments as $consultant_appointment) {
             $consultant_appointment['clinic_name'] = $consultant_appointment->getClinicName();
         }
 
@@ -389,14 +385,14 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         $responseData = [];
 
-        foreach ($clinics as $clinic){
+        foreach ($clinics as $clinic) {
             $responseData[$clinic->name]['clinic_name'] = $clinic->name;
-            $responseData[$clinic->name]['completed_appointments'] =$consultant_appointments
-                ->where('clinic_name','=',$clinic->name)
-                ->where('status_id','=',4)->count();
-            $responseData[$clinic->name]['cancelled_appointments'] =$consultant_appointments
-                ->where('clinic_name','=',$clinic->name)
-                ->whereIn('status_id',[1,7])->count();
+            $responseData[$clinic->name]['completed_appointments'] = $consultant_appointments
+                ->where('clinic_name', '=', $clinic->name)
+                ->where('status_id', '=', 4)->count();
+            $responseData[$clinic->name]['cancelled_appointments'] = $consultant_appointments
+                ->where('clinic_name', '=', $clinic->name)
+                ->whereIn('status_id', [1, 7])->count();
         }
 
         return $responseData;

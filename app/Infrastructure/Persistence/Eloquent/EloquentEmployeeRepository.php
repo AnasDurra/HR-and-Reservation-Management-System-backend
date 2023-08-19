@@ -322,29 +322,42 @@ class EloquentEmployeeRepository implements EmployeeRepositoryInterface
             // go through each additional permission, and make sure
             // each permission (check it's perm_id) is not found
             // in the list of job title permissions
-            foreach ($data['additional_permissions'] as $permission) {
-                if (!in_array($permission, $jobTitlePermissions->pluck('perm_id')->toArray())) {
+            if (isset($data['additional_permissions'])) {
+                foreach ($data['additional_permissions'] as $permission) {
+                    if (!in_array($permission, $jobTitlePermissions->pluck('perm_id')->toArray())) {
 
-                    // if the permission is not found, then add it to the list
-                    $additional_permissions[] = $permission;
+                        // if the permission is not found, then add it to the list
+                        $additional_permissions[] = $permission;
 
+                    }
                 }
+
+                // attach the additional permissions to the employee (with status = 1)
+                // and attach the excluded permissions to the employee (with status = 0)
+                // in the staffing record
+
+                if (count($additional_permissions) > 0) {
+                    $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
+                        ->attach($additional_permissions, [
+                            'status' => 1,
+                        ]);
+                    $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
+                        ->attach($additional_permissions, [
+                            'status' => 1,
+                        ]);
+                }
+
             }
 
-            $excluded_permissions = $data['excluded_permissions'];
+            $excluded_permissions = optional($data)['excluded_permissions'];
 
-            // attach the additional permissions to the employee (with status = 1)
-            // and attach the excluded permissions to the employee (with status = 0)
-            // in the staffing record
-            $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
-                ->attach($additional_permissions, [
-                    'status' => 1,
-                ]);
+            if (isset(optional($data)['excluded_permissions'])) {
 
-            $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
-                ->attach($excluded_permissions, [
-                    'status' => 0,
-                ]);
+                $employee->staffings()->whereNull('end_date')->latest()->firstOrFail()->permissions()
+                    ->attach($excluded_permissions, [
+                        'status' => 0,
+                    ]);
+            }
 
             // update job application status to hired
             $jobApplication = JobApplication::query()

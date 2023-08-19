@@ -141,8 +141,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('absences', AbsenceController::class);
     Route::get('employee-absences/{emp_id}', [AbsenceController::class, 'showEmployeeAbsences']);
 
-// TEMP  ROUT FOR PDF
+    // TEMP  ROUT FOR PDF
     Route::get('pdf', [ReportController::class, 'create']);
+
+    // cancel reservation(deny future reservation)
+    // 1. by customer
+    Route::post('cancel-reservation-by-customer/{appointment}', [TimeSheetController::class, 'cancelReservationByCustomer']);
+
+    // 2. by employee
+    Route::post('cancel-appointment-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservationByEmployee']);
+
+    // 3. by consultant
+    Route::post('cancel-reservation-by-consultant/{appointment}', [TimeSheetController::class, 'cancelReservationByConsultant']);
+
+    // cancel reservation(to be reservable again)
+    Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservation']);
 
 });
 
@@ -199,19 +212,11 @@ Route::put('attendance-modification/{app_id}/{status_id}', [AppointmentControlle
 Route::post('add-case-note', [AppointmentController::class, 'appointmentPreview']);
 Route::apiResource('appointment', AppointmentController::class);
 
-// cancel reservation(deny future reservation)
-// 1. by customer
-Route::post('cancel-reservation-by-customer/{appointment}', [TimeSheetController::class, 'cancelReservationByCustomer']);
-
-// 2. by employee
-Route::post('cancel-appointment-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservationByEmployee']);
-
-// 3. by consultant
-Route::post('cancel-reservation-by-consultant/{appointment}', [TimeSheetController::class, 'cancelReservationByConsultant']);
-
-// cancel reservation(to be reservable again)
-Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservation']);
-
-
 // get all time slots (appointments) for a specific consultant in a specific date
 Route::get('consultant-time-slots/{consultant_id}/{date}', [TimeSheetController::class, 'getConsultantTimeSlots']);
+
+// check username availability
+Route::get('check-username/{username}', [CustomerController::class, 'checkUsername']);
+
+// check email availability
+Route::get('check-email/{email}', [CustomerController::class, 'checkEmail']);
