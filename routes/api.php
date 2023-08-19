@@ -3,6 +3,7 @@
 use App\Application\Http\Controllers\AppointmentController;
 use App\Application\Http\Controllers\AuthenticationController;
 use App\Application\Http\Controllers\CustomerController;
+use App\Application\Http\Controllers\EmailVerificationController;
 use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
@@ -144,6 +145,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // TEMP  ROUT FOR PDF
     Route::get('pdf', [ReportController::class, 'create']);
+
+
+    // Register the routes for the EmailVerification Controller
+    Route::post('email/verification-notification', [EmailVerificationController::class, 'emailVerification'])/*->middleware('throttle:6,1')->name('verification.send')*/
+    ;
 
     // cancel reservation(deny future reservation)
     // 1. by customer

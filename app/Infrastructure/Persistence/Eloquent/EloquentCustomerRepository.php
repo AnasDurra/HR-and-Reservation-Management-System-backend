@@ -14,6 +14,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use App\Notifications\EmailVerificationNotification;
 
 
 class EloquentCustomerRepository implements CustomerRepositoryInterface
@@ -238,6 +239,12 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             'verified' => false,
             'blocked' => false,
         ]);
+
+
+        //verify email
+        if(isset($data['email'])){
+            $new_customer->notify(new EmailVerificationNotification());
+        }
 
         return [
             'token' => $new_customer->createToken('customer_auth_token')->plainTextToken,
