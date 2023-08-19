@@ -18,8 +18,24 @@ class Customer extends Model
 
 
     protected $primaryKey = 'id';
-    protected $fillable = ['education_level_id', 'first_name', 'last_name', 'job', 'birth_date', 'phone', 'phone_number',
-        'martial_status', 'num_of_children', 'national_number', 'profile_picture', 'username', 'password', 'verified', 'blocked', 'email'];
+    protected $fillable = [
+        'education_level_id',
+        'first_name',
+        'last_name',
+        'job',
+        'birth_date',
+        'phone',
+        'phone_number',
+        'martial_status',
+        'num_of_children',
+        'national_number',
+        'profile_picture',
+        'username',
+        'password',
+        'verified',
+        'blocked',
+        'email',
+        ];
 
     protected $hidden = [
         'password',
@@ -33,7 +49,7 @@ class Customer extends Model
 
     public function educationLevel(): BelongsTo
     {
-        return $this->belongsTo(EducationLevel::class,'education_level_id','education_level_id');
+        return $this->belongsTo(EducationLevel::class, 'education_level_id', 'education_level_id');
     }
 
     public function appointments(): HasMany
