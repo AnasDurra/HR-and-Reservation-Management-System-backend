@@ -56,6 +56,10 @@ class Appointment extends Model
     {
         return $this->workDay->day_date > now();
     }
+    public function getIsPastAttribute(): bool
+    {
+        return $this->workDay->day_date < now();
+    }
 
     /**
      * mutator to return whether the appointment is already cancelled or not
@@ -93,5 +97,21 @@ class Appointment extends Model
 
         return $clinicName;
     }
+
+    /**
+     * mutator to update Appointment Status id based on the day_date
+     */
+//    public function setStatusIdAttribute(): void
+//    {
+//        // If the day_date is in the past and status_id = STATUS_AVAILABLE , set the status_id to STATUS_CLOSED
+//        if ($this->is_past && $this->status_id == AppointmentStatus::STATUS_AVAILABLE) {
+//            $this->status_id = AppointmentStatus::STATUS_CLOSED;
+//            $this->save();
+//        }
+//        if ($this->is_past && $this->status_id == AppointmentStatus::STATUS_RESERVED) {
+//            $this->status_id = AppointmentStatus::STATUS_ATTENDANCE_IS_NOT_RECORDED;
+//            $this->save();
+//        }
+//    }
 
 }

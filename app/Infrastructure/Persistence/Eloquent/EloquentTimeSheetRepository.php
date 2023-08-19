@@ -7,6 +7,7 @@ use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\Consultant;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Models\CD\Shift;
+use App\Domain\Models\CD\UnRegisteredAccount;
 use App\Domain\Models\CD\WorkDay;
 use App\Domain\Repositories\TimeSheetRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
@@ -205,6 +206,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         }
 
         $appointment->customer_id = $customer_id;
+        $appointment->status_id = AppointmentStatus::STATUS_RESERVED;
         $appointment->save();
 
         return $appointment;
@@ -307,6 +309,12 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         $appointment->update([
             'status_id' => AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE,
         ]);
+
+        $reservation_by_phone = UnRegisteredAccount::query()->where('app_id', '=', $appointment->id)->first();
+
+        if ($reservation_by_phone) {
+            $reservation_by_phone->delete();
+        }
 
         // TODO: Notify the customer & consultant
 
