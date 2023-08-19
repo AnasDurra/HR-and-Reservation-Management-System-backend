@@ -151,17 +151,13 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
         $cancelled_by_consultant_appointments = $consultant_appointments->whereIn('status_id',[3,8])->values();;
         $cancelled_by_customers_appointments = $consultant_appointments->whereIn('status_id',[1,7])->values();;
 
-        $now = now()->toDateString();
-        $available_appointments = $consultant_appointments->filter(function ($appointment) use ($now) {
-            $appointmentDate = substr($appointment->start_time, 0, 10);
-            return $appointment->status_id === 6 && $appointmentDate <= $now;
-        })->values();
+        $unknown_appointments = $consultant_appointments->where('status_id','=',11)->values();
 
         return [
             'completed_appointments' => $completed_appointments,
             'cancelled_by_consultant_appointments' => $cancelled_by_consultant_appointments,
             'cancelled_by_customers_appointments' => $cancelled_by_customers_appointments,
-            'available_appointments' => $available_appointments,
+            'unknown_appointments' => $unknown_appointments,
         ];
     }
 
@@ -201,7 +197,7 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
         foreach ($months as $month) {
             $count = $consultant_appointments->filter(function ($appointment) use ($month) {
                 return $appointment->status_id === 4 &&
-                    date('F', strtotime($appointment->start_time)) === $month;
+                    date('F', strtotime($appointment->workDay->day_date)) === $month;
             })->count();
 
             // Add data to the response array

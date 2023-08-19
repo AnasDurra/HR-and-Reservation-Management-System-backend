@@ -26,7 +26,7 @@ class DashboardService
         $employees = $employeeService->getEmployeeList()->getCollection();
         $workingEmployees = 0;
         foreach ($employees as $employee) {
-            $status = $employee->getCurrentEmploymentStatusAttribute();
+            $status = $employee->getCurrentEmploymentStatusAttribute()->emp_status_id;
             if($status == 1)
                 $workingEmployees++;
         }
