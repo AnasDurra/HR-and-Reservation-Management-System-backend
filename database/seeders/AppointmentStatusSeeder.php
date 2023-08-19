@@ -22,6 +22,8 @@ class AppointmentStatusSeeder extends Seeder
             'متاح',
             'الموعد فائت من قبل المراجع',
             'الموعد فائت من قبل المستشار',
+            'الموعد مغلق',
+            'لم يتم تسجيل الحضور',
         ];
 
         foreach ($status as $item) {

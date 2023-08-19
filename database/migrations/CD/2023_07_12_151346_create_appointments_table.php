@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Models\CD\AppointmentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,7 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('work_day_id');
-            $table->unsignedBigInteger('status_id')->default('1');
+            $table->unsignedBigInteger('status_id')->default(AppointmentStatus::STATUS_AVAILABLE);
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->Time('start_time');
             $table->Time('end_time');

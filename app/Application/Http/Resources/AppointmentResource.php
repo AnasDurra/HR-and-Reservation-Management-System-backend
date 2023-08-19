@@ -26,8 +26,11 @@ class AppointmentResource extends JsonResource
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
             'status' => [
-                'id' => $this->status->id,
-                'name' => $this->status->name,
+                'id' => $this->status ? $this->status->id : null,
+                'name' => $this->status ? $this->status->name : null,
+                'customer_name' => $this->customer ? $this->customer->getFullNameAttribute() : null,
+                'phone_number' => $this->customer ? $this->customer->phone_number : null,
+
             ],
         ];
     }

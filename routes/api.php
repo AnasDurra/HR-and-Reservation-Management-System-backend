@@ -2,6 +2,7 @@
 
 use App\Application\Http\Controllers\AppointmentController;
 use App\Application\Http\Controllers\AuthenticationController;
+use App\Application\Http\Controllers\CaseNoteController;
 use App\Application\Http\Controllers\CustomerController;
 use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
@@ -215,3 +216,7 @@ Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController
 
 // get all time slots (appointments) for a specific consultant in a specific date
 Route::get('consultant-time-slots/{consultant_id}/{date}', [TimeSheetController::class, 'getConsultantTimeSlots']);
+
+
+//Case Note
+Route::apiResource('case-note', CaseNoteController::class);

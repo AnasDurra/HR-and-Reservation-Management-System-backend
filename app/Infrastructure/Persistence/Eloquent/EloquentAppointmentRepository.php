@@ -7,6 +7,7 @@ use App\Domain\Models\CD\CaseNote;
 use App\Domain\Models\CD\WorkDay;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,26 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
     public function getAppointmentList(): Collection
     {
+
+//        $work_days = WorkDay::query()->first();
+//        $appointment = Appointment::query()->whereIn('work_day_id', $work_days)->first();
+
+//        dd($appointment);
+//        dd($work_days->day_date < now() && $appointment->status_id == AppointmentStatus::STATUS_AVAILABLE);
+//        dd($work_days->day_date < Carbon::now());
+//        dd($work_days->day_date );
+//        dd( Carbon::now());
+//        dd($appointment->status_id == AppointmentStatus::STATUS_AVAILABLE);
+//        if ($work_days->day_date < now() && $appointment->status_id == AppointmentStatus::STATUS_AVAILABLE) {
+//            $appointment->status_id = AppointmentStatus::STATUS_CLOSED;
+//            $appointment->save();
+//        }
+//        if ($work_days->day_date < now() && $appointment->status_id == AppointmentStatus::STATUS_RESERVED) {
+//            $appointment->status_id = AppointmentStatus::STATUS_ATTENDANCE_IS_NOT_RECORDED;
+//            $appointment->save();
+//        }
+
+//        dd($appointment);
 
         $work_days = WorkDay::query();
 

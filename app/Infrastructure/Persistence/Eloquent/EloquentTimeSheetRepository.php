@@ -275,6 +275,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
         //filter by start & end date
         $work_days = WorkDay::query()->whereIn('shift_id', $shift);
+
         if ($start_date) {
             $work_days->where('day_date', '>=', $start_date)->pluck('id');
         }
@@ -283,11 +284,12 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         }
         $work_days = $work_days->pluck('id');
 
+        $cancelled_value = [AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE,
+            AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT];
+
         return Appointment::query()
             ->whereIn('work_day_id', $work_days)
-            ->where('status_id', '=',
-                AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT
-                || AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE)
+            ->whereIn('status_id', $cancelled_value)
             ->paginate(10);
     }
 
