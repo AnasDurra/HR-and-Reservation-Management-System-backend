@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\CaseNote;
+use App\Domain\Models\CD\UnRegisteredAccount;
 use App\Domain\Models\CD\WorkDay;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
@@ -19,26 +20,6 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
     public function getAppointmentList(): Collection
     {
 
-//        $work_days = WorkDay::query()->first();
-//        $appointment = Appointment::query()->whereIn('work_day_id', $work_days)->first();
-
-//        dd($appointment);
-//        dd($work_days->day_date < now() && $appointment->status_id == AppointmentStatus::STATUS_AVAILABLE);
-//        dd($work_days->day_date < Carbon::now());
-//        dd($work_days->day_date );
-//        dd( Carbon::now());
-//        dd($appointment->status_id == AppointmentStatus::STATUS_AVAILABLE);
-//        if ($work_days->day_date < now() && $appointment->status_id == AppointmentStatus::STATUS_AVAILABLE) {
-//            $appointment->status_id = AppointmentStatus::STATUS_CLOSED;
-//            $appointment->save();
-//        }
-//        if ($work_days->day_date < now() && $appointment->status_id == AppointmentStatus::STATUS_RESERVED) {
-//            $appointment->status_id = AppointmentStatus::STATUS_ATTENDANCE_IS_NOT_RECORDED;
-//            $appointment->save();
-//        }
-
-//        dd($appointment);
-
         $work_days = WorkDay::query();
 
         $start_date = request('start_date');
@@ -53,6 +34,13 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
         $work_days = $work_days->pluck('id');
 
         return Appointment::query()->whereIn('work_day_id', $work_days)->get();
+//        $appointment = Appointment::query()->whereIn('work_day_id', $work_days)->first();
+//        dd($appointment->unRegisteredAccount);
+//
+//        $app = Appointment::query()->find(4);
+//
+////        $unregistered = UnRegisteredAccount::query()->first();
+//        dd($app->unRegisteredAccount);
     }
 
 

@@ -15,6 +15,9 @@ class UnRegisteredAccount extends Model
     // Define relationships, if any
     public function appointment(): BelongsTo
     {
-        return $this->belongsTo(Appointment::class, 'app_id', 'id');
+        return $this->belongsTo(
+            Appointment::class,
+            'app_id',
+            'id');
     }
 }

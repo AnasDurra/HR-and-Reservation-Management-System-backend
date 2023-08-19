@@ -14,9 +14,6 @@ class Appointment extends Model
 
     protected $primaryKey = 'id';
     protected $fillable = ['work_day_id', 'status_id', 'customer_id', 'start_time', 'end_time', 'cancellation_reason'];
-//    protected $dispatchesEvents = [
-//        'saving' => AppointmentSaving::class,
-//    ];
 
     public function workDay(): BelongsTo
     {
@@ -38,10 +35,15 @@ class Appointment extends Model
         return $this->hasOne(CaseNote::class);
     }
 
-    public function unRegisteredAccount(): BelongsTo
+    public function unRegisteredAccount(): HasOne
     {
-        return $this->belongsTo(UnRegisteredAccount::class, 'app_id', 'id');
+        return $this->hasOne(UnRegisteredAccount::class, 'app_id', 'id');
     }
+
+//    public function unRegisteredAccount(): BelongsTo
+//    {
+//        return $this->belongsTo(UnRegisteredAccount::class/*, 'app_id', 'id'*/);
+//    }
 
     /**
      * mutator to return whether the appointment is reserved
@@ -49,7 +51,8 @@ class Appointment extends Model
      */
     public function getIsReservedAttribute(): bool
     {
-        return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null;
+        return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null
+            || UnRegisteredAccount::query()->find($this->id) != null;
     }
 
     /**
@@ -103,49 +106,5 @@ class Appointment extends Model
         return $clinicName;
     }
 
-    /**
-     * mutator to update Appointment Status id based on the day_date
-     */
-//    public function setStatusIdAttribute(): void
-//    {
-////        // If the day_date is in the past and status_id = STATUS_AVAILABLE , set the status_id to STATUS_CLOSED
-////        if ($this->is_past && $this->status_id == AppointmentStatus::STATUS_AVAILABLE) {
-////            $this->status_id = AppointmentStatus::STATUS_CLOSED;
-////            $this->save();
-////        }
-////        if ($this->is_past && $this->status_id == AppointmentStatus::STATUS_RESERVED) {
-////            $this->status_id = AppointmentStatus::STATUS_ATTENDANCE_IS_NOT_RECORDED;
-////            $this->save();
-////        }
-//
-//        $work_days = $this->workDay;
-//        if ($work_days->day_date < now() && $this->status_id == AppointmentStatus::STATUS_AVAILABLE) {
-//            $this->status_id = AppointmentStatus::STATUS_CLOSED;
-//            $this->save();
-//        }
-//        if ($work_days->day_date < now() && $this->status_id == AppointmentStatus::STATUS_RESERVED) {
-//            $this->status_id = AppointmentStatus::STATUS_ATTENDANCE_IS_NOT_RECORDED;
-//            $this->save();
-//        }
-//    }
-
-//    public function setStatusIdAttribute($value): void
-//    {
-//        // Get the associated work_day
-//        $workDay = $this->workDay;
-//        // Check if the appointment's day_date is in the past
-//
-//        if ($workDay->day_date < now()) {
-//            // Check the current status and update accordingly
-//            if ($this->status_id == AppointmentStatus::STATUS_AVAILABLE) {
-//                $this->attributes['status_id'] = AppointmentStatus::STATUS_CLOSED;
-//            } elseif ($this->status_id == AppointmentStatus::STATUS_RESERVED) {
-//                $this->attributes['status_id'] = AppointmentStatus::STATUS_ATTENDANCE_IS_NOT_RECORDED;
-//            }
-//        } else {
-//            // If the day_date is in the future, keep the original status
-//            $this->attributes['status_id'] = $value;
-//        }
-//    }
 
 }
