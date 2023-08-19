@@ -56,9 +56,10 @@ class AttendanceResource extends JsonResource
 
             // Leave before calculation
             if($element["check_out_time"]) {
-                if (!($element["employee"]["schedule"]["time_out"] <= $element["check_out_time"])) {
+                $schedule_time_out = $element["shift.new_time_out"] ?? $element["employee"]["schedule"]["time_out"];
+                if (!($schedule_time_out <= $element["check_out_time"])) {
                     $leaveTime = \DateTime::createFromFormat('H:i:s', $element["check_out_time"]);
-                    $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $element["employee"]["schedule"]["time_out"]);
+                    $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $schedule_time_out);
                     $duration = $scheduleTimeOut->diff($leaveTime);
                     $data[$i]["leaveBefore"] = $duration->format('%H:%I:%S');
                 }
