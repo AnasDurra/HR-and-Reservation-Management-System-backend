@@ -25,6 +25,7 @@ use App\Application\Http\Controllers\AbsenceController;
 use App\Application\Http\Controllers\EducationLevelController;
 use App\Application\Http\Controllers\EventController;
 use App\Application\Http\Controllers\UnRegisteredAccountController;
+use App\Application\Http\Controllers\DashboardController;
 
 
 use App\Application\Http\Controllers\ConsultantController;
@@ -215,3 +216,7 @@ Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController
 
 // get all time slots (appointments) for a specific consultant in a specific date
 Route::get('consultant-time-slots/{consultant_id}/{date}', [TimeSheetController::class, 'getConsultantTimeSlots']);
+
+
+// Register routes for dashboard requests
+Route::get('dashboard', [DashboardController::class, 'dashboard']);

@@ -161,11 +161,11 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     {
         $customers = Customer::query()
             ->whereHas('appointments.status', function ($query) {
-                $query->where('id', '=', 1);
+                $query->whereIn('id',[1,7]);
             })
             ->withCount(['appointments as missed_appointment_count' => function ($query) {
                 $query->whereHas('status', function ($query) {
-                    $query->where('id', 1);
+                    $query->whereIn('id',[1,7]);
                 });
             }])
             ->orderBy('missed_appointment_count', 'desc');
