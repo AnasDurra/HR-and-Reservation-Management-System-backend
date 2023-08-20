@@ -14,20 +14,15 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // TODO check for scheduling time
-        $schedule->command('attendance:store')
-            ->everyTenMinutes()
-            ->between('06:00', '19:00')
-            ->appendOutputTo('scheduler.log');
+         $schedule->command('attendance:store')
+             ->everyTenMinutes()
+             ->between('06:00','19:00')
+             ->appendOutputTo('scheduler.log');
 
-        $schedule->command('absences:store')
-            ->daily()
-            ->at('22:00')
-            ->appendOutputTo('scheduler.log');
-
-        $schedule->command('daily:update-status')
-            ->daily()
-            ->at('22:00')
-            ->appendOutputTo('UpdateStatusId.log');
+         $schedule->command('absences:store')
+             ->daily()
+             ->at('22:00')
+             ->appendOutputTo('scheduler.log');
     }
 
     /**
@@ -35,7 +30,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__ . '/Commands');
+        $this->load(__DIR__.'/Commands');
 
         $this->load([
             GenerateDDDClasses::class,

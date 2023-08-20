@@ -18,7 +18,6 @@ use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Repositories\AttendanceRepositoryInterface;
 
 use App\Domain\Repositories\AuthenticationRepositoryInterface;
-use App\Domain\Repositories\CaseNoteRepositoryInterface;
 use App\Domain\Repositories\ClinicRepositoryInterface;
 use App\Domain\Repositories\ConsultantRepositoryInterface;
 use App\Domain\Repositories\CustomerRepositoryInterface;
@@ -46,7 +45,6 @@ use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Domain\Repositories\ShiftRequestRepositoryInterface;
 use App\Domain\Repositories\VacationRequestRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\EloquentAuthenticationRepository;
-use App\Infrastructure\Persistence\Eloquent\EloquentCaseNoteRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentClinicRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentConsultantRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentCustomerRepository;
@@ -119,7 +117,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TimeSheetRepositoryInterface::class, EloquentTimeSheetRepository::class);
         $this->app->bind(AppointmentRepositoryInterface::class, EloquentAppointmentRepository::class);
         $this->app->bind(UnRegisteredAccountRepositoryInterface::class, EloquentUnRegisteredAccountRepository::class);
-        $this->app->bind(CaseNoteRepositoryInterface::class,EloquentCaseNoteRepository ::class);
     }
 
 

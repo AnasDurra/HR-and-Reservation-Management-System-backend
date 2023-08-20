@@ -4,16 +4,13 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\CaseNote;
-use App\Domain\Models\CD\UnRegisteredAccount;
 use App\Domain\Models\CD\WorkDay;
 use App\Domain\Repositories\AppointmentRepositoryInterface;
 use App\Domain\Models\CD\Appointment;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Container\EntryNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use phpDocumentor\Reflection\PseudoTypes\NonEmptyLowercaseString;
 
 class EloquentAppointmentRepository implements AppointmentRepositoryInterface
 {
@@ -34,13 +31,6 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
         $work_days = $work_days->pluck('id');
 
         return Appointment::query()->whereIn('work_day_id', $work_days)->get();
-//        $appointment = Appointment::query()->whereIn('work_day_id', $work_days)->first();
-//        dd($appointment->unRegisteredAccount);
-//
-//        $app = Appointment::query()->find(4);
-//
-////        $unregistered = UnRegisteredAccount::query()->first();
-//        dd($app->unRegisteredAccount);
     }
 
 
@@ -74,55 +64,39 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
         // TODO: Implement the logic to delete a Appointment
     }
 
-
     /**
-     * @throws Exception
+     * @throws EntryNotFoundException
      */
     public function attendanceModification($app_id, $status_id): Appointment|Builder|null
     {
         try {
-            $appointment = Appointment::query()->find($app_id);
-
-            if (!$appointment)
-                abort(403, "Appointment with ID $app_id not found.");
+            $appointment = Appointment::query()->findOrFail($app_id);
 
             //status_id must be 4 or 7 or 8
+
             // Check if status_id is within the specified range
             $validStatuses = [
                 AppointmentStatus::STATUS_COMPLETED
                 , AppointmentStatus::STATUS_MISSED_BY_CUSTOMER
                 , AppointmentStatus::STATUS_MISSED_BY_CONSULTANT
             ];
-
-//            dd($status_id == AppointmentStatus::STATUS_AVAILABLE && $appointment->is_future);
-//            dd($status_id == AppointmentStatus::STATUS_AVAILABLE);
-//            dd($appointment->is_future);
-//            dd($appointment->workDay->day_date > now());
-
-            if (in_array($status_id, $validStatuses)) {
-                $appointment->status_id = $status_id;
-                $appointment->save();
-            } else if ($status_id == AppointmentStatus::STATUS_AVAILABLE && $appointment->is_future) {
-                $appointment->status_id = $status_id;
-                $appointment->save();
-//                dd($appointment);
-            } else if ($status_id == AppointmentStatus::STATUS_ATTENDANCE_IS_NOT_RECORDED && $appointment->is_past) {
-                $appointment->status_id = $status_id;
-                $appointment->save();
-            } else {
+            if (!in_array($status_id, $validStatuses))
                 abort(400, "Invalid status id");
-            }
+
+
+            $appointment->status_id = $status_id;
+            $appointment->save();
 
             return $appointment;
         } catch (Exception $exception) {
-//            throw new EntryNotFoundException("Appointment with ID $app_id not found.");
-            throw $exception;
+            throw new EntryNotFoundException("Appointment with ID $app_id not found.");
+//            throw $exception;
+
         }
 
     }
 
-    public
-    function appointmentPreview(array $data): CaseNote|Builder|null
+    public function appointmentPreview(array $data): CaseNote|Builder|null
     {
         return CaseNote::query()->create([
             'app_id' => $data['app_id'],
