@@ -15,6 +15,6 @@ class CaseNote extends Model
 
     public function appointment(): HasOne
     {
-        return $this->hasOne(Appointment::class);
+        return $this->hasOne(Appointment::class,'app_id','id');
     }
 }

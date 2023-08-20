@@ -2,6 +2,7 @@
 
 namespace App\Domain\Models\CD;
 
+use App\Events\AppointmentSaving;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,7 +32,7 @@ class Appointment extends Model
 
     public function caseNote(): HasOne
     {
-        return $this->hasOne(CaseNote::class);
+        return $this->hasOne(CaseNote::class,'app_id','id');
     }
 
     public function unRegisteredAccount(): BelongsTo
@@ -45,7 +46,8 @@ class Appointment extends Model
      */
     public function getIsReservedAttribute(): bool
     {
-        return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null;
+        return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null
+            || $this->status_id == AppointmentStatus::STATUS_RESERVED_ON_PHONE;
     }
 
     /**
@@ -57,6 +59,11 @@ class Appointment extends Model
         return $this->workDay->day_date > now();
     }
 
+    public function getIsPastAttribute(): bool
+    {
+        return $this->workDay->day_date < now();
+    }
+
     /**
      * mutator to return whether the appointment is already cancelled or not
      * by checking status_id == 1 || status_id == 2 || status_id == 3
@@ -66,6 +73,19 @@ class Appointment extends Model
         return $this->status_id == AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT ||
             $this->status_id == AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE ||
             $this->status_id == AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT;
+    }
+
+    /**
+     * mutator to return consultant name for the appointment
+     */
+    public function getConsultantName(): string
+    {
+        $consultant = $this->workDay->shift->consultant;
+
+        $consultantName = $consultant->first_name .' '. $consultant->last_name;
+        $this->unsetRelation('workDay');
+
+        return $consultantName;
     }
 
     /**

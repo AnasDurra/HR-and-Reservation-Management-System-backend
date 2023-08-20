@@ -289,7 +289,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
      */
     public function customerLogin(array $data): array
     {
-
         // data contains email(can be either username or email) and password
         $customer = Customer::query()
             ->where('email', '=', $data['email'])
@@ -441,14 +440,14 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         $responseData = [];
 
-        foreach ($clinics as $clinic) {
-            $responseData[$clinic->name]['clinic_name'] = $clinic->name;
-            $responseData[$clinic->name]['completed_appointments'] = $consultant_appointments
-                ->where('clinic_name', '=', $clinic->name)
-                ->where('status_id', '=', 4)->count();
-            $responseData[$clinic->name]['cancelled_appointments'] = $consultant_appointments
-                ->where('clinic_name', '=', $clinic->name)
-                ->whereIn('status_id', [1, 7])->count();
+        for($i = 0 ; $i < count($clinics) ; $i ++){
+            $responseData[$i]['clinic_name'] = $clinics[$i]->name;
+            $responseData[$i]['completed_appointments'] =$consultant_appointments
+                ->where('clinic_name','=',$clinics[$i]->name)
+                ->where('status_id','=',4)->count();
+            $responseData[$i]['cancelled_appointments'] =$consultant_appointments
+                ->where('clinic_name','=',$clinics[$i]->name)
+                ->whereIn('status_id',[1,7])->count();
         }
 
         return $responseData;

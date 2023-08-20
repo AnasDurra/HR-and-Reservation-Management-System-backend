@@ -165,12 +165,12 @@ class TimeSheetController extends Controller
      */
     public function cancelReservation(Appointment $appointment): JsonResponse
     {
-        // make sure the user is an employee
-        if (!auth()->user()->isEmployee()) {
-            return response()->json([
-                'message' => 'لا يمكن إلغاء الموعد لأنك لست موظف',
-            ], 403);
-        }
+//        // make sure the user is an employee
+//        if (!auth()->user()->isEmployee()) {
+//            return response()->json([
+//                'message' => 'لا يمكن إلغاء الموعد لأنك لست موظف',
+//            ], 403);
+//        }
 
         // make sure the appointment is in the future
         if (!$appointment->is_future) {

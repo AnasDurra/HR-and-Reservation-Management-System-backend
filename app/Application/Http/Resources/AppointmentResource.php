@@ -29,6 +29,17 @@ class AppointmentResource extends JsonResource
                 'id' => $this->status->id,
                 'name' => $this->status->name,
             ],
+
+            'case_note' => $this->caseNote ? [
+                'id' => $this->caseNote->id,
+                'app_id' => $this->caseNote->app_id,
+                'title' => $this->caseNote->title,
+                'description' => $this->caseNote->description,
+                'created_at' => $this->caseNote->created_at,
+            ] : null,
+
+            'clinic_name' => $this->getClinicName(),
+            'consultant_name' => $this->getConsultantName(),
         ];
     }
 }
