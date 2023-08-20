@@ -39,6 +39,9 @@ class AppointmentResource extends JsonResource
                 'description' => $this->caseNote->description,
                 'created_at' => $this->caseNote->created_at,
             ] : null,
+
+            'clinic_name' => $this->getClinicName(),
+            'consultant_name' => $this->getConsultantName(),
         ];
     }
 }

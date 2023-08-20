@@ -81,6 +81,19 @@ class Appointment extends Model
     }
 
     /**
+     * mutator to return consultant name for the appointment
+     */
+    public function getConsultantName(): string
+    {
+        $consultant = $this->workDay->shift->consultant;
+
+        $consultantName = $consultant->first_name .' '. $consultant->last_name;
+        $this->unsetRelation('workDay');
+
+        return $consultantName;
+    }
+
+    /**
      * mutator to return consultant id for the appointment
      */
     public function getConsultantId(): int
