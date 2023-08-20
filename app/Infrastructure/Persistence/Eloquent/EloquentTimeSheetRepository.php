@@ -128,28 +128,32 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         try {
 
             $createdAppointments = new Collection();
+            $user_id = 1; // TODO $user_id = Auth::id();
+            $consultant = Consultant::query()->where('user_id', '=', $user_id)->first();
 
             DB::beginTransaction();
             foreach ($data['dates'] as $date) {
 
-                // first, check that there is no record with the same date and shift
-                $records = WorkDay::query()
-                    ->whereHas('appointments', function ($query) {
-                        $query->whereNotIn('status_id', [1, 2, 3]);
-                    })
-                    ->get();
+                foreach ($consultant->shifts as $shift){
+                    $records = $shift->workDays()
+                        ->where('day_date','=',$date['date'])
+                        ->whereHas('appointments', function ($query) {
+                            $query->whereNotIn('status_id', [1, 2, 3]);
+                        })
+                        ->get();
 
-                if ($records->count() > 0) {
-                    abort(400, "يوجد مواعيد غير ملغية مرتبطة بهذا اليوم");
-                }
+                    if ($records->count() > 0) {
+                        abort(400, "يوجد مواعيد غير ملغية مرتبطة بهذا اليوم");
+                    }
 
-                $records = WorkDay::query()
-                    ->where('day_date','=',$date['date'])
-                    ->where('shift_id','=',$date['shift_Id'])
-                    ->get();
+                    $records = WorkDay::query()
+                        ->where('day_date','=',$date['date'])
+                        ->where('shift_id','=',$date['shift_Id'])
+                        ->get();
 
-                if ($records->count() > 0) {
-                    abort(400, "تم بالفعل اسناد جدول دوام لليوم المحدد");
+                    if ($records->count() > 0) {
+                        abort(400, "تم بالفعل اسناد جدول دوام لليوم المحدد");
+                    }
                 }
 
                 $work_day = WorkDay::query()->create([
