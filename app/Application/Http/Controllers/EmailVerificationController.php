@@ -7,6 +7,8 @@ use App\Http\Requests\EmailVerificationRequest;
 use Carbon\Carbon;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class EmailVerificationController extends Controller
 {
@@ -33,5 +35,19 @@ class EmailVerificationController extends Controller
         return response()->json([
             'message' => 'Email verified successfully'
         ], 200);
+    }
+
+    public function getEmailVerified(): JsonResponse
+    {
+        //get unique email from otps table
+        $uniqueEmails = DB::table('otps')
+            ->where('valid', '=', false)
+            ->distinct()
+            ->pluck('identifier')
+            ->toArray();
+
+        return response()->json([
+            'emails' => $uniqueEmails
+        ]);
     }
 }

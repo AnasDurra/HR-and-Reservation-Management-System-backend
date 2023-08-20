@@ -147,9 +147,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // Register the routes for the EmailVerification Controller
-    Route::post('email/verification-notification', [EmailVerificationController::class, 'emailVerification'])/*->middleware('throttle:6,1')->name('verification.send')*/
-    ;
-
+    Route::post('email/verification-notification', [EmailVerificationController::class, 'emailVerification']);
+    Route::get('email/verification-notification', [EmailVerificationController::class, 'getEmailVerified']);
 });
 
 // Register the routes for the CustomerController
