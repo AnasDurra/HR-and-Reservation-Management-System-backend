@@ -382,7 +382,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             $employeeData->save();
 
 
-
             DB::commit();
 
             return $jobApplication;
@@ -457,7 +456,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                     // then we can accept this application and update job vacancy status to 2
 
                     $accepted = $jobApplicationData['app_status_id'] == 2;
-                    $rejected = $jobApplicationData['app_status_id'] == 3;
+                    $rejected = $jobApplicationData['app_status_id'] != 2;
 
                     if ($accepted) {
                         $jobVacancy = $jobApplication->jobVacancy;
