@@ -2,10 +2,12 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Repositories\CustomerRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class CustomerService
 {
@@ -79,5 +81,15 @@ class CustomerService
     public function getStatistics(int $id): array|null
     {
         return $this->CustomerRepository->getStatistics($id);
+    }
+
+    public function bookAnAppointmentByCustomer($appointment): Appointment|Builder|null
+    {
+        return $this->CustomerRepository->bookAnAppointmentByCustomer($appointment);
+    }
+
+    public function getCustomerAppointments(): Collection
+    {
+        return $this->CustomerRepository->getCustomerAppointments();
     }
 }
