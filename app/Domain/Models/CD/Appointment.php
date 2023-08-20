@@ -32,7 +32,7 @@ class Appointment extends Model
 
     public function caseNote(): HasOne
     {
-        return $this->hasOne(CaseNote::class);
+        return $this->hasOne(CaseNote::class,'app_id','id');
     }
 
     public function unRegisteredAccount(): HasOne
@@ -52,7 +52,7 @@ class Appointment extends Model
     public function getIsReservedAttribute(): bool
     {
         return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null
-            || UnRegisteredAccount::query()->find($this->id) != null;
+            || $this->status_id == AppointmentStatus::STATUS_RESERVED_ON_PHONE;
     }
 
     /**

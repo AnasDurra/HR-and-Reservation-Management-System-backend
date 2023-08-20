@@ -389,13 +389,13 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         $responseData = [];
 
-        foreach ($clinics as $clinic){
-            $responseData[$clinic->name]['clinic_name'] = $clinic->name;
-            $responseData[$clinic->name]['completed_appointments'] =$consultant_appointments
-                ->where('clinic_name','=',$clinic->name)
+        for($i = 0 ; $i < count($clinics) ; $i ++){
+            $responseData[$i]['clinic_name'] = $clinics[$i]->name;
+            $responseData[$i]['completed_appointments'] =$consultant_appointments
+                ->where('clinic_name','=',$clinics[$i]->name)
                 ->where('status_id','=',4)->count();
-            $responseData[$clinic->name]['cancelled_appointments'] =$consultant_appointments
-                ->where('clinic_name','=',$clinic->name)
+            $responseData[$i]['cancelled_appointments'] =$consultant_appointments
+                ->where('clinic_name','=',$clinics[$i]->name)
                 ->whereIn('status_id',[1,7])->count();
         }
 

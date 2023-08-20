@@ -144,15 +144,6 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
                     if ($records->count() > 0) {
                         abort(400, "يوجد مواعيد غير ملغية مرتبطة بهذا اليوم");
                     }
-
-                    $records = WorkDay::query()
-                        ->where('day_date','=',$date['date'])
-                        ->where('shift_id','=',$date['shift_Id'])
-                        ->get();
-
-                    if ($records->count() > 0) {
-                        abort(400, "تم بالفعل اسناد جدول دوام لليوم المحدد");
-                    }
                 }
 
                 $work_day = WorkDay::query()->create([

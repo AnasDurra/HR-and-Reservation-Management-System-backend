@@ -67,11 +67,32 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
         ]);
 
 
-        if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+        // Shift request
+        $shift_request = $leave->employee->shiftRequests()
+            ->whereDate('start_date', '<=', $leave["leave_date"])
+            ->where('remaining_days','!=',0)
+            ->whereNull('deleted_at')
+            ->where('req_stat',2) // TODO check if id is correct
+            ->first();
+
+        $shift_new_time_in = null;
+        $shift_new_time_out = null;
+        if($shift_request){
+            if($shift_request['remaining_days'] != 0) {
+                $shift_request->remaining_days -=1;
+                $shift_request->save();
+                $shift_new_time_in = $shift_request["new_time_in"];
+                $shift_new_time_out = $shift_request["new_time_out"];
+            }
+        }
+
+        $schedule_time_out = $shift_new_time_out ?? $leave->employee->schedule->time_out;
+
+        if (!($schedule_time_out <= $leave->leave_time)) {
             $leave["status"] =0;
             $leave->save();
             $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
-            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $schedule_time_out);
             $duration = $scheduleTimeOut->diff($leaveTime);
 
             $leave["leaveBefore"] = $duration->format('%H:%I:%S');

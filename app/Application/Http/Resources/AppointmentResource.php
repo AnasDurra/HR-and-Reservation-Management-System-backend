@@ -31,6 +31,14 @@ class AppointmentResource extends JsonResource
                 'customer_name' => $this->unRegisteredAccount ? $this->unRegisteredAccount->name : null,
                 'phone_number' => $this->unRegisteredAccount ? $this->unRegisteredAccount->phone_number : null,
             ],
+
+            'case_note' => $this->caseNote ? [
+                'id' => $this->caseNote->id,
+                'app_id' => $this->caseNote->app_id,
+                'title' => $this->caseNote->title,
+                'description' => $this->caseNote->description,
+                'created_at' => $this->caseNote->created_at,
+            ] : null,
         ];
     }
 }

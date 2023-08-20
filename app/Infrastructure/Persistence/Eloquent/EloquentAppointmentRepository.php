@@ -102,7 +102,7 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
             if (in_array($status_id, $validStatuses)) {
                 $appointment->status_id = $status_id;
                 $appointment->save();
-            } else if ($status_id == AppointmentStatus::STATUS_AVAILABLE && $appointment->is_future) {
+            } else if ($status_id == AppointmentStatus::STATUS_RESERVED && $appointment->is_future) {
                 $appointment->status_id = $status_id;
                 $appointment->save();
 //                dd($appointment);
