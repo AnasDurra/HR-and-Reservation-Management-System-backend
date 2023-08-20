@@ -134,12 +134,21 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
 
                 // first, check that there is no record with the same date and shift
                 $records = WorkDay::query()
-                    ->where('day_date', $date['date'])
-                    ->where('shift_id', $date['shift_Id'])
+                    ->whereHas('appointments', function ($query) {
+                        $query->whereNotIn('status_id', [1, 2, 3]);
+                    })
                     ->get();
 
                 if ($records->count() > 0) {
-//                    throw new DuplicatedEntryException("تم بالفعل اسناد جدول دوام لليوم المحدد");
+                    abort(400, "يوجد مواعيد غير ملغية مرتبطة بهذا اليوم");
+                }
+
+                $records = WorkDay::query()
+                    ->where('day_date','=',$date['date'])
+                    ->where('shift_id','=',$date['shift_Id'])
+                    ->get();
+
+                if ($records->count() > 0) {
                     abort(400, "تم بالفعل اسناد جدول دوام لليوم المحدد");
                 }
 
