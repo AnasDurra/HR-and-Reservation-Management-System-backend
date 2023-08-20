@@ -21,8 +21,8 @@ class LoginNotification extends Notification
      */
     public function __construct()
     {
-        $this->message = 'You have logged in successfully';
-        $this->subject = 'Login Notification';
+        $this->message = 'قمت بتسجيل الدخول إلى حسابك للتو.';
+        $this->subject = 'إشعار تسجيل الدخول';
         $this->fromEmail = 'stomeh6@gmail.com';
         $this->mailer = 'smtp';
     }
@@ -45,7 +45,7 @@ class LoginNotification extends Notification
         return (new MailMessage)
             ->mailer('smtp')
             ->subject($this->subject)
-            ->greeting('Hello ' . $notifiable->first_name)
+            ->greeting('مرحباً ' . $notifiable->first_name)
             ->line($this->message);
     }
 

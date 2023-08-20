@@ -6,28 +6,29 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Ichtrojan\Otp\Otp;
+use JetBrains\PhpStorm\Pure;
 
 
 class EmailVerificationNotification extends Notification
 {
     use Queueable;
 
-    public $message;
-    public $subject;
-    public $fromEmail;
-    public $mailer;
-    private $opt;
+    public string $message;
+    public string $subject;
+    public string $fromEmail;
+    public string $mailer;
+    private Otp $opt;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    #[Pure] public function __construct()
     {
-        $this->message = 'Use the code below for verification of your email address.';
-        $this->subject = 'Email Verification';
+        $this->message = 'فيما يلي رمز التحقق الخاص بك';
+        $this->subject = 'رمز التحقق';
         $this->fromEmail = 'stomeh6@gmail.com';
         $this->mailer = 'smtp';
-        $this->otp = new Otp;
+        $this->otp = new Otp();
     }
 
     /**
@@ -49,9 +50,9 @@ class EmailVerificationNotification extends Notification
         return (new MailMessage)
             ->mailer('smtp')
             ->subject($this->subject)
-            ->greeting('Hello ' . $notifiable->first_name)
+            ->greeting('مرحباً ' . $notifiable->first_name)
             ->line($this->message)
-            ->line('code: ' . $otp->token);
+            ->line('رمز التحقق: ' . $otp->token);
     }
 
     /**

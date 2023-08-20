@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Application\Http\Resources\CustomerResource;
 use App\Application\Http\Resources\PermissionResource;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Repositories\CustomerRepositoryInterface;
@@ -9,10 +10,13 @@ use App\Exceptions\EntryNotFoundException;
 use App\Notifications\LoginNotification;
 use App\Utils\StorageUtilities;
 use Exception;
+use Ichtrojan\Otp\Models\Otp;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Str;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use App\Notifications\EmailVerificationNotification;
 
@@ -163,11 +167,11 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     {
         $customers = Customer::query()
             ->whereHas('appointments.status', function ($query) {
-                $query->whereIn('id',[1,7]);
+                $query->whereIn('id', [1, 7]);
             })
             ->withCount(['appointments as missed_appointment_count' => function ($query) {
                 $query->whereHas('status', function ($query) {
-                    $query->whereIn('id',[1,7]);
+                    $query->whereIn('id', [1, 7]);
                 });
             }])
             ->orderBy('missed_appointment_count', 'desc');
@@ -242,10 +246,38 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
 
         //verify email
-        if(isset($data['email'])){
+        if (isset($data['email'])) {
             $new_customer->notify(new EmailVerificationNotification());
         }
 
+        return [
+            'token' => $new_customer->createToken('customer_auth_token')->plainTextToken,
+            'activated' => false,
+            'customer_data' => new CustomerResource($new_customer),
+        ];
+    }
+
+    public function addCustomerByEmployee(array $data): array
+    {
+        $new_customer = Customer::query()->create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'education_level_id' => $data['education_level_id'],
+            'email' => $data['email'] ?? null,
+            'username' => $this->generateUniqueUsername($data['first_name']),
+            'password' => Hash::make($this->generatePassword()),
+            'job' => $data['job'],
+            'birth_date' => $data['birth_date'],
+            'phone' => $data['phone'] ?? null,
+            'phone_number' => $data['phone_number'],
+            'martial_status' => $data['martial_status'],
+            'num_of_children' => $data['num_of_children'],
+            'national_number' => $data['national_number'] ?? null,
+            'profile_picture' => $data['profile_picture'] ?? null,
+
+            'verified' => isset($data['national_number']),
+            'blocked' => false,
+        ]);
         return [
             'token' => $new_customer->createToken('customer_auth_token')->plainTextToken,
             'customer_data' => $new_customer,
@@ -255,11 +287,13 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     /**
      * @throws EntryNotFoundException
      */
-    public function userLogin(array $data): array
+    public function customerLogin(array $data): array
     {
+
+        // data contains email(can be either username or email) and password
         $customer = Customer::query()
-            ->where('email', $data['email'] ?? '')
-            ->orWhere('username', $data['username'] ?? '')
+            ->where('email', '=', $data['email'])
+            ->orWhere('username', '=', $data['email'])
             ->first();
 
         if (!$customer) {
@@ -270,11 +304,26 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             throw new EntryNotFoundException("كلمة المرور غير صحيحة", 401);
         }
 
+        // Check if the customer is verified
+        $activated = DB::table('otps')
+            ->where('identifier', $customer->email)
+            ->where('valid', false)->exists();
 
-        $customer->notify(new LoginNotification());
+        // if the customer is not verified, send otp
+        if (!$activated) {
+            $customer->notify(new EmailVerificationNotification());
+            return [
+                'token' => $customer->createToken('customer_auth_token')->plainTextToken,
+                'activated' => false,
+                'customer' => new CustomerResource($customer),
+            ];
+        } else {
+            $customer->notify(new LoginNotification());
+        }
         return [
             'token' => $customer->createToken('customer_auth_token')->plainTextToken,
-            'customer_name' => $customer->full_name,
+            'activated' => true,
+            'customer' => new CustomerResource($customer),
         ];
     }
 
@@ -424,6 +473,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
     function generatePassword(): string
     {
-        return \Str::random(12);
+        return Str::random(12);
     }
 }

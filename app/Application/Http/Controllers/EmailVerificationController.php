@@ -7,31 +7,45 @@ use App\Http\Requests\EmailVerificationRequest;
 use Carbon\Carbon;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Http\JsonResponse;
+use JetBrains\PhpStorm\Pure;
 
 class EmailVerificationController extends Controller
 {
-    private $otp;
+    private Otp $otp;
 
-    public function __construct()
+    #[Pure] public function __construct()
     {
         $this->otp = new Otp;
     }
 
     public function emailVerification(EmailVerificationRequest $request): JsonResponse
     {
-        $otp2 = $this->otp->validate($request->email, $request->otp);
+        // get the otp from the request
+        $otp = $request->otp;
+
+        // get the customer email using the token
+        $customerId = $request->user()->id;
+        $customer = Customer::query()
+            ->where('id', $customerId)
+            ->first();
+        $email = $customer->email;
+
+        // validate the otp
+        $otp2 = $this->otp->validate($email, $otp);
+
+        // if the otp is not valid (expired or wrong)
         if (!$otp2->status) {
             return response()->json([
-                'error' => $otp2
-            ], 401);
+                'message' => 'Invalid OTP'
+            ], 400);
         }
 
-        $customer = Customer::query()->where('email', $request->email)->first();
+        // if the otp is valid, update the customer email_verified_at
         $customer->email_verified_at = Carbon::now();
         $customer->save();
 
         return response()->json([
             'message' => 'Email verified successfully'
-        ], 200);
+        ]);
     }
 }

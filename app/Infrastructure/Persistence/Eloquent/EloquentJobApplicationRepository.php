@@ -447,6 +447,40 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         throw new Exception(" لا يمكن تحديث الحالة", 400);
                     }
 
+                    // check if the new status is accepted (status = 2)
+                    // check the number of accepted applications for the same job vacancy
+                    // and compare it with count field of job vacancy
+                    // if the number of accepted applications is less than count field by 1
+                    // then we can accept this application and update job vacancy status to 2
+
+                    $accepted = $jobApplicationData['app_status_id'] == 2;
+                    $rejected = $jobApplicationData['app_status_id'] == 3;
+
+                    if ($accepted) {
+                        $jobVacancy = $jobApplication->jobVacancy;
+                        $acceptedApplicationsCount = $jobVacancy->jobApplications()->where("app_status_id", 2)->count();
+                        if ($acceptedApplicationsCount == $jobVacancy->getAttribute("count") - 1) {
+                            $jobVacancy->update([
+                                "status" => 2,
+                            ]);
+                        }
+                    }
+
+                    // and if new status is rejected (status = 3)
+                    // check the number of accepted applications for the same job vacancy
+                    // and compare it with count field of job vacancy
+                    // if the number of accepted applications is equal to count field
+                    // then we can reject this application and update job vacancy status to 1 (make it available again)
+                    elseif ($rejected) {
+                        $jobVacancy = $jobApplication->jobVacancy;
+                        $acceptedApplicationsCount = $jobVacancy->jobApplications()->where("app_status_id", 2)->count();
+                        if ($acceptedApplicationsCount == $jobVacancy->getAttribute("count")) {
+                            $jobVacancy->update([
+                                "status" => 1,
+                            ]);
+                        }
+                    }
+
                     $updated['app_status_id'] = $jobApplicationData['app_status_id'];
                 }
 

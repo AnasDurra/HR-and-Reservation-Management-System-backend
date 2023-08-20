@@ -380,8 +380,13 @@ class Employee extends Model
 
         // check if the employee current department is already in the history
         // if so, then we don't need to add it again
-        if ($departmentHistory->last()['dep_id'] == $this->currentDepartment->dep_id) {
-            return collect($departmentHistory);
+
+
+        // check if the department history is empty
+        if (!$departmentHistory->isEmpty()) {
+            if ($departmentHistory->last()['dep_id'] == $this->currentDepartment->dep_id) {
+                return collect($departmentHistory);
+            }
         }
 
         // append the current department to the end of the collection

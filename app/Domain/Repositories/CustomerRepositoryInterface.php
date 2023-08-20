@@ -22,7 +22,9 @@ interface CustomerRepositoryInterface
 
     public function userSingUp(array $data): array;
 
-    public function userLogin(array $data): array;
+    public function addCustomerByEmployee(array $data): array;
+
+    public function customerLogin(array $data): array;
 
     public function userLogout(): void;
 

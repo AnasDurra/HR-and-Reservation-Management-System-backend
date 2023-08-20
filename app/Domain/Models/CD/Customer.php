@@ -35,6 +35,7 @@ class Customer extends Model
         'verified',
         'blocked',
         'email',
+        'email_verified_at',
         ];
 
     protected $hidden = [

@@ -3,6 +3,7 @@
 namespace App\Application\Http\Controllers;
 
 use App\Application\Http\Requests\AddCustomerRequest;
+use App\Application\Http\Requests\CustomerLoginRequest;
 use App\Application\Http\Requests\EditCustomerAfterVerification;
 use App\Application\Http\Requests\EditCustomerBeforeVerification;
 use App\Application\Http\Requests\UserLoginRequest;
@@ -83,18 +84,19 @@ class CustomerController extends Controller
         $validated = $this->CustomerService->userSingUp($validated);
         return response()->json([
             'token' => $validated['token'],
-            'data'=> new CustomerResource($validated['customer_data'])
+            'activated' => $validated['activated'],
+            'data' => new CustomerResource($validated['customer_data'])
         ]);
     }
 
-    public function userLogin(UserLoginRequest $request): JsonResponse
+    public function customerLogin(CustomerLoginRequest $request): JsonResponse
     {
-        $credentials = $request->only(['email', 'username', 'password']);
-        $data = $this->CustomerService->userLogin($credentials);
+        $credentials = $request->only(['email', 'password']);
+        $data = $this->CustomerService->customerLogin($credentials);
         return response()->json($data);
     }
 
-    public function userLogout(): JsonResponse
+    public function customerLogout(): JsonResponse
     {
         $this->CustomerService->userLogout();
         return response()->json([
@@ -110,11 +112,13 @@ class CustomerController extends Controller
             $data['profile_picture'] = StorageUtilities::storeCustomerPhoto($request['profile_picture']);
         }
 
-        $data = $this->CustomerService->userSingUp($data);
+        // TODO : GET BACK TO HERE
+//        $data = $this->CustomerService->userSingUp($data);
+        $data = $this->CustomerService->addCustomerByEmployee($data);
         return response()->json([
             'token' => $data['token'],
             'data' => new CustomerResource($data['customer_data'])
-        ], 200);
+        ]);
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Storage;
 
 class CustomerResource extends JsonResource
 {
@@ -13,7 +14,7 @@ class CustomerResource extends JsonResource
             'id' => $this["id"],
             'first_name' => $this["first_name"],
             'last_name' => $this["last_name"],
-            'education_level' =>[
+            'education_level' => [
                 'education_level_id' => $this["educationLevel"]["education_level_id"],
                 'name' => $this["educationLevel"]["name"],
             ],
@@ -26,7 +27,9 @@ class CustomerResource extends JsonResource
             'martial_status' => $this["martial_status"],
             'num_of_children' => $this["num_of_children"],
             'national_number' => $this["national_number"],
-            'profile_picture' => $this["profile_picture"] ?? null,
+            'profile_picture' => $this["profile_picture"] == null
+                ? null
+                : Storage::disk('public')->url($this["profile_picture"]),
 
             'verified' => $this["verified"] ?? null,
             'blocked' => $this["blocked"] ?? null,

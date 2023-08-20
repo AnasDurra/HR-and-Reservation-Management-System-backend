@@ -148,8 +148,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // Register the routes for the EmailVerification Controller
-    Route::post('email/verification-notification', [EmailVerificationController::class, 'emailVerification'])/*->middleware('throttle:6,1')->name('verification.send')*/
-    ;
+    Route::post('email/verification-notification', [EmailVerificationController::class, 'emailVerification']);
 
     // cancel reservation(deny future reservation)
     // 1. by customer
@@ -171,8 +170,8 @@ Route::apiResource('customer', CustomerController::class);
 //Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
 //Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
 Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
-Route::post('customer/login', [CustomerController::class, 'userLogin']);
-Route::post('customer/logout', [CustomerController::class, 'userLogout']);
+Route::post('customer/login', [CustomerController::class, 'customerLogin']);
+Route::post('customer/logout', [CustomerController::class, 'customerLogout']);
 
 Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
 Route::post('customer/{id}', [CustomerController::class, 'update']);

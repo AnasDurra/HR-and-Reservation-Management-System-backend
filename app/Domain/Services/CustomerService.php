@@ -41,9 +41,14 @@ class CustomerService
         return $this->CustomerRepository->userSingUp($data);
     }
 
-    public function userLogin(array $data): array
+    public function addCustomerByEmployee(array $data): array
     {
-        return $this->CustomerRepository->userLogin($data);
+        return $this->CustomerRepository->addCustomerByEmployee($data);
+    }
+
+    public function customerLogin(array $data): array
+    {
+        return $this->CustomerRepository->customerLogin($data);
     }
 
     public function userLogout(): void
