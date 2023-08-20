@@ -2,13 +2,12 @@
 
 namespace App\Application\Http\Controllers;
 
+use App\Application\Http\Requests\EmailVerificationRequest;
 use App\Domain\Models\CD\Customer;
-use App\Http\Requests\EmailVerificationRequest;
 use Carbon\Carbon;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EmailVerificationController extends Controller

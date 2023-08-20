@@ -4,6 +4,7 @@ use App\Application\Http\Controllers\AppointmentController;
 use App\Application\Http\Controllers\AuthenticationController;
 use App\Application\Http\Controllers\CustomerController;
 use App\Application\Http\Controllers\EmailVerificationController;
+use App\Application\Http\Controllers\ForgetPasswordController;
 use App\Application\Http\Controllers\JobApplicationController;
 use App\Application\Http\Controllers\DepartmentController;
 use App\Application\Http\Controllers\JobVacancyController;
@@ -12,6 +13,7 @@ use App\Application\Http\Controllers\LogController;
 use App\Application\Http\Controllers\PermissionController;
 use App\Application\Http\Controllers\EmployeeController;
 use App\Application\Http\Controllers\ReportController;
+use App\Application\Http\Controllers\ResetPasswordController;
 use App\Application\Http\Controllers\ScheduleController;
 use App\Application\Http\Controllers\BiometricDeviceController;
 use App\Application\Http\Controllers\AttendanceController;
@@ -150,6 +152,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('email/verification-notification', [EmailVerificationController::class, 'emailVerification']);
     Route::get('email/verification-notification', [EmailVerificationController::class, 'getEmailVerified']);
 });
+
+Route::post('password/forget-password', [ForgetPasswordController::class, 'forgetPassword']);
+Route::post('password/reset-password', [ResetPasswordController::class, 'passwordReset']);
 
 // Register the routes for the CustomerController
 Route::apiResource('customer', CustomerController::class);
