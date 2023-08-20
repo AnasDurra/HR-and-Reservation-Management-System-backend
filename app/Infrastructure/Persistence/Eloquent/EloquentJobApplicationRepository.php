@@ -115,6 +115,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
 
     /**
      * @throws Exception
+     * @throws Throwable
      */
     public function createJobApplication(array $data): Builder|Model
     {
@@ -196,16 +197,25 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                 "address_id" => $address->getAttribute('address_id'),
             ]);
 
+
+//            // create a job application with this employee data
+            $jobApplication = $employeeData->jobApplication()->create([
+                "job_vacancy_id" => $data['job_application']["job_vacancy_id"],
+                "section_man_notes" => optional($data['job_application'])["section_man_notes"],
+                "vice_man_rec" => optional($data['job_application'])["vice_man_rec"],
+                "app_status_id" => 1, // set app status id by default to 1 (pending)
+            ]);
+
             // check if passport is passed, assign the object ot the empData
 
 
             // create job application for this employee data
-            $employeeData->jobApplication()->create([
-                "job_vacancy_id" => $data['job_application']['job_vacancy_id'],
-                "app_status_id" => 1, // needs to be processed
-                "section_man_notes" => optional($data['job_application'])['section_man_notes'],
-                "vice_man_rec" => optional($data['job_application'])['vice_man_rec'],
-            ]);
+//            $employeeData->jobApplication()->create([
+//                "job_vacancy_id" => $data['job_application']['job_vacancy_id'],
+//                "app_status_id" => 1, // needs to be processed
+//                "section_man_notes" => optional($data['job_application'])['section_man_notes'],
+//                "vice_man_rec" => optional($data['job_application'])['vice_man_rec'],
+//            ]);
 
 
             // driving licence data (if exists)
@@ -372,13 +382,6 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
             $employeeData->save();
 
 
-            // create a job application with this employee data
-            $jobApplication = $employeeData->jobApplication()->create([
-                "job_vacancy_id" => $data['job_application']["job_vacancy_id"],
-                "section_man_notes" => optional($data['job_application'])["section_man_notes"],
-                "vice_man_rec" => optional($data['job_application'])["vice_man_rec"],
-                "app_status_id" => 1, // set app status id by default to 1 (pending)
-            ]);
 
             DB::commit();
 
@@ -461,7 +464,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $acceptedApplicationsCount = $jobVacancy->jobApplications()->where("app_status_id", 2)->count();
                         if ($acceptedApplicationsCount == $jobVacancy->getAttribute("count") - 1) {
                             $jobVacancy->update([
-                                "status" => 2,
+                                "vacancy_status_id" => 2,
                             ]);
                         }
                     }
@@ -476,7 +479,7 @@ class EloquentJobApplicationRepository implements JobApplicationRepositoryInterf
                         $acceptedApplicationsCount = $jobVacancy->jobApplications()->where("app_status_id", 2)->count();
                         if ($acceptedApplicationsCount == $jobVacancy->getAttribute("count")) {
                             $jobVacancy->update([
-                                "status" => 1,
+                                "vacancy_status_id" => 1,
                             ]);
                         }
                     }
