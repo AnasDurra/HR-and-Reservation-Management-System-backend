@@ -7,6 +7,7 @@ use App\Http\Requests\EmailVerificationRequest;
 use Carbon\Carbon;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,8 @@ class EmailVerificationController extends Controller
 
     public function emailVerification(EmailVerificationRequest $request): JsonResponse
     {
-        $otp2 = $this->otp->validate($request->email, $request->otp);
+//        $otp2 = $this->otp->validate($request->email, $request->otp);
+        $otp2 = $this->otp->validate(Auth::guard('customer')->user()->email, $request->otp);
         if (!$otp2->status) {
             return response()->json([
                 'error' => $otp2
