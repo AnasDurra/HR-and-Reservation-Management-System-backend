@@ -134,13 +134,12 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
             DB::beginTransaction();
             foreach ($data['dates'] as $date) {
 
-                foreach ($consultant->shifts as $shift){
+                foreach ($consultant->shifts()->get() as $shift){
                     $records = $shift->workDays()
                         ->where('day_date','=',$date['date'])
                         ->whereHas('appointments', function ($query) {
                             $query->whereNotIn('status_id', [1, 2, 3]);
-                        })
-                        ->get();
+                        })->get();
 
                     if ($records->count() > 0) {
                         abort(400, "يوجد مواعيد غير ملغية مرتبطة بهذا اليوم");
