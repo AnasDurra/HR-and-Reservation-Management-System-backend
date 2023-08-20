@@ -2,6 +2,7 @@
 
 use App\Application\Http\Controllers\AppointmentController;
 use App\Application\Http\Controllers\AuthenticationController;
+use App\Application\Http\Controllers\CaseNoteController;
 use App\Application\Http\Controllers\CustomerController;
 use App\Application\Http\Controllers\EmailVerificationController;
 use App\Application\Http\Controllers\JobApplicationController;
@@ -229,3 +230,7 @@ Route::get('check-email/{email}', [CustomerController::class, 'checkEmail']);
 
 // Register routes for dashboard requests
 Route::get('dashboard', [DashboardController::class, 'dashboard']);
+
+
+//Case Note
+Route::apiResource('case-note', CaseNoteController::class);

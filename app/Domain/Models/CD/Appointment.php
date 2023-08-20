@@ -2,6 +2,7 @@
 
 namespace App\Domain\Models\CD;
 
+use App\Events\AppointmentSaving;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,10 +35,15 @@ class Appointment extends Model
         return $this->hasOne(CaseNote::class);
     }
 
-    public function unRegisteredAccount(): BelongsTo
+    public function unRegisteredAccount(): HasOne
     {
-        return $this->belongsTo(UnRegisteredAccount::class, 'app_id', 'id');
+        return $this->hasOne(UnRegisteredAccount::class, 'app_id', 'id');
     }
+
+//    public function unRegisteredAccount(): BelongsTo
+//    {
+//        return $this->belongsTo(UnRegisteredAccount::class/*, 'app_id', 'id'*/);
+//    }
 
     /**
      * mutator to return whether the appointment is reserved
@@ -45,7 +51,8 @@ class Appointment extends Model
      */
     public function getIsReservedAttribute(): bool
     {
-        return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null;
+        return $this->status_id == AppointmentStatus::STATUS_RESERVED && $this->customer_id != null
+            || UnRegisteredAccount::query()->find($this->id) != null;
     }
 
     /**
@@ -55,6 +62,11 @@ class Appointment extends Model
     public function getIsFutureAttribute(): bool
     {
         return $this->workDay->day_date > now();
+    }
+
+    public function getIsPastAttribute(): bool
+    {
+        return $this->workDay->day_date < now();
     }
 
     /**
@@ -93,5 +105,6 @@ class Appointment extends Model
 
         return $clinicName;
     }
+
 
 }

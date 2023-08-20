@@ -11,12 +11,15 @@ use Illuminate\Database\Eloquent\Builder;
 class EloquentCaseNoteRepository implements CaseNoteRepositoryInterface
 {
 
-    public function getCaseNoteById(int $id): CaseNote|Builder|null
+    /**
+     * @throws EntryNotFoundException
+     */
+    public function getCaseNoteById($id): CaseNote|Builder|null
     {
         try {
             return CaseNote::query()->findOrFail($id);
-        } catch (\Exception $e) {
-            return null;
+        } catch (Exception $e) {
+            throw new EntryNotFoundException("Case Note with ID $id not found.");
         }
     }
 

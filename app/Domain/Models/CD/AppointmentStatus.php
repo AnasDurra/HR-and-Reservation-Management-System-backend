@@ -18,6 +18,9 @@ class AppointmentStatus extends Model
     const STATUS_AVAILABLE = 6;
     const STATUS_MISSED_BY_CUSTOMER = 7;
     const STATUS_MISSED_BY_CONSULTANT = 8;
+    const STATUS_RESERVED_ON_PHONE = 9;
+    const STATUS_CLOSED = 10;
+    const  STATUS_ATTENDANCE_IS_NOT_RECORDED = 11;
 
     protected $primaryKey = 'id';
     protected $fillable = ['name'];
@@ -26,4 +29,5 @@ class AppointmentStatus extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+
 }
