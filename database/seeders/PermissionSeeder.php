@@ -58,6 +58,9 @@ class PermissionSeeder extends Seeder
             ],[
                 'name' => 'إدراة الفعاليات',
             ],
+            [
+                'name' => 'إدارة المواعيد'
+            ]
         ];
 
         foreach ($permissions as $permission) {
