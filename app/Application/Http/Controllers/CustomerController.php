@@ -267,5 +267,19 @@ class CustomerController extends Controller
         return AppointmentResource::collection($appointments);
     }
 
+    public function getCustomerInfo(): CustomerResource
+    {
+        $customer = $this->CustomerService->getCustomerInfo();
+        return new CustomerResource($customer);
+    }
+
+    public function getCustomerStatistics(): JsonResponse
+    {
+        $statistics = $this->CustomerService->getCustomerStatistics();
+        return response()->json([
+            'data' => ($statistics)
+        ], 200);
+    }
+
 
 }

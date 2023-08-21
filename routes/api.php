@@ -170,6 +170,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // get customer's appointments
     Route::get('customer/appointments', [CustomerController::class, 'getCustomerAppointments']);
 
+    // get customer's info
+    Route::get('customer/get-info', [CustomerController::class, 'getCustomerInfo']);
+
+    // get Customer's Statistics
+    Route::get('customer/get-statistics', [CustomerController::class, 'getCustomerStatistics']);
+
 });
 
 // Register the routes for the CustomerController
