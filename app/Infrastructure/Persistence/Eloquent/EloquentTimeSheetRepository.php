@@ -295,17 +295,16 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
     function cancelReservationByCustomer($appointment): Appointment|Builder|null
     {
         $appointment->update([
-            'status_id' => AppointmentStatus::STATUS_AVAILABLE,
-            'customer_id' => null
+            'status_id' => AppointmentStatus::STATUS_CANCELED_BY_CUSTOMER,
         ]);
-
-        // Notify the consultant
-        $consultant = $appointment->getConsultant();
-        $customer = $appointment->customer()->first();
-        $customerId = $customer->id;
-        $customerName = $customer->getFullNameAttribute();
-        $consultant?->notify
-        (new ReservationCancelledByCustomer($customerId, $customerName, $appointment->workDay->day_date));
+//
+//        // Notify the consultant
+//        $consultant = $appointment->getConsultant();
+//        $customer = $appointment->customer;
+//        $customerId = $customer->id;
+//        $customerName = $customer->getFullNameAttribute();
+//        $consultant?->notify
+//        (new ReservationCancelledByCustomer($customerId, $customerName, $appointment->workDay->day_date));
 
         return $appointment;
     }
@@ -318,24 +317,24 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
             'status_id' => AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE,
         ]);
 
-        $user_id = Auth::id();
-        $employee = Employee::query()->where('user_id', '=', $user_id)->first();
-
-        // Notify the customer & consultant
-        $employeeId = $employee->id; // TODO : check this
-        $employee = Employee::query()->find($employeeId);
-        $employeeName = $employee->getFullNameAttribute();
-
-        // Notify the consultant
-        $consultant = $appointment->getConsultant();
-        $customer = $appointment->customer()->first();
-        $consultant?->notify
-        (new ReservationCancelledByEmployee($employeeId, $employeeName, $appointment->workDay->day_date,
-            1, $customer->getFullNameAttribute()));
-
-        // Notify the customer
-        $customer?->notify
-        (new ReservationCancelledByEmployee($employeeId, $employeeName, $appointment->workDay->day_date, 2));
+//        $user_id = Auth::id();
+//        $employee = Employee::query()->where('user_id', '=', $user_id)->first();
+//
+//        // Notify the customer & consultant
+//        $employeeId = $employee->id; // TODO : check this
+//        $employee = Employee::query()->find($employeeId);
+//        $employeeName = $employee->getFullNameAttribute();
+//
+//        // Notify the consultant
+//        $consultant = $appointment->getConsultant();
+//        $customer = $appointment->customer()->first();
+//        $consultant?->notify
+//        (new ReservationCancelledByEmployee($employeeId, $employeeName, $appointment->workDay->day_date,
+//            1, $customer->getFullNameAttribute()));
+//
+//        // Notify the customer
+//        $customer?->notify
+//        (new ReservationCancelledByEmployee($employeeId, $employeeName, $appointment->workDay->day_date, 2));
 
         return $appointment;
     }
@@ -347,17 +346,17 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         $appointment->update([
             'status_id' => AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT
         ]);
-        $user_id = Auth::id();
-        $consultant = Consultant::query()->where('user_id', '=', $user_id)->first();
-
-        $consultantId = $consultant->id; // TODO : check this
-        $consultant = Consultant::query()->find($consultantId);
-        $consultantName = $consultant->getFullNameAttribute();
-
-        // Notify the customer
-        $customer = $appointment->customer()->first();
-        $customer?->notify
-        (new ReservationCancelledByConsultant($consultantId, $consultantName, $appointment->workDay->day_date));
+//        $user_id = Auth::id();
+//        $consultant = Consultant::query()->where('user_id', '=', $user_id)->first();
+//
+//        $consultantId = $consultant->id; // TODO : check this
+//        $consultant = Consultant::query()->find($consultantId);
+//        $consultantName = $consultant->getFullNameAttribute();
+//
+//        // Notify the customer
+//        $customer = $appointment->customer()->first();
+//        $customer?->notify
+//        (new ReservationCancelledByConsultant($consultantId, $consultantName, $appointment->workDay->day_date));
 
         return $appointment;
     }

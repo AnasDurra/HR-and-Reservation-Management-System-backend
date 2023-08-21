@@ -27,7 +27,7 @@ class CustomerResource extends JsonResource
             'martial_status' => $this["martial_status"],
             'num_of_children' => $this["num_of_children"],
             'national_number' => $this["national_number"],
-            'profile_picture' => $this["profile_picture"] == null
+            'profile_picture' => Storage::url($this["profile_picture"]) == null
                 ? null
                 : Storage::disk('public')->url($this["profile_picture"]),
 
