@@ -2,10 +2,12 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Models\Employee;
 use App\Domain\Models\ShiftRequest;
 use App\Infrastructure\Persistence\Eloquent\EloquentAbsenceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
+use Illuminate\Support\Facades\Auth;
 use JetBrains\PhpStorm\NoReturn;
 use setasign\Fpdi\Tcpdf\Fpdi;
 
@@ -283,8 +285,10 @@ class ReportService
         $pdf->Text(150,25,"التاريخ: ");
         $pdf->Text(162,25,now()->format('Y/m/d'));
 
+        $user_id = Auth::id();
+        $byEmployee = Employee::query()->where('user_id','=',$user_id)->first();
         $pdf->Text(150,35,"الموظف المختص: ");
-        $pdf->Text(180,35,"أنس ريش");
+        $pdf->Text(180,35,$byEmployee->getFullNameAttribute());
 
         $pdf->Line(10, 60, 200, 60);
 
@@ -680,8 +684,10 @@ class ReportService
         $staffing_report->Text(150,41-6,"اسم الموظف:");
         $staffing_report->Text(174,41-6,$employee->getFullNameAttribute());
 
+        $user_id = Auth::id();
+        $byEmployee = Employee::query()->where('user_id','=',$user_id)->first();
         $staffing_report->Text(150,49-6,"الموظف المختص: ");
-        $staffing_report->Text(180,49-6,"أنس ريش");
+        $staffing_report->Text(180,49-6,$byEmployee->getFullNameAttribute());
 
 
         $staffing_report->SetFont('aealarabiya', '', 16);
