@@ -9,6 +9,7 @@ use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\Consultant;
 use App\Domain\Services\ConsultantService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -137,7 +138,7 @@ class ConsultantController extends Controller
 
     public function consultantCustomers(): JsonResponse
     {
-        $user_id = 1;
+        $user_id = Auth::id();
         $consultant = Consultant::query()->where('user_id','=',$user_id)->first();
 
         if(!$consultant){
