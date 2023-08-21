@@ -4,6 +4,7 @@ namespace App\Application\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class EventResource extends JsonResource
 {
@@ -16,7 +17,7 @@ class EventResource extends JsonResource
             'side_address' => $this['side_address'] ?? null,
             'description' => $this['description'] ?? null,
             'link' => $this['link'] ?? null,
-            'image' => $this['image'],
+            'image' => Storage::url($this['image']),
             'blurhash' => $this['blurhash'] ?? null,
             'start_date' => $this['start_date'],
             'end_date' => $this['end_date'] ?? null,

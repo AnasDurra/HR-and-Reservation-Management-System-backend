@@ -6,7 +6,7 @@ use App\Domain\Repositories\EventRepositoryInterface;
 use App\Domain\Models\CD\Event;
 use App\Exceptions\EntryNotFoundException;
 use App\Utils\StorageUtilities;
-use Bepsvpt\Blurhash\BlurHash;
+use Bepsvpt\Blurhash\Facades\BlurHash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -48,9 +48,7 @@ class EloquentEventRepository implements EventRepositoryInterface
             $image = request()->file('image');
             $imageData = StorageUtilities::storeEventPhoto($image);
 
-            $blurhash = new Blurhash();
-            // Generate BlurHash code for the image
-            $blurhashCode = $blurhash->encode($image);
+            $blurhashCode = BlurHash::encode($image);
         }
 
         return Event::query()->create([
