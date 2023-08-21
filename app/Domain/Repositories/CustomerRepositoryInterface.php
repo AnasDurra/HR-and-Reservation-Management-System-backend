@@ -2,9 +2,11 @@
 
 namespace App\Domain\Repositories;
 
+use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\Customer;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface CustomerRepositoryInterface
 {
@@ -33,4 +35,9 @@ interface CustomerRepositoryInterface
     public function customerVerification(array $data): Customer|Builder|null;
 
     public function getStatistics(int $id): array|null;
+
+    public function bookAnAppointmentByCustomer($appointment): Appointment|Builder|null;
+
+    public function getCustomerAppointments(): Collection;
+
 }

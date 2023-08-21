@@ -151,6 +151,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Register the routes for the EmailVerification Controller
     Route::post('email/verification-notification', [EmailVerificationController::class, 'emailVerification']);
+    Route::get('email/resend-verification-notification', [EmailVerificationController::class, 'resendEmailVerification']);
 
     // cancel reservation(deny future reservation)
     // 1. by customer
@@ -164,6 +165,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // cancel reservation(to be reservable again)
     Route::post('cancel-reservation-by-employee/{appointment}', [TimeSheetController::class, 'cancelReservation']);
+
+    // book an appointment by customer
+    Route::put('customer/book-appointment/{id}', [CustomerController::class, 'bookAnAppointmentByCustomer']);
+
+    // get customer's appointments
+    Route::get('customer/appointments', [CustomerController::class, 'getCustomerAppointments']);
 
 });
 

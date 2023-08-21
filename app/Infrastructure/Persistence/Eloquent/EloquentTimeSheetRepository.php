@@ -301,6 +301,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
     {
         $appointment->update([
             'status_id' => AppointmentStatus::STATUS_AVAILABLE,
+            'customer_id' => null
         ]);
 
         // Notify the consultant

@@ -8,12 +8,15 @@ use App\Application\Http\Requests\EditCustomerAfterVerification;
 use App\Application\Http\Requests\EditCustomerBeforeVerification;
 use App\Application\Http\Requests\UserLoginRequest;
 use App\Application\Http\Requests\UserSingUpRequest;
+use App\Application\Http\Resources\AppointmentResource;
 use App\Application\Http\Resources\CustomerBriefResource;
 use App\Application\Http\Resources\CustomerResource;
 use App\Application\Http\Resources\CustomersMissedAppointments;
+use App\Domain\Models\CD\Appointment;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Services\CustomerService;
 use App\Utils\StorageUtilities;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Validator;
@@ -232,5 +235,37 @@ class CustomerController extends Controller
             'message' => 'البريد الإلكتروني متاح'
         ]);
     }
+
+    public function bookAnAppointmentByCustomer($appointment): AppointmentResource|JsonResponse
+    {
+
+        $appointment = Appointment::query()->where('id', '=', $appointment)->findOrFail($appointment);
+
+        // make sure the appointment is in the future
+        if ($appointment->is_future === false) {
+            return response()->json([
+                'message' => 'لا يمكن حجز الموعد لأنه مضى',
+            ], 422);
+        }
+
+        // make sure the appointment is reserved
+        if ($appointment->is_reserved === true) {
+            return response()->json([
+                'message' => 'لا يمكن حجز الموعد لأنه محجوز سابقاً',
+            ], 422);
+        }
+        $appointment = $this->CustomerService->bookAnAppointmentByCustomer($appointment);
+        return new AppointmentResource($appointment);
+
+    }
+
+
+    public
+    function getCustomerAppointments(): AnonymousResourceCollection
+    {
+        $appointments = $this->CustomerService->getCustomerAppointments();
+        return AppointmentResource::collection($appointments);
+    }
+
 
 }

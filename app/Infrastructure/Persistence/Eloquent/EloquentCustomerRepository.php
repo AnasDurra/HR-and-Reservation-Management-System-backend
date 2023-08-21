@@ -4,6 +4,8 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Application\Http\Resources\CustomerResource;
 use App\Application\Http\Resources\PermissionResource;
+use App\Domain\Models\CD\Appointment;
+use App\Domain\Models\CD\AppointmentStatus;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Repositories\CustomerRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
@@ -13,6 +15,7 @@ use Exception;
 use Ichtrojan\Otp\Models\Otp;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -473,5 +476,23 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     function generatePassword(): string
     {
         return Str::random(12);
+    }
+
+    public function bookAnAppointmentByCustomer($appointment): Appointment|Builder|null
+    {
+        $appointment = Appointment::query()->where('id', '=', $appointment)->findOrFail($appointment);
+
+        $appointment->update([
+            'status_id' => AppointmentStatus::STATUS_RESERVED,
+            'customer_id' => Auth::guard()->user()->id,
+        ]);
+//        $appointment->save();
+
+        return $appointment;
+    }
+
+    public function getCustomerAppointments(): Collection
+    {
+        return Appointment::query()->where('customer_id', '=', Auth::guard()->user()->id)->get();
     }
 }
