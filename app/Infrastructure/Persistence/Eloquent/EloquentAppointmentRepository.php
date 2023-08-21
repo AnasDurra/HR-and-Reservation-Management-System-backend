@@ -101,7 +101,6 @@ class EloquentAppointmentRepository implements AppointmentRepositoryInterface
                 $appointment->status_id = $status_id;
                 $appointment->save();
             } else if (($status_id == AppointmentStatus::STATUS_RESERVED_ON_PHONE) && $appointment->is_future) {
-                echo 1;
                 $appointment->status_id = $status_id;
                 $appointment->load('unRegisteredAccount');
                 $appointment->save();

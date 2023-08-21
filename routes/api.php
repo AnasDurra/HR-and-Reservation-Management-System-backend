@@ -254,3 +254,6 @@ Route::get('mobile-allConsultantNotification', [ConsultantMobileNotificationCont
 Route::get('mobile-unReadConsultantNotification', [ConsultantMobileNotificationController::class, 'getUnReadNotifications']);
 // mark Consultant mobile notification as read
 Route::get('mark-mobile-consultant-notification-as-read/{not_id}', [ConsultantMobileNotificationController::class, 'markNotificationAsRead']);
+
+//Case Note
+Route::apiResource('case-note', CaseNoteController::class);
