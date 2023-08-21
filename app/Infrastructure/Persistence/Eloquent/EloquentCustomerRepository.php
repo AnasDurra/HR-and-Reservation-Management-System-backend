@@ -443,14 +443,14 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         $responseData = [];
 
-        for($i = 0 ; $i < count($clinics) ; $i ++){
+        for ($i = 0; $i < count($clinics); $i++) {
             $responseData[$i]['clinic_name'] = $clinics[$i]->name;
-            $responseData[$i]['completed_appointments'] =$consultant_appointments
-                ->where('clinic_name','=',$clinics[$i]->name)
-                ->where('status_id','=',4)->count();
-            $responseData[$i]['cancelled_appointments'] =$consultant_appointments
-                ->where('clinic_name','=',$clinics[$i]->name)
-                ->whereIn('status_id',[1,7])->count();
+            $responseData[$i]['completed_appointments'] = $consultant_appointments
+                ->where('clinic_name', '=', $clinics[$i]->name)
+                ->where('status_id', '=', 4)->count();
+            $responseData[$i]['cancelled_appointments'] = $consultant_appointments
+                ->where('clinic_name', '=', $clinics[$i]->name)
+                ->whereIn('status_id', [1, 7])->count();
         }
 
         return $responseData;
@@ -493,4 +493,35 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
     {
         return Appointment::query()->where('customer_id', '=', Auth::guard()->user()->id)->get();
     }
+
+    public function getCustomerInfo(): Customer|Builder|null
+    {
+        return Customer::query()->where('id', '=', Auth::guard()->user()->id)->first();
+    }
+
+    public function getCustomerStatistics(): array
+    {
+        // get number of completed appointment , number of cancelled appointment , number of missed appointment by customer & missed by consultant , number of total appointment
+        $customer = Auth::guard()->user()->id;
+        $appointments = Appointment::query()->where('customer_id', '=', $customer)->get();
+        $completed_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_COMPLETED)->count();
+        $cancelled_by_customer_appointments = $appointments->where('status_id', AppointmentStatus::STATUS_CANCELED_BY_CUSTOMER)->count();
+        $cancelled_by_consultant_appointments = $appointments->where('status_id', AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT)->count();
+        $missed_by_customer_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_MISSED_BY_CUSTOMER)->count();
+        $missed_by_consultant_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_MISSED_BY_CONSULTANT)->count();
+        $reserved_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_RESERVED)->count();
+        $total_appointments = $appointments->count();
+
+        return [
+            'completed_appointments' => $completed_appointments,
+            'reserved_appointments' => $reserved_appointments,
+            'cancelled_by_customer_appointments' => $cancelled_by_customer_appointments,
+            'cancelled_by_consultant_appointments' => $cancelled_by_consultant_appointments,
+            'missed_by_customer_appointments' => $missed_by_customer_appointments,
+            'missed_by_consultant_appointments' => $missed_by_consultant_appointments,
+            'total_appointments' => $total_appointments,
+        ];
+
+    }
+
 }

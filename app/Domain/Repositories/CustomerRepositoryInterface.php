@@ -40,4 +40,8 @@ interface CustomerRepositoryInterface
 
     public function getCustomerAppointments(): Collection;
 
+    public function getCustomerInfo(): Customer|Builder|null;
+
+    public function getCustomerStatistics(): array;
+
 }

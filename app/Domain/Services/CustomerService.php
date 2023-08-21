@@ -92,4 +92,14 @@ class CustomerService
     {
         return $this->CustomerRepository->getCustomerAppointments();
     }
+
+    public function getCustomerInfo(): Customer|Builder|null
+    {
+        return $this->CustomerRepository->getCustomerInfo();
+    }
+
+    public function getCustomerStatistics(): array
+    {
+        return $this->CustomerRepository->getCustomerStatistics();
+    }
 }
