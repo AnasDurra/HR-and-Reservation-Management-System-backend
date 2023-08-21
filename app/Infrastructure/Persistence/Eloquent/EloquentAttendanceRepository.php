@@ -44,8 +44,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                     ->whereNull('latetimes.deleted_at');
             })
             ->leftJoin('shift_requests', function($join) {
-                $join->on('attendances.emp_id', '=' ,'shift_requests.emp_id')
-                    ->whereRaw('shift_requests.start_date = attendances.attendance_date')
+                $join->on('shift_requests.shift_req_id', '=' ,'attendances.shift_req_id')
                     ->whereNull('shift_requests.deleted_at')
                     ->where('shift_requests.req_stat',2); // TODO check if id is correct
             })
@@ -122,7 +121,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
 
         // Shift request
         $shift_request = $attendance->employee->shiftRequests()
-            ->whereDate('start_date', '==', $attendance["attendance_date"]) // TODO Check if it works
+            ->where('shift_req_id','=',$attendance["shift_req_id "])
             ->whereNull('deleted_at')
             ->where('req_stat',2) // TODO check if id is correct
             ->first();
@@ -229,6 +228,8 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             if($shift_request['remaining_days'] != 0) {
                 $shift_request->remaining_days -=1;
                 $shift_request->save();
+                $attendance->shift_req_id = $shift_request->shift_req_id;
+                $attendance->save();
                 $shift_new_time_in = $shift_request["new_time_in"];
                 $shift_new_time_out = $shift_request["new_time_out"];
             }

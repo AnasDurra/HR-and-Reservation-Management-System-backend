@@ -53,7 +53,7 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
         }
 
         $eloquentAttendanceRepository = new EloquentAttendanceRepository();
-        if(!($eloquentAttendanceRepository->getEmployeeAttByDate($data['emp_id'],$data['leave_date']))){
+        if(!($employee_att = $eloquentAttendanceRepository->getEmployeeAttByDate($data['emp_id'],$data['leave_date']))){
             return null;
         }
 
@@ -69,8 +69,7 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
 
         // Shift request
         $shift_request = $leave->employee->shiftRequests()
-            ->whereDate('start_date', '<=', $leave["leave_date"])
-            ->where('remaining_days','!=',0)
+            ->where('shift_req_id','=',$employee_att['shift_req_id'])
             ->whereNull('deleted_at')
             ->where('req_stat',2) // TODO check if id is correct
             ->first();
@@ -78,10 +77,10 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
         $shift_new_time_in = null;
         $shift_new_time_out = null;
         if($shift_request){
-            if($shift_request['remaining_days'] != 0) {
-                $shift_new_time_in = $shift_request["new_time_in"];
-                $shift_new_time_out = $shift_request["new_time_out"];
-            }
+            $leave->shift_req_id = $shift_request->shift_req_id;
+            $leave->save();
+            $shift_new_time_in = $shift_request["new_time_in"];
+            $shift_new_time_out = $shift_request["new_time_out"];
         }
 
         $schedule_time_out = $shift_new_time_out ?? $leave->employee->schedule->time_out;

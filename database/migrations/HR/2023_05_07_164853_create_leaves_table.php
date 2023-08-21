@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('leaves', function (Blueprint $table) {
             $table->id('leave_id');
             $table->unsignedBigInteger('emp_id');
+            $table->unsignedBigInteger('shift_req_id')->nullable();
             $table->unsignedInteger('uid')->default(0);
             $table->tinyInteger('state')->default(0);
             $table->time('leave_time');
