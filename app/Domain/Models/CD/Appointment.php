@@ -35,9 +35,9 @@ class Appointment extends Model
         return $this->hasOne(CaseNote::class,'app_id','id');
     }
 
-    public function unRegisteredAccount(): BelongsTo
+    public function unRegisteredAccount(): HasOne
     {
-        return $this->belongsTo(UnRegisteredAccount::class, 'app_id', 'id');
+        return $this->HasOne(UnRegisteredAccount::class, 'app_id', 'id');
     }
 
     /**

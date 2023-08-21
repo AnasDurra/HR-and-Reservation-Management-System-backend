@@ -213,6 +213,7 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         }
 
         $appointment->customer_id = $customer_id;
+        $appointment->status_id = AppointmentStatus::STATUS_RESERVED;
         $appointment->save();
 
         return $appointment;

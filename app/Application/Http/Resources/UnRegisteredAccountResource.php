@@ -21,13 +21,23 @@ class UnRegisteredAccountResource extends JsonResource
             'created_at' => $this['appointment']['created_at'],
 
             'status'=>[
-                'status_id' => $this['appointment']['status']['id'],
-                'status_name' => $this['appointment']['status']['name'],
+                'id' => $this['appointment']['status']['id'],
+                'name' => $this['appointment']['status']['name'],
                 'un-registered-account_id' => $this['id'],
                 'customer_name' => $this['name'],
                 'phone_number' => $this['phone_number'],
                 'created_at' => $this['created_at']->format('Y-m-d_H:i:s'),
             ],
+            'case_note' => $this->appointment->caseNote ? [
+                'id' => $this->appointment->caseNote->id,
+                'app_id' => $this->appointment->caseNote->app_id,
+                'title' => $this->appointment->caseNote->title,
+                'description' => $this->appointment->caseNote->description,
+                'created_at' => $this->appointment->caseNote->created_at,
+            ] : null,
+
+            'clinic_name' => $this->appointment->getClinicName(),
+            'consultant_name' => $this->appointment->getConsultantName(),
         ];
     }
 }
