@@ -114,4 +114,11 @@ class Appointment extends Model
         return $clinicName;
     }
 
+    /**
+     * mutator to return consultant model for the appointment
+     */
+    public function getConsultant(): Consultant
+    {
+        return $this->workDay->shift->consultant->first();
+    }
 }

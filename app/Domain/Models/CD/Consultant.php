@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 class Consultant extends Model
 {
     use HasFactory;
+    use Notifiable;
 
     protected $primaryKey = 'id';
     protected $fillable = ['user_id','clinic_id', 'first_name', 'last_name', 'birth_date', 'phone_number', 'address'];
@@ -30,4 +32,8 @@ class Consultant extends Model
         return $this->belongsTo(Clinic::class);
     }
 
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
 }

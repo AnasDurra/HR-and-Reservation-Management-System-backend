@@ -8,8 +8,12 @@ use App\Domain\Models\CD\Consultant;
 use App\Domain\Models\CD\Customer;
 use App\Domain\Models\CD\Shift;
 use App\Domain\Models\CD\WorkDay;
+use App\Domain\Models\Employee;
 use App\Domain\Repositories\TimeSheetRepositoryInterface;
 use App\Exceptions\EntryNotFoundException;
+use App\Notifications\ReservationCancelledByConsultant;
+use App\Notifications\ReservationCancelledByCustomer;
+use App\Notifications\ReservationCancelledByEmployee;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -300,6 +304,13 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         ]);
 
         // Notify the consultant
+        $consultant = $appointment->getConsultant();
+        $customer = $appointment->customer()->first();
+        $customerId = $customer->id;
+        $customerName = $customer->getFullNameAttribute();
+        $consultant?->notify
+        (new ReservationCancelledByCustomer($customerId,$customerName,$appointment->workDay->day_date));
+
         return $appointment;
     }
 
@@ -311,7 +322,21 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
             'status_id' => AppointmentStatus::STATUS_CANCELED_BY_EMPLOYEE,
         ]);
 
-        // TODO: Notify the customer & consultant
+        // Notify the customer & consultant
+        $employeeId = 1; // TODO : $employeeId = Auth::id();
+        $employee = Employee::query()->find($employeeId);
+        $employeeName = $employee->getFullNameAttribute();
+
+        // Notify the consultant
+        $consultant = $appointment->getConsultant();
+        $customer = $appointment->customer()->first();
+        $consultant?->notify
+        (new ReservationCancelledByEmployee($employeeId,$employeeName,$appointment->workDay->day_date,
+            1,$customer->getFullNameAttribute()));
+
+        // Notify the customer
+        $customer?->notify
+        (new ReservationCancelledByEmployee($employeeId,$employeeName,$appointment->workDay->day_date,2));
 
         return $appointment;
     }
@@ -324,7 +349,14 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
             'status_id' => AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT
         ]);
 
-        // TODO: Notify the customer & consultant
+        $consultantId = 1; // TODO : $consultantId = Auth::id();
+        $consultant = Consultant::query()->find($consultantId);
+        $consultantName = $consultant->getFullNameAttribute();
+
+        // Notify the customer
+        $customer = $appointment->customer()->first();
+        $customer?->notify
+        (new ReservationCancelledByConsultant($consultantId,$consultantName,$appointment->workDay->day_date));
 
         return $appointment;
     }

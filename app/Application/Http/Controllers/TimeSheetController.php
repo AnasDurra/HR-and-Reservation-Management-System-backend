@@ -153,7 +153,7 @@ class TimeSheetController extends Controller
             ], 422);
         }
 
-        $appointment = $this->TimeSheetService->cancelReservationByConsultant($appointment->id);
+        $appointment = $this->TimeSheetService->cancelReservationByConsultant($appointment);
         return response()->json([
             'message' => 'تم إلغاء الموعد بنجاح',
             'data' => new AppointmentResource($appointment),

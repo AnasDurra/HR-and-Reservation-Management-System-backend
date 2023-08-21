@@ -27,6 +27,8 @@ use App\Application\Http\Controllers\EducationLevelController;
 use App\Application\Http\Controllers\EventController;
 use App\Application\Http\Controllers\UnRegisteredAccountController;
 use App\Application\Http\Controllers\DashboardController;
+use App\Application\Http\Controllers\CustomerMobileNotificationController;
+use App\Application\Http\Controllers\ConsultantMobileNotificationController;
 
 
 use App\Application\Http\Controllers\ConsultantController;
@@ -229,3 +231,19 @@ Route::get('check-email/{email}', [CustomerController::class, 'checkEmail']);
 
 // Register routes for dashboard requests
 Route::get('dashboard', [DashboardController::class, 'dashboard']);
+
+
+// all Customer mobile notifications
+Route::get('mobile-allCustomerNotification', [CustomerMobileNotificationController::class, 'getAllNotifications']);
+// unRead Customer mobile notifications
+Route::get('mobile-unReadCustomerNotification', [CustomerMobileNotificationController::class, 'getUnReadNotifications']);
+// mark Customer mobile notification as read
+Route::get('mark-mobile-customer-notification-as-read/{not_id}', [CustomerMobileNotificationController::class, 'markNotificationAsRead']);
+
+
+// all Consultant mobile notifications
+Route::get('mobile-allConsultantNotification', [ConsultantMobileNotificationController::class, 'getAllNotifications']);
+// unRead Consultant mobile notifications
+Route::get('mobile-unReadConsultantNotification', [ConsultantMobileNotificationController::class, 'getUnReadNotifications']);
+// mark Consultant mobile notification as read
+Route::get('mark-mobile-consultant-notification-as-read/{not_id}', [ConsultantMobileNotificationController::class, 'markNotificationAsRead']);
