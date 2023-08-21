@@ -18,8 +18,6 @@ class AppointmentResource extends JsonResource
             'id' => $this->id,
             'status_id' => $this->status_id,
             'customer_id' => $this->customer_id,
-            //get customer name
-//            dd($this->customer->getFullNameAttribute()),
             'customer_name' => $this->customer ? $this->customer->getFullNameAttribute() : null,
             'cancellation_reason' => $this->cancellation_reason,
             'date' => $this->workDay->day_date,
@@ -28,6 +26,8 @@ class AppointmentResource extends JsonResource
             'status' => [
                 'id' => $this->status->id,
                 'name' => $this->status->name,
+                'customer_name' => $this->unRegisteredAccount ? $this->unRegisteredAccount->name : null,
+                'phone_number' => $this->unRegisteredAccount ? $this->unRegisteredAccount->phone_number : null,
             ],
 
             'case_note' => $this->caseNote ? [
