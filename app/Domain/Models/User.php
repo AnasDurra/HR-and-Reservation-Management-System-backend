@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use JetBrains\PhpStorm\Pure;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -78,6 +79,14 @@ class User extends Authenticatable
     public function isEmployee(): bool
     {
         return $this->usertype->user_type_id === 1;
+    }
+
+    #[Pure] public function getFullNameAttribute()
+    {
+        if ($this->isEmployee()) {
+            return $this->employee->full_name;
+        }
+        return null;
     }
 
 }
