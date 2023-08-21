@@ -154,10 +154,10 @@ class EloquentConsultantRepository implements ConsultantRepositoryInterface
         $unknown_appointments = $consultant_appointments->where('status_id','=',11)->values();
 
         return [
-            'completed_appointments' => $completed_appointments,
-            'cancelled_by_consultant_appointments' => $cancelled_by_consultant_appointments,
-            'cancelled_by_customers_appointments' => $cancelled_by_customers_appointments,
-            'unknown_appointments' => $unknown_appointments,
+            'completed_appointments' => count($completed_appointments),
+            'cancelled_by_consultant_appointments' => count($cancelled_by_consultant_appointments),
+            'cancelled_by_customers_appointments' => count($cancelled_by_customers_appointments),
+            'unknown_appointments' => count($unknown_appointments),
         ];
     }
 

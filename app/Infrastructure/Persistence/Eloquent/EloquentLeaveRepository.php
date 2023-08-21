@@ -79,8 +79,6 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
         $shift_new_time_out = null;
         if($shift_request){
             if($shift_request['remaining_days'] != 0) {
-                $shift_request->remaining_days -=1;
-                $shift_request->save();
                 $shift_new_time_in = $shift_request["new_time_in"];
                 $shift_new_time_out = $shift_request["new_time_out"];
             }
