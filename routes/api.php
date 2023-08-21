@@ -180,87 +180,92 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('customer/get-statistics', [CustomerController::class, 'getCustomerStatistics']);
 
     Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
-});
 
-// Register the routes for the CustomerController
-Route::apiResource('customer', CustomerController::class);
+
+    // TODO : check these route recently added
+    Route::apiResource('time-sheet', TimeSheetController::class);
+    Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
+    Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
+    Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
+    Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);
+
+    // Register the routes for the CustomerController
+    Route::apiResource('customer', CustomerController::class);
 //Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
 //Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
-Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
-Route::post('customer/login', [CustomerController::class, 'customerLogin']);
-Route::post('customer/logout', [CustomerController::class, 'customerLogout']);
+    Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
+    Route::post('customer/login', [CustomerController::class, 'customerLogin']);
+    Route::post('customer/logout', [CustomerController::class, 'customerLogout']);
 
-Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
-Route::post('customer/{id}', [CustomerController::class, 'update']);
-Route::get('missed-Appointments-By-Customers', [CustomerController::class, 'customersMissedAppointments']);
-Route::put('customer/toggle-status/{customer_id}', [CustomerController::class, 'customerToggleStatus']);
+    Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
+    Route::post('customer/{id}', [CustomerController::class, 'update']);
+    Route::get('missed-Appointments-By-Customers', [CustomerController::class, 'customersMissedAppointments']);
+    Route::put('customer/toggle-status/{customer_id}', [CustomerController::class, 'customerToggleStatus']);
 
 // Register the routes for the customerDetection
-Route::post('customer-detection', [CustomerController::class, 'customerDetection']);
+    Route::post('customer-detection', [CustomerController::class, 'customerDetection']);
 
 // Register the routes for the customerVerification
-Route::post('customer-verification', [CustomerController::class, 'customerVerification']);
+    Route::post('customer-verification', [CustomerController::class, 'customerVerification']);
 
 // Register the routes for the customerStatistics
-Route::get('customer/statistics/{id}', [CustomerController::class, 'getStatistics']);
+    Route::get('customer/statistics/{id}', [CustomerController::class, 'getStatistics']);
 
 
 // Register the router for EducationLevelController
-Route::apiResource('education_levels', EducationLevelController::class);
+    Route::apiResource('education_levels', EducationLevelController::class);
 
 // Register the routes for the ConsultantController
-Route::apiResource('consultant', ConsultantController::class);
-Route::get('consultant/statistics/{id}', [ConsultantController::class, 'getStatistics']);
-Route::get('consultant/monthly-statistics/{id}', [ConsultantController::class, 'getMonthlyStatistics']);
+    Route::apiResource('consultant', ConsultantController::class);
+    Route::get('consultant/statistics/{id}', [ConsultantController::class, 'getStatistics']);
+    Route::get('consultant/monthly-statistics/{id}', [ConsultantController::class, 'getMonthlyStatistics']);
 
 // Register the routes for the ClinicController
-Route::apiResource('clinic', ClinicController::class);
+    Route::apiResource('clinic', ClinicController::class);
 
 // Register the routes for the EventController
-Route::apiResource('events', EventController::class)->except(['update']);
-Route::post('events/{event}', [EventController::class, 'update']);
+    Route::apiResource('events', EventController::class)->except(['update']);
+    Route::post('events/{event}', [EventController::class, 'update']);
 
 // Register the routes for the UnRegisteredAccountController
-Route::apiResource('book-un-registered-account', UnRegisteredAccountController::class);
-
-Route::apiResource('time-sheet', TimeSheetController::class);
-Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
-Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
-Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
-Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);
+    Route::apiResource('book-un-registered-account', UnRegisteredAccountController::class);
 
 //Appointment
-Route::put('attendance-modification/{app_id}/{status_id}', [AppointmentController::class, 'attendanceModification']);
-Route::post('add-case-note', [AppointmentController::class, 'appointmentPreview']);
-Route::apiResource('appointment', AppointmentController::class);
+    Route::put('attendance-modification/{app_id}/{status_id}', [AppointmentController::class, 'attendanceModification']);
+    Route::post('add-case-note', [AppointmentController::class, 'appointmentPreview']);
+    Route::apiResource('appointment', AppointmentController::class);
 
 // get all time slots (appointments) for a specific consultant in a specific date
-Route::get('consultant-time-slots/{consultant_id}/{date}', [TimeSheetController::class, 'getConsultantTimeSlots']);
+    Route::get('consultant-time-slots/{consultant_id}/{date}', [TimeSheetController::class, 'getConsultantTimeSlots']);
 
 // check username availability
-Route::get('check-username/{username}', [CustomerController::class, 'checkUsername']);
+    Route::get('check-username/{username}', [CustomerController::class, 'checkUsername']);
 
 // check email availability
-Route::get('check-email/{email}', [CustomerController::class, 'checkEmail']);
+    Route::get('check-email/{email}', [CustomerController::class, 'checkEmail']);
 
 // Register routes for dashboard requests
-Route::get('dashboard', [DashboardController::class, 'dashboard']);
+    Route::get('dashboard', [DashboardController::class, 'dashboard']);
 
 
 // all Customer mobile notifications
-Route::get('mobile-allCustomerNotification', [CustomerMobileNotificationController::class, 'getAllNotifications']);
+    Route::get('mobile-allCustomerNotification', [CustomerMobileNotificationController::class, 'getAllNotifications']);
 // unRead Customer mobile notifications
-Route::get('mobile-unReadCustomerNotification', [CustomerMobileNotificationController::class, 'getUnReadNotifications']);
+    Route::get('mobile-unReadCustomerNotification', [CustomerMobileNotificationController::class, 'getUnReadNotifications']);
 // mark Customer mobile notification as read
-Route::get('mark-mobile-customer-notification-as-read/{not_id}', [CustomerMobileNotificationController::class, 'markNotificationAsRead']);
+    Route::get('mark-mobile-customer-notification-as-read/{not_id}', [CustomerMobileNotificationController::class, 'markNotificationAsRead']);
 
 
 // all Consultant mobile notifications
-Route::get('mobile-allConsultantNotification', [ConsultantMobileNotificationController::class, 'getAllNotifications']);
+    Route::get('mobile-allConsultantNotification', [ConsultantMobileNotificationController::class, 'getAllNotifications']);
 // unRead Consultant mobile notifications
-Route::get('mobile-unReadConsultantNotification', [ConsultantMobileNotificationController::class, 'getUnReadNotifications']);
+    Route::get('mobile-unReadConsultantNotification', [ConsultantMobileNotificationController::class, 'getUnReadNotifications']);
 // mark Consultant mobile notification as read
-Route::get('mark-mobile-consultant-notification-as-read/{not_id}', [ConsultantMobileNotificationController::class, 'markNotificationAsRead']);
+    Route::get('mark-mobile-consultant-notification-as-read/{not_id}', [ConsultantMobileNotificationController::class, 'markNotificationAsRead']);
 
 //Case Note
 Route::apiResource('case-note', CaseNoteController::class);
+
+});
+
+
