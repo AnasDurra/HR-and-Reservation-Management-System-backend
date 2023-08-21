@@ -173,6 +173,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('customer/appointments', [CustomerController::class, 'getCustomerAppointments']);
 
     Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
+
+
+    // TODO : check these route recently added
+    Route::apiResource('time-sheet', TimeSheetController::class);
+    Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
+    Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
+    Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
+    Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);
+
 });
 
 // Register the routes for the CustomerController
@@ -215,12 +224,6 @@ Route::post('events/{event}', [EventController::class, 'update']);
 
 // Register the routes for the UnRegisteredAccountController
 Route::apiResource('book-un-registered-account', UnRegisteredAccountController::class);
-
-Route::apiResource('time-sheet', TimeSheetController::class);
-Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
-Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
-Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);
-Route::get('canceled-appointment', [TimeSheetController::class, 'getCanceledAppointment']);
 
 //Appointment
 Route::put('attendance-modification/{app_id}/{status_id}', [AppointmentController::class, 'attendanceModification']);
