@@ -323,10 +323,13 @@ class Employee extends Model
 
         // check if the employee current job title is already in the history
         // if so, then we don't need to add it again
-        if ($jobTitleHistory->last()['job_title_id'] == $this->current_job_title->job_title_id) {
-            return collect($jobTitleHistory);
-        }
 
+        // check if the job title history is empty
+        if ($jobTitleHistory->isNotEmpty()) {
+            if ($jobTitleHistory->last()['job_title_id'] == $this->current_job_title->job_title_id) {
+                return collect($jobTitleHistory);
+            }
+        }
         // append the current job title to the end of the collection
         $jobTitleHistory[] = [
             'job_title_id' => $this->current_job_title->job_title_id,
