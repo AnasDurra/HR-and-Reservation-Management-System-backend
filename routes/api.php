@@ -29,6 +29,7 @@ use App\Application\Http\Controllers\UnRegisteredAccountController;
 use App\Application\Http\Controllers\DashboardController;
 use App\Application\Http\Controllers\CustomerMobileNotificationController;
 use App\Application\Http\Controllers\ConsultantMobileNotificationController;
+use App\Application\Http\Controllers\CaseNoteController;
 
 
 use App\Application\Http\Controllers\ConsultantController;
