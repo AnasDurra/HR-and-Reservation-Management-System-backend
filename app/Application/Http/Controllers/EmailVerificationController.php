@@ -4,9 +4,12 @@ namespace App\Application\Http\Controllers;
 
 use App\Domain\Models\CD\Customer;
 use App\Http\Requests\EmailVerificationRequest;
+use App\Notifications\EmailVerificationNotification;
 use Carbon\Carbon;
+use http\Env\Response;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use JetBrains\PhpStorm\Pure;
 
 class EmailVerificationController extends Controller
@@ -46,6 +49,14 @@ class EmailVerificationController extends Controller
 
         return response()->json([
             'message' => 'Email verified successfully'
+        ]);
+    }
+
+    public function resendEmailVerification(Request $request): JsonResponse
+    {
+        $request->user()->notify(new EmailVerificationNotification());
+        return response()->json([
+            'message' => 'OTP resent successfully'
         ]);
     }
 }
