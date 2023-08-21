@@ -219,6 +219,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('consultant', ConsultantController::class);
     Route::get('consultant/statistics/{id}', [ConsultantController::class, 'getStatistics']);
     Route::get('consultant/monthly-statistics/{id}', [ConsultantController::class, 'getMonthlyStatistics']);
+    // Route for consultant customers
+    Route::get('consultant-customers', [ConsultantController::class, 'consultantCustomers']);
 
 // Register the routes for the ClinicController
     Route::apiResource('clinic', ClinicController::class);
@@ -267,5 +269,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('case-note', CaseNoteController::class);
 
 });
-
 

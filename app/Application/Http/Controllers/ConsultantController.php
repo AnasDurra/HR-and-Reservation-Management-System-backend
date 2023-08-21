@@ -4,6 +4,9 @@ namespace App\Application\Http\Controllers;
 
 use App\Application\Http\Resources\ConsultantBriefResource;
 use App\Application\Http\Resources\ConsultantResource;
+use App\Domain\Models\CD\Appointment;
+use App\Domain\Models\CD\AppointmentStatus;
+use App\Domain\Models\CD\Consultant;
 use App\Domain\Services\ConsultantService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
@@ -131,4 +134,40 @@ class ConsultantController extends Controller
             'data' => ($statistics)
         ], 200);
     }
+
+    public function consultantCustomers(): JsonResponse
+    {
+        $user_id = 1;
+        $consultant = Consultant::query()->where('user_id','=',$user_id)->first();
+
+        if(!$consultant){
+            return response()->json([
+                'data' => "consultant not found"
+            ], 404);
+        }
+
+        $appointments = Appointment::query()
+            ->with(['customer', 'unRegisteredAccount', 'workDay' => function ($query) {
+            $query->orderByDesc('day_date');
+            }])
+            ->get();
+
+        foreach ($appointments as $appointment){
+            $appointment['consultant_id'] = $appointment->getConsultantId();
+        }
+
+        $appointments = $appointments->where('consultant_id','=',$consultant->id)
+            ->where('status_id','=',AppointmentStatus::STATUS_COMPLETED)->values();
+
+
+        $consultantCustomers = $appointments->where('customer','!=',null)->pluck('customer');
+        $consultantUnRegisteredCustomers = $appointments->where('unRegisteredAccount','!=',null)->pluck('unRegisteredAccount');
+
+        return response()->json([
+            'consultantCustomers' => $consultantCustomers,
+            'consultantUnRegisteredCustomers' => $consultantUnRegisteredCustomers
+        ], 200);
+    }
+
+
 }
