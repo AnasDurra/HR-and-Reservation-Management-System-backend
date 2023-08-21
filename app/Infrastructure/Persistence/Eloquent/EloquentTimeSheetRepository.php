@@ -19,6 +19,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -131,15 +132,15 @@ class EloquentTimeSheetRepository implements TimeSheetRepositoryInterface
         try {
 
             $createdAppointments = new Collection();
-            $user_id = 1; // TODO $user_id = Auth::id();
+            $user_id = Auth::id();
             $consultant = Consultant::query()->where('user_id', '=', $user_id)->first();
 
             DB::beginTransaction();
             foreach ($data['dates'] as $date) {
 
-                foreach ($consultant->shifts()->get() as $shift){
+                foreach ($consultant->shifts()->get() as $shift) {
                     $records = $shift->workDays()
-                        ->where('day_date','=',$date['date'])
+                        ->where('day_date', '=', $date['date'])
                         ->whereHas('appointments', function ($query) {
                             $query->whereNotIn('status_id', [1, 2, 3]);
                         })->get();

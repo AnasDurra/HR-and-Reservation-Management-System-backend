@@ -480,8 +480,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
     public function bookAnAppointmentByCustomer($appointment): Appointment|Builder|null
     {
-        $appointment = Appointment::query()->where('id', '=', $appointment)->findOrFail($appointment);
-
         $appointment->update([
             'status_id' => AppointmentStatus::STATUS_RESERVED,
             'customer_id' => Auth::guard()->user()->id,

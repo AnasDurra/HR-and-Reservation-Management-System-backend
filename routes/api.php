@@ -172,6 +172,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // get customer's appointments
     Route::get('customer/appointments', [CustomerController::class, 'getCustomerAppointments']);
 
+    Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
 });
 
 // Register the routes for the CustomerController
@@ -216,7 +217,6 @@ Route::post('events/{event}', [EventController::class, 'update']);
 Route::apiResource('book-un-registered-account', UnRegisteredAccountController::class);
 
 Route::apiResource('time-sheet', TimeSheetController::class);
-Route::post('add-work-day', [TimeSheetController::class, 'addWorkDay']);
 Route::put('book-by-employee/{app_id}/{customer_id}', [TimeSheetController::class, 'bookAnAppointmentByEmployee']);
 Route::get('consultant-schedule', [TimeSheetController::class, 'getConsultantSchedule']);
 Route::put('cancel-appointment/{id}', [TimeSheetController::class, 'cancelAppointmentByConsultant']);

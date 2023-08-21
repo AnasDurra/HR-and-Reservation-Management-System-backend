@@ -254,14 +254,14 @@ class CustomerController extends Controller
                 'message' => 'لا يمكن حجز الموعد لأنه محجوز سابقاً',
             ], 422);
         }
+
         $appointment = $this->CustomerService->bookAnAppointmentByCustomer($appointment);
         return new AppointmentResource($appointment);
 
     }
 
 
-    public
-    function getCustomerAppointments(): AnonymousResourceCollection
+    public function getCustomerAppointments(): AnonymousResourceCollection
     {
         $appointments = $this->CustomerService->getCustomerAppointments();
         return AppointmentResource::collection($appointments);

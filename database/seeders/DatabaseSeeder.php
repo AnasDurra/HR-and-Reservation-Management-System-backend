@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             ClinicSeeder::class,
             AppointmentStatusSeeder::class,
+            ActionSeeder::class,
         ]);
     }
 }

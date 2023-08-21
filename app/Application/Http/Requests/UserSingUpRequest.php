@@ -50,7 +50,6 @@ class UserSingUpRequest extends FormRequest
             'job' => [
                 'required',
                 'string',
-                'min:5',
                 'max:50',
             ],
             'martial_status' => [
