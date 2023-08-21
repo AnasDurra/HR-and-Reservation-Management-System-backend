@@ -2,6 +2,7 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Models\ShiftRequest;
 use App\Infrastructure\Persistence\Eloquent\EloquentAbsenceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentAttendanceRepository;
 use App\Infrastructure\Persistence\Eloquent\EloquentEmployeeRepository;
@@ -542,14 +543,26 @@ class ReportService
 
             $pdf->SetTextColor(0, 0, 0);
 
+            // Shift request
+            $shift_request = ShiftRequest::query()->where('shift_req_id','=',$attendance['shift_req_id'])->first();
+
+            $shift_new_time_in = null;
+            $shift_new_time_out = null;
+            if($shift_request){
+                $shift_new_time_in = $shift_request["new_time_in"];
+                $shift_new_time_out = $shift_request["new_time_out"];
+            }
+
+            $schedule_time_out = $shift_new_time_out ?? $attendance['employee']['schedule']['time_out'];
+
             if(!isset($attendance['check_out_time'])){
                 $earlierLeave = false;
                 $leaveBefore = "-";
             }
             // Leave before calculation
-            else if (!($attendance["employee"]["schedule"]["time_out"] <= $attendance["check_out_time"])) {
+            else if (!($schedule_time_out <= $attendance["check_out_time"])) {
                 $leaveTime = \DateTime::createFromFormat('H:i:s', $attendance["check_out_time"]);
-                $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $attendance["employee"]["schedule"]["time_out"]);
+                $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $schedule_time_out);
                 $duration = $scheduleTimeOut->diff($leaveTime);
                 $attendance["leaveBefore"] = $duration->format('%H:%I:%S');
 

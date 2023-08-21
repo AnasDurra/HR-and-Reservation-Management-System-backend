@@ -163,6 +163,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 'latetimes.duration AS latetime.duration',
                 'latetimes.latetime_date AS latetime.latetime_date',
 
+                'attendances.shift_req_id',
                 'shift_requests.new_time_in AS shift.new_time_in',
                 'shift_requests.new_time_out AS shift.new_time_out',
             )
