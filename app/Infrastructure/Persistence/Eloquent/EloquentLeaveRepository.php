@@ -12,9 +12,9 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
     {
         $leaves = Leave::query()->latest('leave_date')->paginate(10);
         foreach ($leaves as $key => $leave) {
-            if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+            if (!($leave->schedule_time_out <= $leave->leave_time)) {
                 $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
-                $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+                $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->schedule_time_out);
                 $duration = $scheduleTimeOut->diff($leaveTime);
                 $leave["leaveBefore"] = $duration->format('%H:%I:%S');
             }
@@ -30,9 +30,9 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
 
         if(!$leave) return null;
 
-        if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+        if (!($leave->schedule_time_out <= $leave->leave_time)) {
             $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
-            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->schedule_time_out);
             $duration = $scheduleTimeOut->diff($leaveTime);
 
             $leave["leaveBefore"] = $duration->format('%H:%I:%S');
@@ -66,6 +66,9 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
             'leave_date' => $data['leave_date'],
         ]);
 
+        $leave->schedule_time_in = $leave->employee->schedule->time_in;
+        $leave->schedule_time_out = $leave->employee->schedule->time_out;
+        $leave->save();
 
         // Shift request
         $shift_request = $leave->employee->shiftRequests()
@@ -112,11 +115,11 @@ class EloquentLeaveRepository implements LeaveRepositoryInterface
         $leave->save();
 
 
-        if (!($leave->employee->schedule->time_out <= $leave->leave_time)) {
+        if (!($leave->schedule_time_out <= $leave->leave_time)) {
             $leave["status"] =0;
             $leave->save();
             $leaveTime = \DateTime::createFromFormat('H:i:s', $leave["leave_time"]);
-            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->employee->schedule->time_out);
+            $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $leave->schedule_time_out);
             $duration = $scheduleTimeOut->diff($leaveTime);
 
             $leave["leaveBefore"] = $duration->format('%H:%I:%S');

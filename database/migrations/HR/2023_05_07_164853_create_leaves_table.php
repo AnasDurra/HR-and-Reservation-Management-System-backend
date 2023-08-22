@@ -19,6 +19,9 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1);
             $table->tinyInteger('type')->default(1);
 
+            $table->time('schedule_time_in')->nullable();
+            $table->time('schedule_time_out')->nullable();
+
             $table->foreign('emp_id')->references('emp_id')->on('employees')->cascadeOnDelete();
 
             $table->timestamps();

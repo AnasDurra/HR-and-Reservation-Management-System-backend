@@ -557,7 +557,7 @@ class ReportService
                 $shift_new_time_out = $shift_request["new_time_out"];
             }
 
-            $schedule_time_out = $shift_new_time_out ?? $attendance['employee']['schedule']['time_out'];
+            $schedule_time_out = $shift_new_time_out ?? $attendance['schedule_time_out'];
 
             if(!isset($attendance['check_out_time'])){
                 $earlierLeave = false;

@@ -33,8 +33,8 @@ class AttendanceResource extends JsonResource
                     'schedule' => [
                         'schedule_id' => $this["employee"]["schedule"]["schedule_id"],
                         'name' => $this["employee"]["schedule"]["name"],
-                        'time_in' => $this["employee"]["schedule"]["time_in"],
-                        'time_out' => $this["employee"]["schedule"]["time_out"],
+                        'time_in' => $this["schedule_time_in"],
+                        'time_out' => $this["schedule_time_out"] ?? null,
                         ],
                     ],
                 ];
@@ -56,7 +56,7 @@ class AttendanceResource extends JsonResource
 
             // Leave before calculation
             if($element["check_out_time"]) {
-                $schedule_time_out = $element["shift.new_time_out"] ?? $element["employee"]["schedule"]["time_out"];
+                $schedule_time_out = $element["shift.new_time_out"] ?? $element["schedule_time_out"];
                 if (!($schedule_time_out <= $element["check_out_time"])) {
                     $leaveTime = \DateTime::createFromFormat('H:i:s', $element["check_out_time"]);
                     $scheduleTimeOut = \DateTime::createFromFormat('H:i:s', $schedule_time_out);
@@ -79,8 +79,8 @@ class AttendanceResource extends JsonResource
             $data[$i]["employee"]["cur_dep"] = $element["employee"]["cur_dep"];
             $data[$i]["employee"]["schedule"]["schedule_id"] = $element["employee"]["schedule"]["schedule_id"];
             $data[$i]["employee"]["schedule"]["name"] = $element["employee"]["schedule"]["name"];
-            $data[$i]["employee"]["schedule"]["time_in"] = $element["employee"]["schedule"]["time_in"];
-            $data[$i]["employee"]["schedule"]["time_out"] = $element["employee"]["schedule"]["time_out"];
+            $data[$i]["employee"]["schedule"]["time_in"] = $element["schedule_time_in"];
+            $data[$i]["employee"]["schedule"]["time_out"] = $element["schedule_time_out"] ?? null;
             $i++;
         }
         return [

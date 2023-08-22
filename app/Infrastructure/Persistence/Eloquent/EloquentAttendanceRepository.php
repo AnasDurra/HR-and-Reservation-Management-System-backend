@@ -24,9 +24,13 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 'attendances.state AS check_in.state',
                 'attendances.status AS check_in.status',
                 'attendances.attendance_time AS check_in_time',
+                'attendances.schedule_time_in', // this new
+                'attendances.schedule_time_out', // this new
+
                 'leaves.state AS check_out.state',
                 'leaves.status AS check_out.status',
                 'leaves.leave_time AS check_out_time',
+
                 'latetimes.duration AS latetime.duration',
                 'latetimes.latetime_date AS latetime.latetime_date',
 
@@ -46,7 +50,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             ->leftJoin('shift_requests', function($join) {
                 $join->on('shift_requests.shift_req_id', '=' ,'attendances.shift_req_id')
                     ->whereNull('shift_requests.deleted_at')
-                    ->where('shift_requests.req_stat',2); // TODO check if id is correct
+                    ->where('shift_requests.req_stat',2);
             })
             ->latest('attendances.attendance_date');
 
@@ -69,23 +73,23 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             });
         }
 
-        // filter by scheduleId
-        if (request()->has('schedule')) {
-
-            // get the schedules
-            $schedules = request()->get('schedule');
-
-            // extract the comma separated values
-            $schedules = explode(',', $schedules);
-
-            // convert it to array of integers
-            $schedules = array_map('intval', $schedules);
-
-            // filter the result based on schedule IDs
-            $attendance->whereHas('employee.schedule', function ($query) use ($schedules) {
-                $query->whereIn('schedule_id', $schedules);
-            })->get();
-        }
+//        // filter by scheduleId
+//        if (request()->has('schedule')) {
+//
+//            // get the schedules
+//            $schedules = request()->get('schedule');
+//
+//            // extract the comma separated values
+//            $schedules = explode(',', $schedules);
+//
+//            // convert it to array of integers
+//            $schedules = array_map('intval', $schedules);
+//
+//            // filter the result based on schedule IDs
+//            $attendance->whereHas('employee.schedule', function ($query) use ($schedules) {
+//                $query->whereIn('schedule_id', $schedules);
+//            })->get();
+//        }
 
         // filter by emp_id
         if (request()->has('emp_id')) {
@@ -108,6 +112,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         return $attendance->paginate(10)->toArray();
     }
 
+    // Delete this function (unused)
     public function getAttendanceById(int $id): Attendance|Builder|null
     {
         $attendance = Attendance::query()->with([
@@ -142,6 +147,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         return $attendance;
     }
 
+    // Delete this function (unused)
     public function getAttendanceByEmpId(int $emp_id): array|null
     {
         $attendances = Attendance::query()
@@ -157,6 +163,9 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
                 'attendances.state AS check_in.state',
                 'attendances.status AS check_in.status',
                 'attendances.attendance_time AS check_in_time',
+                'attendances.schedule_time_in', // this new
+                'attendances.schedule_time_out', // this new
+
                 'leaves.state AS check_out.state',
                 'leaves.status AS check_out.status',
                 'leaves.leave_time AS check_out_time',
@@ -214,12 +223,16 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
             'attendance_date' => $data['attendance_date'],
         ]);
 
+        $attendance->schedule_time_in = $attendance->employee->schedule->time_in;
+        $attendance->schedule_time_out = $attendance->employee->schedule->time_out;
+        $attendance->save();
+
         // Shift request
         $shift_request = $attendance->employee->shiftRequests()
             ->whereDate('start_date', '<=', $attendance["attendance_date"])
             ->where('remaining_days','!=',0)
             ->whereNull('deleted_at')
-            ->where('req_stat',2) // TODO check if id is correct
+            ->where('req_stat',2)
             ->first();
 
 
@@ -266,6 +279,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         return $attendance;
     }
 
+    // Delete this function (unused)
     public function updateAttendance(int $id, array $data): Attendance|Builder|null
     {
         $attendance = Attendance::query()->find($id);
@@ -345,6 +359,7 @@ class EloquentAttendanceRepository implements AttendanceRepositoryInterface
         return $attendance;
     }
 
+    // Delete this function (unused)
     public function deleteAttendance($id): Attendance|Builder|null
     {
         $attendance = $this->getAttendanceById($id);

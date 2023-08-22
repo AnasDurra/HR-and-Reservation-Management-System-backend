@@ -12,7 +12,7 @@ class Attendance extends Model
     use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'attendance_id';
-    protected $fillable = ['emp_id', 'uid', 'state', 'attendance_time', 'attendance_date', 'status', 'type'];
+    protected $fillable = ['emp_id', 'uid', 'state', 'attendance_time', 'attendance_date', 'status', 'type','schedule_time_in'];
 
     public function employee(): BelongsTo
     {
