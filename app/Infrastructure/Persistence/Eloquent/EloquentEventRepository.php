@@ -78,9 +78,10 @@ class EloquentEventRepository implements EventRepositoryInterface
             $image = request()->file('image');
             $imageData = StorageUtilities::storeEventPhoto($image);
 
-            $blurhash = new Blurhash();
-            // Generate BlurHash code for the image
-            $blurhashCode = $blurhash->encode($image);
+//            $blurhash = new Blurhash();
+//            // Generate BlurHash code for the image
+//            $blurhashCode = $blurhash->encode($image);
+            $blurhashCode = BlurHash::encode($image);
         }
 
         $event->update([

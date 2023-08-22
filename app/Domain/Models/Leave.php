@@ -12,7 +12,7 @@ class Leave extends Model
     use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'leave_id';
-    protected $fillable = ['emp_id', 'uid', 'state', 'leave_time', 'leave_date', 'status', 'type'];
+    protected $fillable = ['emp_id', 'uid', 'state', 'leave_time', 'leave_date', 'status', 'type','schedule_time_out'];
 
     public function employee(): BelongsTo
     {

@@ -50,6 +50,19 @@ use Illuminate\Support\Facades\Route;
 // login route
 Route::post('login', [AuthenticationController::class, 'userLogin']);
 
+// Register the router for EducationLevelController
+Route::apiResource('education_levels', EducationLevelController::class);
+
+Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
+
+Route::post('customer/login', [CustomerController::class, 'customerLogin']);
+
+// check username availability
+Route::get('check-username/{username}', [CustomerController::class, 'checkUsername']);
+
+// check email availability
+Route::get('check-email/{email}', [CustomerController::class, 'checkEmail']);
+
 Route::middleware('auth:sanctum')->group(function () {
     // login route
     Route::post('/logout', [AuthenticationController::class, 'userLogout']);
@@ -193,8 +206,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('customer', CustomerController::class);
 //Route::post('customer/update/before/{id}', [CustomerController::class, 'updateBeforeVerified']);
 //Route::post('customer/update/after/{id}', [CustomerController::class, 'updateAfterVerified']);
-    Route::post('customer/user-sing-up', [CustomerController::class, 'userSingUp']);
-    Route::post('customer/login', [CustomerController::class, 'customerLogin']);
+
     Route::post('customer/logout', [CustomerController::class, 'customerLogout']);
 
     Route::post('customer/add-by-emp', [CustomerController::class, 'addCustomerByEmployee']);
@@ -212,8 +224,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('customer/statistics/{id}', [CustomerController::class, 'getStatistics']);
 
 
-// Register the router for EducationLevelController
-    Route::apiResource('education_levels', EducationLevelController::class);
+
 
 // Register the routes for the ConsultantController
     Route::apiResource('consultant', ConsultantController::class);
@@ -240,11 +251,6 @@ Route::middleware('auth:sanctum')->group(function () {
 // get all time slots (appointments) for a specific consultant in a specific date
     Route::get('consultant-time-slots/{consultant_id}/{date}', [TimeSheetController::class, 'getConsultantTimeSlots']);
 
-// check username availability
-    Route::get('check-username/{username}', [CustomerController::class, 'checkUsername']);
-
-// check email availability
-    Route::get('check-email/{email}', [CustomerController::class, 'checkEmail']);
 
 // Register routes for dashboard requests
     Route::get('dashboard', [DashboardController::class, 'dashboard']);
