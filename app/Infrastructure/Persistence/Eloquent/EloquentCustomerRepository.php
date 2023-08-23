@@ -505,8 +505,8 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         $customer = Auth::guard()->user()->id;
         $appointments = Appointment::query()->where('customer_id', '=', $customer)->get();
         $completed_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_COMPLETED)->count();
-        $cancelled_by_customer_appointments = $appointments->where('status_id', AppointmentStatus::STATUS_CANCELED_BY_CUSTOMER)->count();
-        $cancelled_by_consultant_appointments = $appointments->where('status_id', AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT)->count();
+        $cancelled_by_customer_appointments = $appointments->where('status_id','=', AppointmentStatus::STATUS_CANCELED_BY_CUSTOMER)->count();
+        $cancelled_by_consultant_appointments = $appointments->where('status_id', '=',AppointmentStatus::STATUS_CANCELED_BY_CONSULTANT)->count();
         $missed_by_customer_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_MISSED_BY_CUSTOMER)->count();
         $missed_by_consultant_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_MISSED_BY_CONSULTANT)->count();
         $reserved_appointments = $appointments->where('status_id', '=', AppointmentStatus::STATUS_RESERVED)->count();

@@ -278,7 +278,7 @@ class CustomerController extends Controller
         $statistics = $this->CustomerService->getCustomerStatistics();
         return response()->json([
             'data' => ($statistics)
-        ], 200);
+        ]);
     }
 
 
